@@ -321,6 +321,14 @@ function HeroSection() {
     return () => clearTimeout(t);
   }, [slide, current.duration, current.showVideo]);
 
+  /* Reset + replay video whenever slide 0 becomes active */
+  useEffect(() => {
+    if (current.showVideo && videoRef.current) {
+      videoRef.current.currentTime = 0;
+      videoRef.current.play().catch(() => {});
+    }
+  }, [slide, current.showVideo]);
+
   const handleVideoEnded = useCallback(() => {
     setSlide(s => (s + 1) % SLIDES.length);
   }, []);
