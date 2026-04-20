@@ -820,8 +820,8 @@ function HomeCTASection() {
     <section className="section home-cta-section">
       <div className="container">
         <motion.div
-          initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }} transition={{ duration: 0.55 }}
+          initial={{ opacity: 1, y: 0 }} animate={{ opacity: 1, y: 0 }}
+          style={{ opacity: 1, transform: 'none' }}
         >
           <div
             ref={cardRef}
