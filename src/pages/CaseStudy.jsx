@@ -215,7 +215,7 @@ export default function CaseStudy() {
             <h2 className="cs-cta-title">Ready to Build Your SaaS?</h2>
             <p className="cs-cta-sub">We'll tell you exactly how we'd build it and what it would cost — in a free 30-minute call.</p>
             <div className="cs-cta-actions">
-              <a href="https://calendly.com" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{padding:'14px 32px',fontSize:'1rem'}}>
+              <a href="https://calendly.com/aijohn" target="_blank" rel="noopener noreferrer" className="btn btn-primary" style={{padding:'14px 32px',fontSize:'1rem'}}>
                 Book Free Consultation <ArrowRight size={16}/>
               </a>
               <Link to="/services" className="btn btn-outline-white" style={{padding:'14px 32px',fontSize:'1rem'}}>

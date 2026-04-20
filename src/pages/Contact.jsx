@@ -104,7 +104,7 @@ export default function Contact() {
               <p className="contact-estoras__desc">North American clients are served through our Estoras Group partnership — global delivery, enterprise accountability.</p>
             </div>
 
-            <a href="https://calendly.com" target="_blank" rel="noopener noreferrer" className="btn btn-primary contact-calendly">
+            <a href="https://calendly.com/aijohn" target="_blank" rel="noopener noreferrer" className="btn btn-primary contact-calendly">
               <Calendar size={16}/> Book a Free 30-Min Call
             </a>
           </motion.div>

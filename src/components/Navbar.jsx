@@ -146,7 +146,7 @@ export default function Navbar() {
         </nav>
 
         {/* CTA */}
-        <a href="https://calendly.com" target="_blank" rel="noopener noreferrer" className="navbar__cta">
+        <a href="https://calendly.com/aijohn" target="_blank" rel="noopener noreferrer" className="navbar__cta">
           <Phone size={14} strokeWidth={2.5} />
           Book a Free Call
         </a>
@@ -212,7 +212,7 @@ export default function Navbar() {
               ))}
               <motion.div initial={{ opacity: 0, x: -14 }} animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: NAV_LINKS.length * 0.045 }}>
-                <a href="https://calendly.com" target="_blank" rel="noopener noreferrer"
+                <a href="https://calendly.com/aijohn" target="_blank" rel="noopener noreferrer"
                   className="btn btn-primary navbar__mobile-cta">
                   <Phone size={14}/> Book a Free Call
                 </a>
