@@ -269,7 +269,7 @@ const TECH_GROUPS = [
 const TESTIMONIALS = [
   {
     quote: "AIJOHN built the core AI platform for Neyo.ai with a level of depth and speed I hadn't seen from any dev partner before. They didn't just execute — they architected. Senior engineers, zero hand-holding needed. Genuinely felt like co-founders.",
-    author: 'Chris Daglow', role: 'Founder & CEO', company: 'Neyo.ai', stage: 'AI SaaS · neyo.ai',
+    author: 'Chris', role: 'Founder & CEO', company: 'Neyo.ai', stage: 'AI SaaS · neyo.ai',
     rating: 5, initials: 'CD', color: '#4A9FD4',
   },
   {
@@ -859,11 +859,11 @@ function HomeCTASection() {
               </h2>
               <p className="home-cta__sub">Free 30-minute consultation. Fixed-price projects. Honest scoping with real timelines.</p>
               <div className="home-cta__actions">
-                <a href="https://calendly.com/aijohn" target="_blank" rel="noopener noreferrer" className="btn-hero-primary home-cta__btn">
+                <a href="https://calendly.com/aijohn" target="_blank" rel="noopener noreferrer" className="home-cta__btn-primary">
                   Book a Free Call
-                  <span className="btn-hero-primary__arrow-wrap"><ArrowRight size={16} /></span>
+                  <span className="home-cta__btn-primary__arrow"><ArrowRight size={16} /></span>
                 </a>
-                <Link to="/estimate" className="btn-hero-outline home-cta__btn">
+                <Link to="/estimate" className="home-cta__btn-secondary">
                   AI Estimator <Zap size={14} />
                 </Link>
               </div>
