@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f2a4a"/>
+      <stop offset="100%" stop-color="#1a3a6a"/>
+    </linearGradient>
+    <linearGradient id="txt" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4A9FD4"/>
+      <stop offset="100%" stop-color="#7CC2E8"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+  <rect width="64" height="64" rx="14" fill="none" stroke="rgba(74,159,212,0.4)" stroke-width="1.5"/>
+  <text x="32" y="42" font-family="'Arial Black', 'Arial', sans-serif" font-weight="900" font-size="22" fill="url(#txt)" text-anchor="middle" letter-spacing="-1">AIJ</text>
+  <rect x="12" y="47" width="40" height="2" rx="1" fill="url(#txt)" opacity="0.6"/>
+</svg>

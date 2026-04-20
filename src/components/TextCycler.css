@@ -1,0 +1,23 @@
+.text-cycler {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0;
+  white-space: nowrap;
+}
+
+.text-cycler__prefix {
+  display: inline;
+}
+
+.text-cycler__word-wrap {
+  display: inline-block;
+  position: relative;
+  min-width: 1px;
+}
+
+.text-cycler__word {
+  display: inline-block;
+  font-weight: inherit;
+  line-height: inherit;
+  will-change: opacity, transform;
+}
