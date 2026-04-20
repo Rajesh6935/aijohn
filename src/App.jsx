@@ -6,6 +6,7 @@ import {
   useLocation,
 } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
+import { Analytics } from '@vercel/analytics/react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
@@ -62,6 +63,7 @@ function App() {
       </main>
       <Footer />
       <ChatBot />
+      <Analytics />
     </Router>
   );
 }
