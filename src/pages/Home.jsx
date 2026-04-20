@@ -268,19 +268,19 @@ const TECH_GROUPS = [
 
 const TESTIMONIALS = [
   {
-    quote: "AIJOHN delivered our AI analytics dashboard in 7 weeks — on time, on budget, exactly to spec. Daily updates, senior engineers only. Best dev team we've ever worked with.",
-    author: 'Sarah Chen', role: 'CTO', company: 'FinFlow Analytics', stage: 'Series A · Fintech',
-    rating: 5, initials: 'SC', color: '#4A9FD4',
+    quote: "AIJOHN built the core AI platform for Neyo.ai with a level of depth and speed I hadn't seen from any dev partner before. They didn't just execute — they architected. Senior engineers, zero hand-holding needed. Genuinely felt like co-founders.",
+    author: 'Chris Daglow', role: 'Founder & CEO', company: 'Neyo.ai', stage: 'AI SaaS · neyo.ai',
+    rating: 5, initials: 'CD', color: '#4A9FD4',
   },
   {
-    quote: "We came with a rough idea, they came back with a full architecture doc in 3 days. The MVP was live in 6 weeks. Our investors were genuinely impressed with both the speed and code quality.",
+    quote: "ROSOR needed a solid engineering team fast — AIJOHN delivered clean architecture, fast turnaround, and zero drama. They understood our product vision immediately and shipped exactly what we needed. Highly recommend them to any serious founder.",
+    author: 'Alex', role: 'Founder', company: 'ROSOR', stage: 'PropTech · rosor.ca',
+    rating: 5, initials: 'AL', color: '#0891b2',
+  },
+  {
+    quote: "We came with a rough concept and they returned a full architecture doc in 3 days. The MVP was live in 6 weeks, on budget. Our investors were genuinely impressed with the speed and the code quality. Best engineering partner we've worked with.",
     author: 'Marcus Osei', role: 'Founder & CEO', company: 'Logiflex', stage: 'Pre-Seed · AI SaaS',
-    rating: 5, initials: 'MO', color: '#0891b2',
-  },
-  {
-    quote: "We had a legacy PHP monolith that was killing our velocity. AIJOHN migrated everything to Rails microservices with zero downtime. Load times are 3× faster. Worth every rupee.",
-    author: 'Priya Nair', role: 'VP Engineering', company: 'GrowthBridge', stage: 'Series B · MarTech',
-    rating: 5, initials: 'PN', color: '#16a34a',
+    rating: 5, initials: 'MO', color: '#16a34a',
   },
 ];
 
@@ -314,19 +314,7 @@ function HeroSection() {
   const current = SLIDES[slide];
   const videoRef = useRef(null);
 
-  /* Slow the video to cinematic 0.5× speed */
-  useEffect(() => {
-    const el = videoRef.current;
-    if (!el) return;
-    const setRate = () => { el.playbackRate = 0.5; };
-    setRate();
-    el.addEventListener('loadedmetadata', setRate);
-    el.addEventListener('play', setRate);
-    return () => {
-      el.removeEventListener('loadedmetadata', setRate);
-      el.removeEventListener('play', setRate);
-    };
-  }, []);
+  /* Play video at normal speed */
 
   useEffect(() => {
     const t = setTimeout(() => setSlide(s => (s + 1) % SLIDES.length), current.duration);
@@ -769,7 +757,7 @@ function EstorasSection() {
             <div className="home-estoras__rule" />
             <div className="home-estoras__stats">
               {[
-                { val: '3+',    lbl: 'Years Together',  cls: '' },
+                { val: '15+',   lbl: 'Months Together', cls: '' },
                 { val: 'N.A.',  lbl: 'Market Presence', cls: 'home-estoras__stat-val--teal' },
                 { val: 'F500',  lbl: 'Client Caliber',  cls: 'home-estoras__stat-val--green' },
               ].map(s => (
@@ -806,41 +794,84 @@ function EstorasSection() {
 
 /* ── CTA ────────────────────────────────────────────────────────────── */
 function HomeCTASection() {
+  const cardRef = useRef(null);
+  const [tilt, setTilt] = useState({ rx: 0, ry: 0, sx: 50, sy: 50, active: false });
+
+  const handleMouseMove = useCallback((e) => {
+    const card = cardRef.current;
+    if (!card) return;
+    const rect = card.getBoundingClientRect();
+    const x = (e.clientX - rect.left) / rect.width;
+    const y = (e.clientY - rect.top) / rect.height;
+    setTilt({
+      rx: (y - 0.5) * -14,
+      ry: (x - 0.5) * 18,
+      sx: x * 100,
+      sy: y * 100,
+      active: true,
+    });
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    setTilt({ rx: 0, ry: 0, sx: 50, sy: 50, active: false });
+  }, []);
+
   return (
     <section className="section home-cta-section">
       <div className="container">
-        <motion.div className="home-cta-card"
+        <motion.div
           initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }} transition={{ duration: 0.55 }}>
-          <div className="home-cta__glow" />
-          <ParticleCanvas className="home-cta__particles" />
-          <div className="home-cta__content">
-            <span className="home-cta__eyebrow">Let's Build Together</span>
-            <h2 className="home-cta__title home-cta__title--sm">
-              Ready to Ship Your{' '}
-              <TextCycler
-                items={[
-                  { text: 'AI SaaS?',    color: '#4A9FD4' },
-                  { text: 'MVP?',        color: '#7CC2E8' },
-                  { text: 'AI Product?', color: '#90d4f7' },
-                ]}
-                interval={2200}
-              />
-            </h2>
-            <p className="home-cta__sub">Free 30-minute consultation. Fixed-price projects. Honest scoping with real timelines.</p>
-            <div className="home-cta__actions">
-              <a href="https://calendly.com/aijohn" target="_blank" rel="noopener noreferrer" className="btn-hero-primary home-cta__btn">
-                Book a Free Call
-                <span className="btn-hero-primary__arrow-wrap"><ArrowRight size={16} /></span>
-              </a>
-              <Link to="/estimate" className="btn-hero-outline home-cta__btn">
-                AI Estimator <Zap size={14} />
-              </Link>
+          viewport={{ once: true }} transition={{ duration: 0.55 }}
+        >
+          <div
+            ref={cardRef}
+            className={`home-cta-card${tilt.active ? ' home-cta-card--tilted' : ''}`}
+            onMouseMove={handleMouseMove}
+            onMouseLeave={handleMouseLeave}
+            style={{
+              transform: `perspective(1200px) rotateX(${tilt.rx}deg) rotateY(${tilt.ry}deg)`,
+              '--spotlight-x': `${tilt.sx}%`,
+              '--spotlight-y': `${tilt.sy}%`,
+            }}
+          >
+            <div className="home-cta__glow" />
+            <div className="home-cta__spotlight" />
+            <ParticleCanvas className="home-cta__particles" />
+
+            {/* Floating blobs that shift with tilt */}
+            <div className="home-cta__blob home-cta__blob--1"
+              style={{ transform: `translate(${tilt.ry * -1.2}px, ${tilt.rx * 1.2}px)` }} />
+            <div className="home-cta__blob home-cta__blob--2"
+              style={{ transform: `translate(${tilt.ry * 0.8}px, ${tilt.rx * -0.8}px)` }} />
+
+            <div className="home-cta__content">
+              <span className="home-cta__eyebrow">Let's Build Together</span>
+              <h2 className="home-cta__title home-cta__title--sm">
+                Ready to Ship Your{' '}
+                <TextCycler
+                  items={[
+                    { text: 'AI SaaS?',    color: '#4A9FD4' },
+                    { text: 'MVP?',        color: '#7CC2E8' },
+                    { text: 'AI Product?', color: '#90d4f7' },
+                  ]}
+                  interval={2200}
+                />
+              </h2>
+              <p className="home-cta__sub">Free 30-minute consultation. Fixed-price projects. Honest scoping with real timelines.</p>
+              <div className="home-cta__actions">
+                <a href="https://calendly.com/aijohn" target="_blank" rel="noopener noreferrer" className="btn-hero-primary home-cta__btn">
+                  Book a Free Call
+                  <span className="btn-hero-primary__arrow-wrap"><ArrowRight size={16} /></span>
+                </a>
+                <Link to="/estimate" className="btn-hero-outline home-cta__btn">
+                  AI Estimator <Zap size={14} />
+                </Link>
+              </div>
+              <p className="home-cta__note">
+                <CheckCircle2 size={13} style={{ color: '#34d399' }} /> Response within 24 hours &nbsp;•&nbsp;
+                <CheckCircle2 size={13} style={{ color: '#34d399' }} /> Fixed-price guarantee
+              </p>
             </div>
-            <p className="home-cta__note">
-              <CheckCircle2 size={13} style={{ color: '#34d399' }} /> Response within 24 hours &nbsp;•&nbsp;
-              <CheckCircle2 size={13} style={{ color: '#34d399' }} /> Fixed-price guarantee
-            </p>
           </div>
         </motion.div>
       </div>

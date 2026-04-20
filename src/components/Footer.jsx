@@ -76,7 +76,7 @@ export default function Footer() {
       <div className="footer__partner-banner">
         <div className="container footer__partner-inner">
           <span className="footer__partner-text">
-            Part of&nbsp;<strong>ESTORAS GROUP</strong>&nbsp;of Companies
+            AIJOHN Technosoft is part of&nbsp;<strong>ESTORAS GROUP</strong>&nbsp;of Companies
             &nbsp;·&nbsp;<span className="footer__partner-location">Vancouver, Canada</span>
             &nbsp;·&nbsp;
             <a href="https://estorasgroup.com" target="_blank" rel="noopener noreferrer" className="footer__partner-link">estorasgroup.com</a>
@@ -141,16 +141,16 @@ export default function Footer() {
                 <div className="footer__estoras-wordmark">
                   <span className="footer__estoras-e">E</span><span className="footer__estoras-rest">STORAS</span>
                 </div>
-                <div className="footer__estoras-tag">Group · Sister Company</div>
+                <div className="footer__estoras-tag">Group of Companies · Vancouver, Canada</div>
               </div>
 
               <p className="footer__brand-desc">
-                Technology holding group headquartered in Vancouver, Canada. Invests in and operates high-growth software businesses across North America and Asia.
+                Enterprise technology group headquartered in Vancouver, Canada — bringing Fortune-500-level trust, North American legal presence, and executive relationships to every engagement.
               </p>
 
               <div className="footer__estoras-badge">
                 <span className="footer__estoras-badge__dot" />
-                Parent Company of AIJOHN Technosoft
+                AIJOHN Technosoft is part of Estoras Group
               </div>
 
               <div className="footer__office-block">
@@ -161,7 +161,14 @@ export default function Footer() {
                 </address>
                 <div className="footer__contact-list">
                   <a href="https://estorasgroup.com" target="_blank" rel="noopener noreferrer" className="footer__contact-item"><GlobeIcon /> estorasgroup.com</a>
+                  <a href="mailto:info@estorasgroup.com" className="footer__contact-item"><MailIcon /> info@estorasgroup.com</a>
                 </div>
+              </div>
+
+              <div className="footer__estoras-highlights">
+                <div className="footer__estoras-point"><span className="footer__estoras-bullet" />High-growth SaaS &amp; AI portfolio</div>
+                <div className="footer__estoras-point"><span className="footer__estoras-bullet" />North American legal &amp; contract presence</div>
+                <div className="footer__estoras-point"><span className="footer__estoras-bullet" />Signed contracts, Canadian-backed accountability</div>
               </div>
 
               <div className="footer__map-wrap">

@@ -342,30 +342,31 @@ a.home-build-card-link {
   border-radius: 10px;
 }
 
-/* Background image — desaturated for cinematic look; brightens on hover */
+/* Background image — heavily blurred + desaturated, pure texture/atmosphere only */
 .home-build-card__bg {
   position: absolute; inset: 0;
   background-size: cover; background-position: center;
   transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), filter 0.6s;
-  filter: saturate(0.35) brightness(0.55);
+  filter: blur(4px) saturate(0.20) brightness(0.40);
+  transform: scale(1.05); /* pre-scale to hide blur edges */
 }
 .home-build-card:hover .home-build-card__bg {
-  transform: scale(1.06);
-  filter: saturate(0.60) brightness(0.72);
+  transform: scale(1.10);
+  filter: blur(3px) saturate(0.35) brightness(0.52);
 }
 
-/* Cinematic overlay — vignette + card-color grade at top-left */
+/* Overlay — solid dark base so content is always dominant */
 .home-build-card__overlay {
   position: absolute; inset: 0;
   background:
-    linear-gradient(0deg, rgba(0,0,0,0.90) 0%, rgba(0,0,0,0.52) 30%, rgba(0,0,0,0.22) 60%, rgba(0,0,0,0.62) 100%),
-    linear-gradient(135deg, color-mix(in srgb, var(--card-color, #2176AE) 68%, #000) 0%, transparent 55%);
+    linear-gradient(0deg, rgba(0,0,0,0.92) 0%, rgba(0,0,0,0.72) 35%, rgba(0,0,0,0.55) 65%, rgba(0,0,0,0.75) 100%),
+    linear-gradient(135deg, color-mix(in srgb, var(--card-color, #2176AE) 55%, #000) 0%, transparent 50%);
   transition: background 0.5s;
 }
 .home-build-card:hover .home-build-card__overlay {
   background:
-    linear-gradient(0deg, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.38) 35%, rgba(0,0,0,0.12) 65%, rgba(0,0,0,0.52) 100%),
-    linear-gradient(135deg, color-mix(in srgb, var(--card-color, #2176AE) 82%, #000) 0%, transparent 52%);
+    linear-gradient(0deg, rgba(0,0,0,0.88) 0%, rgba(0,0,0,0.58) 35%, rgba(0,0,0,0.38) 65%, rgba(0,0,0,0.68) 100%),
+    linear-gradient(135deg, color-mix(in srgb, var(--card-color, #2176AE) 72%, #000) 0%, transparent 52%);
 }
 
 /* Content */
@@ -398,7 +399,7 @@ a.home-build-card-link {
   font-size: 1.22rem; font-weight: 800; color: #fff; margin-bottom: 8px; line-height: 1.2;
 }
 .home-build-card__desc {
-  font-size: 0.85rem; color: rgba(255,255,255,0.62); line-height: 1.68; margin-bottom: 16px;
+  font-size: 0.85rem; color: rgba(255,255,255,0.70); line-height: 1.68; margin-bottom: 16px;
   max-height: 0; overflow: hidden;
   transition: max-height 0.4s ease, opacity 0.4s;
   opacity: 0;
@@ -792,37 +793,38 @@ a.home-build-card-link {
 .home-tech-group__label { font-size: 0.95rem; font-weight: 800; color: var(--navy); line-height: 1.2; }
 .home-tech-group__desc  { font-size: 0.76rem; color: var(--gray); margin-top: 3px; line-height: 1.5; }
 
-/* Pills grid — revealed/highlighted on hover */
+/* Pills grid — always visible, clean and sharp */
 .home-tech-group__pills {
   display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
   position: relative; z-index: 1;
-  opacity: 0.55;
-  transform: translateY(4px);
-  transition: opacity 0.35s ease, transform 0.35s ease;
-}
-.home-tech-group:hover .home-tech-group__pills {
   opacity: 1;
-  transform: translateY(0);
+  transition: opacity 0.35s ease;
 }
 .home-tech-pill {
   display: flex; flex-direction: column; align-items: center; gap: 7px;
   padding: 12px 8px; border-radius: 10px; cursor: default;
-  background: rgba(238,243,255,0.75);
-  border: 1px solid rgba(0,0,0,0.06);
-  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+  background: rgba(238,243,255,0.80);
+  border: 1px solid rgba(0,0,0,0.08);
+  transition: background 0.22s, transform 0.22s, box-shadow 0.22s, border-color 0.22s;
 }
-.home-tech-group:hover .home-tech-pill:hover {
-  background: color-mix(in srgb, var(--group-color, #2176AE) 10%, #fff);
-  border-color: color-mix(in srgb, var(--group-color, #2176AE) 25%, transparent);
-  transform: translateY(-3px);
-  box-shadow: 0 6px 16px color-mix(in srgb, var(--group-color, #2176AE) 14%, transparent);
+.home-tech-pill:hover {
+  background: color-mix(in srgb, var(--group-color, #2176AE) 12%, #fff);
+  border-color: color-mix(in srgb, var(--group-color, #2176AE) 35%, transparent);
+  transform: translateY(-4px) scale(1.04);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--group-color, #2176AE) 18%, transparent);
 }
 .home-tech-pill__img {
   width: 32px; height: 32px; object-fit: contain; flex-shrink: 0;
+  filter: none; /* no blur, always sharp */
+  transition: transform 0.22s;
 }
+.home-tech-pill:hover .home-tech-pill__img { transform: scale(1.12); }
 .home-tech-pill__name {
-  font-size: 0.70rem; font-weight: 600; color: #475569; white-space: nowrap;
+  font-size: 0.70rem; font-weight: 700; color: #334155; white-space: nowrap;
   overflow: hidden; text-overflow: ellipsis; text-align: center;
+}
+.home-tech-pill:hover .home-tech-pill__name {
+  color: color-mix(in srgb, var(--group-color, #2176AE) 90%, #000);
 }
 
 /* Keep old classes harmless for backward compat */
@@ -1065,7 +1067,7 @@ a.home-build-card-link {
 }
 .home-cta-card {
   position: relative; overflow: hidden;
-  background: rgba(255,255,255,0.82);
+  background: rgba(255,255,255,0.85);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   border: 1px solid rgba(33,118,174,0.14);
@@ -1073,31 +1075,72 @@ a.home-build-card-link {
   border-radius: var(--radius-xl); padding: 88px 56px;
   text-align: center;
   box-shadow: 0 4px 40px rgba(33,118,174,0.10), 0 1px 8px rgba(0,0,0,0.05);
+  transition: transform 0.12s ease-out, box-shadow 0.22s ease;
+  transform-style: preserve-3d;
+  will-change: transform;
 }
-/* Subtle top radial glow inside card */
+.home-cta-card--tilted {
+  box-shadow:
+    0 24px 60px rgba(33,118,174,0.18),
+    0 8px 24px rgba(0,0,0,0.08),
+    0 0 0 1.5px rgba(33,118,174,0.20);
+}
+
+/* Ambient radials */
 .home-cta-card::before {
   content: ''; position: absolute; inset: 0; pointer-events: none;
   background:
     radial-gradient(ellipse 70% 50% at 50% 0%,   rgba(74,159,212,0.10) 0%, transparent 65%),
     radial-gradient(ellipse 40% 40% at 10% 90%,  rgba(33,118,174,0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 40% at 90% 10%,  rgba(124,58,237,0.05) 0%, transparent 60%);
+    radial-gradient(ellipse 40% 40% at 90% 10%,  rgba(33,118,174,0.05) 0%, transparent 60%);
   animation: cta-glow-shift 8s ease-in-out infinite alternate;
 }
 .home-cta-card::after { content: none; }
 @keyframes cta-glow-shift {
-  0%   { opacity: 0.7; transform: scale(1); }
-  50%  { opacity: 1;   transform: scale(1.03) translateY(-6px); }
-  100% { opacity: 0.8; transform: scale(1.01) translateY(3px); }
+  0%   { opacity: 0.7; }
+  50%  { opacity: 1;   }
+  100% { opacity: 0.8; }
 }
+
+/* Mouse-following spotlight */
+.home-cta__spotlight {
+  position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(
+    circle 380px at var(--spotlight-x, 50%) var(--spotlight-y, 50%),
+    rgba(74,159,212,0.13) 0%,
+    rgba(33,118,174,0.06) 40%,
+    transparent 70%
+  );
+  transition: background 0.08s ease;
+  border-radius: inherit;
+}
+
+/* Ambient glow */
 .home-cta__glow {
-  position: absolute; inset: 0; pointer-events: none;
+  position: absolute; inset: 0; pointer-events: none; z-index: 0;
   background: radial-gradient(ellipse 65% 55% at 50% 30%, rgba(74,159,212,0.07) 0%, transparent 65%);
+}
+
+/* Floating blobs — move opposite to tilt for depth illusion */
+.home-cta__blob {
+  position: absolute; border-radius: 50%; pointer-events: none; z-index: 0;
+  transition: transform 0.12s ease-out;
+}
+.home-cta__blob--1 {
+  width: 320px; height: 320px;
+  background: radial-gradient(circle, rgba(74,159,212,0.12) 0%, transparent 70%);
+  top: -80px; left: -80px;
+}
+.home-cta__blob--2 {
+  width: 260px; height: 260px;
+  background: radial-gradient(circle, rgba(33,118,174,0.10) 0%, transparent 70%);
+  bottom: -60px; right: -60px;
 }
 .home-cta__particles {
   position: absolute !important; inset: 0; width: 100% !important; height: 100% !important;
   z-index: 0; opacity: 0.08; pointer-events: none !important;
 }
-.home-cta__content { position: relative; z-index: 1; }
+.home-cta__content { position: relative; z-index: 2; }
 .home-cta__eyebrow {
   display: block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em;
   text-transform: uppercase; color: var(--blue-dark); margin-bottom: 16px;
