@@ -314,12 +314,16 @@ function HeroSection() {
   const current = SLIDES[slide];
   const videoRef = useRef(null);
 
-  /* Play video at normal speed */
-
+  /* Auto-advance: video slide waits for onEnded; other slides use timeout */
   useEffect(() => {
+    if (current.showVideo) return; // video's onEnded handles the transition
     const t = setTimeout(() => setSlide(s => (s + 1) % SLIDES.length), current.duration);
     return () => clearTimeout(t);
-  }, [slide, current.duration]);
+  }, [slide, current.duration, current.showVideo]);
+
+  const handleVideoEnded = useCallback(() => {
+    setSlide(s => (s + 1) % SLIDES.length);
+  }, []);
 
   const goTo = useCallback((i)  => { setSlide(i); }, []);
   const prev = useCallback(() => setSlide(s => (s + SLIDES.length - 1) % SLIDES.length), []);
@@ -339,7 +343,8 @@ function HeroSection() {
       <video
         ref={videoRef}
         className="hero-video-bg"
-        autoPlay muted loop playsInline preload="auto"
+        autoPlay muted playsInline preload="auto"
+        onEnded={handleVideoEnded}
         style={{
           opacity: current.showVideo ? 1 : 0,
           transition: 'opacity 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
