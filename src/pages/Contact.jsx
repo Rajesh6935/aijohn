@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import emailjs from '@emailjs/browser';
 import { Mail, Phone, Globe, MapPin, Calendar, CheckCircle2, ArrowRight, Send } from 'lucide-react';
 import PageWrapper from '../components/PageWrapper';
+import { useSEO } from '../utils/seo';
 import './Contact.css';
 
 const BUDGET_OPTIONS = [
@@ -21,7 +22,11 @@ const INFO_ITEMS = [
 ];
 
 export default function Contact() {
-  useEffect(() => { document.title = 'Contact | AIJOHN Technosoft'; }, []);
+  useSEO({
+    title: 'Contact',
+    description: 'Start your SaaS project with AIJOHN Technosoft. Book a free 30-minute call, email contact@aijohn.in, or send your brief and get a fixed-price quote back in 48 hours.',
+    path: '/contact',
+  });
   const formRef = useRef(null);
   const [form, setForm] = useState({ name:'', company:'', email:'', phone:'', description:'', budget:'' });
   const [status, setStatus] = useState('idle');

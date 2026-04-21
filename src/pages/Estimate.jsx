@@ -9,6 +9,7 @@ import {
   MapPin, Award, RefreshCw
 } from 'lucide-react';
 import PageWrapper from '../components/PageWrapper';
+import { useSEO } from '../utils/seo';
 import './Estimate.css';
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -126,7 +127,11 @@ const fadeUp = {
 
 /* ══════════════════════════════════════════════════════════════════ */
 export default function Estimate() {
-  useEffect(() => { document.title = 'Get an Estimate | AIJOHN Technosoft'; }, []);
+  useSEO({
+    title: 'Get an Estimate',
+    description: 'Get an instant project estimate for your SaaS, MVP, or AI product. Tell us your idea, answer a few questions, and see a realistic timeline and cost range in minutes.',
+    path: '/estimate',
+  });
 
   const [step,     setStep]     = useState(0); // 0=idea, 1-3=wizard, 4=chat, 5=result
   const [idea,     setIdea]     = useState('');

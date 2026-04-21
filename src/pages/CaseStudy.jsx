@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -6,6 +6,7 @@ import {
   CheckCircle2, AlertCircle, ArrowRight, Server, Code2, Database, Cloud, Cpu
 } from 'lucide-react';
 import PageWrapper from '../components/PageWrapper';
+import { useSEO } from '../utils/seo';
 import './CaseStudy.css';
 
 const fadeUp = {
@@ -48,7 +49,11 @@ const CHALLENGES = [
 ];
 
 export default function CaseStudy() {
-  useEffect(() => { document.title = 'neyo.ai Case Study | AIJOHN Technosoft'; }, []);
+  useSEO({
+    rawTitle: 'neyo.ai Case Study | AIJOHN Technosoft',
+    description: 'How AIJOHN Technosoft built neyo.ai, an AI-powered outbound sales platform — from zero to production with RAG pipelines, multi-tenant architecture, and real customer growth.',
+    path: '/case-study',
+  });
   return (
     <PageWrapper>
       {/* Hero */}

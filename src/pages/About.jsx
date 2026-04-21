@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
   Zap, Shield, Users, MessageCircle, ArrowRight, CheckCircle2, Award, Clock, TrendingUp
 } from 'lucide-react';
 import PageWrapper from '../components/PageWrapper';
+import { useSEO } from '../utils/seo';
 import './About.css';
 
 const fadeUp = {
@@ -31,7 +32,11 @@ const VALUES = [
 ];
 
 export default function About() {
-  useEffect(() => { document.title = 'About | AIJOHN Technosoft'; }, []);
+  useSEO({
+    title: 'About',
+    description: 'AIJOHN Technosoft partners with Estoras Group (Canada) to build AI-native SaaS products in 6-8 weeks. Fixed price, weekly demos, and zero surprises.',
+    path: '/about',
+  });
   return (
     <PageWrapper>
       {/* Hero */}

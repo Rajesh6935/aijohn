@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -6,6 +6,7 @@ import {
   CheckCircle2, Star, Award
 } from 'lucide-react';
 import PageWrapper from '../components/PageWrapper';
+import { useSEO } from '../utils/seo';
 import './Team.css';
 
 const TEAM = [
@@ -127,7 +128,11 @@ export default function Team() {
   const [activeDept, setActiveDept] = useState('All');
   const [expanded, setExpanded] = useState(null);
 
-  useEffect(() => { document.title = 'Our Team | AIJOHN Technosoft'; }, []);
+  useSEO({
+    title: 'Our Team',
+    description: 'Meet the AIJOHN Technosoft team — engineers, designers, and product thinkers partnered with Estoras Group to ship enterprise-grade SaaS products.',
+    path: '/team',
+  });
 
   const filtered = activeDept === 'All' ? TEAM : TEAM.filter(m => m.dept === activeDept);
 

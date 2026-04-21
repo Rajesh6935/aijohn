@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, CheckCircle2, Zap, Clock, Shield, Star, ArrowLeft } from 'lucide-react';
 import PageWrapper from '../components/PageWrapper';
+import { useSEO } from '../utils/seo';
 import './ServiceDetail.css';
 
 const SERVICE_DATA = {
@@ -219,10 +220,19 @@ export default function ServiceDetail() {
   const { slug } = useParams();
   const svc = SERVICE_DATA[slug];
 
-  useEffect(() => {
-    if (svc) document.title = `${svc.title} | AIJOHN Technosoft`;
-    else document.title = 'Service Not Found | AIJOHN Technosoft';
-  }, [svc]);
+  useSEO(
+    svc
+      ? {
+          title: svc.title,
+          description: svc.subtitle,
+          path: `/services/${slug}`,
+        }
+      : {
+          rawTitle: 'Service Not Found | AIJOHN Technosoft',
+          description: 'The service page you requested could not be found. Browse all AIJOHN Technosoft services instead.',
+          path: '/services',
+        }
+  );
 
   if (!svc) {
     return (
