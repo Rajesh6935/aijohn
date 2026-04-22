@@ -21,9 +21,10 @@ const path     = require('path');
 // ── Config ─────────────────────────────────────────────────────────
 const PORT    = process.env.PORT || 3000;
 
-// REPLACE THIS with your real Anthropic API key, or set env var:
+// Set your Anthropic API key via environment variable:
 //   export ANTHROPIC_API_KEY="sk-ant-api03-..."
-const API_KEY = process.env.ANTHROPIC_API_KEY || 'REPLACE_WITH_YOUR_ANTHROPIC_API_KEY';
+// Or paste it directly below (not recommended for production):
+const API_KEY = process.env.ANTHROPIC_API_KEY || '';
 
 const ANTHROPIC_URL = 'https://api.anthropic.com/v1/messages';
 
@@ -48,8 +49,8 @@ app.post('/api/chat', async (req, res) => {
         'content-type':      'application/json',
       },
       body: JSON.stringify({
-        model:      model || 'claude-sonnet-4-5',
-        max_tokens: 512,
+        model:      model || 'claude-haiku-4-5-20251001',
+        max_tokens: 400,
         system:     systemPrompt || 'You are a helpful AI assistant.',
         messages:   messages,
       }),

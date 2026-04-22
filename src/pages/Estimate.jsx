@@ -3,741 +3,879 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
   Globe, Smartphone, Brain, Cloud, ShoppingCart, Building2,
-  CheckCircle2, ArrowRight, ArrowLeft, Calculator, Zap, Clock,
-  DollarSign, Layers, Code2, Server, Shield, BarChart3,
-  Send, Rocket, Users, Star, Sparkles, MessageSquare, TrendingDown,
-  MapPin, Award, RefreshCw
+  CheckCircle2, ArrowRight, Send, Rocket, Sparkles, TrendingDown,
+  MapPin, RefreshCw, GitBranch, Server, Clock, BarChart3,
+  DollarSign, Shield, Zap, Award
 } from 'lucide-react';
 import PageWrapper from '../components/PageWrapper';
 import { useSEO } from '../utils/seo';
 import './Estimate.css';
 
-/* ═══════════════════════════════════════════════════════════════════
-   CONFIGURATION — replace the placeholder with your real API key
-   or set the ANTHROPIC_API_KEY env variable when running the proxy.
-   See proxy-server.js in the project root for setup instructions.
-═══════════════════════════════════════════════════════════════════ */
-const AI_PROXY_URL = '/api/chat';   // local proxy endpoint
-const CLAUDE_MODEL  = 'claude-sonnet-4-5';
+/* ══════════════════════════════════════════════════════
+   CONFIG
+══════════════════════════════════════════════════════ */
+const AI_PROXY_URL  = '/api/chat';
+const CLAUDE_MODEL  = 'claude-sonnet-4-5';   // Sonnet for JOHN — smarter conversation
+const MAX_TOKENS    = 800;                    // hard cap per conversation
 
-/* ── Project Types ── */
+const AIJOHN_RATE   = { min: 20, max: 35 };
+
+/* ── Market rates ── */
+const MARKET_RATES = [
+  { region: 'North America',  flag: '🇺🇸', rate: '$150–$250/hr', multiplier: 5.5 },
+  { region: 'Western Europe', flag: '🇬🇧', rate: '$100–$180/hr', multiplier: 4.2 },
+  { region: 'Australia',      flag: '🇦🇺', rate: '$120–$200/hr', multiplier: 4.8 },
+  { region: 'Eastern Europe', flag: '🇵🇱', rate: '$50–$90/hr',   multiplier: 2.2 },
+  { region: 'AIJOHN (India)', flag: '🇮🇳', rate: '$20–$35/hr',   multiplier: 1.0, highlight: true },
+];
+
+/* ── Project types — visual cards with real imagery ── */
 const PROJECT_TYPES = [
-  { id: 'saas',       icon: Globe,        color: '#2176AE', label: 'SaaS Web App',        desc: 'Multi-tenant platform, subscriptions, dashboards' },
-  { id: 'mobile',     icon: Smartphone,   color: '#7C3AED', label: 'Mobile App',          desc: 'iOS & Android, cross-platform or native' },
-  { id: 'ai',         icon: Brain,        color: '#0891B2', label: 'AI / ML Product',     desc: 'LLM integration, RAG pipeline, AI agents' },
-  { id: 'ecommerce',  icon: ShoppingCart, color: '#059669', label: 'E-Commerce Platform', desc: 'Marketplace, payments, inventory, CMS' },
-  { id: 'enterprise', icon: Building2,    color: '#D97706', label: 'Enterprise System',   desc: 'ERP, CRM, internal tools, integrations' },
-  { id: 'mvp',        icon: Rocket,       color: '#EC4899', label: 'MVP / Prototype',     desc: 'Validate fast, minimal but production-ready' },
+  {
+    id: 'saas', color: '#2176AE',
+    gradient: 'linear-gradient(135deg,#1a4fa3,#2176AE)',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=60',
+    emoji: '🌐',
+    label: 'Website / Web App',
+    plain: 'A product people use in their browser',
+    examples: 'Booking platform · Dashboard · Portal',
+  },
+  {
+    id: 'mobile', color: '#7C3AED',
+    gradient: 'linear-gradient(135deg,#5b21b6,#7C3AED)',
+    image: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=600&q=60',
+    emoji: '📱',
+    label: 'Mobile App',
+    plain: 'An app on iPhone or Android',
+    examples: 'Delivery · Fitness · On-demand service',
+  },
+  {
+    id: 'ecommerce', color: '#059669',
+    gradient: 'linear-gradient(135deg,#065f46,#059669)',
+    image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&q=60',
+    emoji: '🛍️',
+    label: 'Online Store',
+    plain: 'Sell products or services online',
+    examples: 'Marketplace · Subscription · Retail',
+  },
+  {
+    id: 'ai', color: '#0891B2',
+    gradient: 'linear-gradient(135deg,#0e4a6e,#0891B2)',
+    image: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fit=crop&w=600&q=60',
+    emoji: '🤖',
+    label: 'AI-Powered Product',
+    plain: 'Something smart that learns & adapts',
+    examples: 'Chatbot · Smart search · Auto-decisions',
+  },
+  {
+    id: 'enterprise', color: '#D97706',
+    gradient: 'linear-gradient(135deg,#92400e,#D97706)',
+    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=600&q=60',
+    emoji: '🏢',
+    label: 'Internal Business Tool',
+    plain: 'Software just for your team',
+    examples: 'CRM · HR tool · Operations system',
+  },
+  {
+    id: 'mvp', color: '#EC4899',
+    gradient: 'linear-gradient(135deg,#9d174d,#EC4899)',
+    image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=60',
+    emoji: '🚀',
+    label: 'Quick Launch / MVP',
+    plain: 'Get something live fast to test the idea',
+    examples: '6–8 week · Lean · Investor-ready',
+  },
 ];
 
-/* ── Features ── */
-const FEATURE_GROUPS = [
-  { label: 'Core', items: [
-    { id: 'auth',          label: 'Auth & User Roles',         weeks: 1,   cost: 2000 },
-    { id: 'dashboard',     label: 'Analytics Dashboard',       weeks: 2,   cost: 4000 },
-    { id: 'payments',      label: 'Payments / Subscriptions',  weeks: 1.5, cost: 3000 },
-    { id: 'multitenancy',  label: 'Multi-Tenancy',             weeks: 2,   cost: 4500 },
-    { id: 'notifications', label: 'Email / Push Notifications',weeks: 1,   cost: 1800 },
-    { id: 'search',        label: 'Advanced Search & Filters', weeks: 1,   cost: 2000 },
-  ]},
-  { label: 'AI', items: [
-    { id: 'chatbot',       label: 'AI Chatbot / Agent',        weeks: 2,   cost: 5000 },
-    { id: 'rag',           label: 'RAG Knowledge Pipeline',    weeks: 2.5, cost: 6000 },
-    { id: 'recommendations', label: 'AI Recommendations',     weeks: 2,   cost: 4500 },
-    { id: 'ocr',           label: 'OCR / Document Processing', weeks: 1.5, cost: 3500 },
-    { id: 'prediction',    label: 'Predictive Analytics',      weeks: 3,   cost: 7000 },
-  ]},
-  { label: 'Infrastructure', items: [
-    { id: 'cicd',          label: 'CI/CD Pipeline',            weeks: 0.5, cost: 1500 },
-    { id: 'microservices', label: 'Microservices Architecture',weeks: 2,   cost: 5000 },
-    { id: 'realtime',      label: 'Real-Time (WebSockets)',    weeks: 1.5, cost: 3500 },
-    { id: 'file_storage',  label: 'File Storage / CDN (S3)',   weeks: 0.5, cost: 1200 },
-  ]},
+/* ── Features — plain English, client-friendly, 8 options max ── */
+const FEATURES_SIMPLE = [
+  { id: 'users',    emoji: '👤', label: 'User Accounts',       sub: 'People can sign up & log in',              weeks: 1,   cost: 2000 },
+  { id: 'payments', emoji: '💳', label: 'Take Payments',       sub: 'Accept cards, subscriptions, invoices',    weeks: 1.5, cost: 3000 },
+  { id: 'admin',    emoji: '📊', label: 'Admin Dashboard',     sub: 'Manage everything from one place',         weeks: 2,   cost: 4000 },
+  { id: 'notify',   emoji: '🔔', label: 'Notifications',       sub: 'Email, SMS or push alerts to users',       weeks: 1,   cost: 1800 },
+  { id: 'search',   emoji: '🔍', label: 'Search & Filters',    sub: 'Find anything quickly in the app',         weeks: 1,   cost: 2000 },
+  { id: 'ai',       emoji: '🤖', label: 'AI Assistant',        sub: 'Smart chat, recommendations or automation',weeks: 2,   cost: 5000 },
+  { id: 'realtime', emoji: '⚡', label: 'Live / Real-Time',    sub: 'Chat, live updates, live tracking',        weeks: 1.5, cost: 3500 },
+  { id: 'files',    emoji: '📁', label: 'File Uploads',        sub: 'Photos, documents, videos',                weeks: 0.5, cost: 1200 },
 ];
 
-/* ── Budget Ranges ── */
-const BUDGETS = [
-  { id: 'starter',    label: '$10K – $25K',  desc: 'MVP · Core features · 6–8 weeks',      icon: '🚀' },
-  { id: 'growth',     label: '$25K – $60K',  desc: 'Full product · AI ready · 8–14 weeks',  icon: '⚡' },
-  { id: 'scale',      label: '$60K – $120K', desc: 'Enterprise · Complex · 14–24 weeks',    icon: '🏢' },
-  { id: 'enterprise', label: '$120K+',       desc: 'Full-scale platform · Custom scope',    icon: '💎' },
+/* ── Support packages — replaces raw budget picker ── */
+const SUPPORT_PACKAGES = [
+  {
+    id: 'launch',
+    emoji: '🚀',
+    color: '#2176AE',
+    gradient: 'linear-gradient(135deg,#1e3a5f,#2176AE)',
+    label: 'Just Build It',
+    tagline: 'One-time project, you take it from there',
+    perks: ['Full handover of code & docs','2 weeks of launch support','Direct Slack during build'],
+    weeks: 'modifier:0.9',
+  },
+  {
+    id: 'care',
+    emoji: '🛡️',
+    color: '#059669',
+    gradient: 'linear-gradient(135deg,#064e3b,#059669)',
+    label: 'Build + Care Plan',
+    tagline: 'We build it, then keep it healthy for you',
+    perks: ['Everything in Build','Monthly updates & bug fixes','Hosting managed by us','Priority response within 24h'],
+    badge: 'Most Popular',
+    weeks: 'modifier:1.0',
+  },
+  {
+    id: 'growth',
+    emoji: '⚡',
+    color: '#7C3AED',
+    gradient: 'linear-gradient(135deg,#4c1d95,#7C3AED)',
+    label: 'Build + Grow Together',
+    tagline: 'Ongoing dev team on-call as you scale',
+    perks: ['Everything in Care Plan','Dedicated dev hours per month','New features on demand','Monthly strategy call with our team'],
+    weeks: 'modifier:1.1',
+  },
+  {
+    id: 'partner',
+    emoji: '💎',
+    color: '#D97706',
+    gradient: 'linear-gradient(135deg,#78350f,#D97706)',
+    label: 'Full Tech Partner',
+    tagline: 'We become your in-house engineering team',
+    perks: ['Everything in Grow Together','Full-time dedicated engineers','You focus on business, we own the tech','Quarterly roadmap planning sessions'],
+    weeks: 'modifier:1.2',
+  },
 ];
 
-/* ── Estimate Calculator ── */
-function calcEstimate(typeId, features, budgetId) {
-  const BASE_WEEKS = { saas: 4, mobile: 5, ai: 5, ecommerce: 4, enterprise: 6, mvp: 3 };
-  const BASE_COST  = { saas: 8000, mobile: 10000, ai: 12000, ecommerce: 9000, enterprise: 14000, mvp: 6000 };
+/* ── Tech stacks ── */
+const TECH_STACKS = {
+  saas:       { frontend: ['React / Next.js','TypeScript','Tailwind CSS'],    backend: ['Node.js / Express','PostgreSQL','Supabase'],          infra: ['AWS (EC2 + RDS)','CloudFront CDN','GitHub Actions'],    ai: [] },
+  mobile:     { frontend: ['React Native','Expo','TypeScript'],               backend: ['Node.js / Fastify','PostgreSQL','Firebase Auth'],      infra: ['AWS Amplify','S3 Storage','GitHub Actions'],            ai: [] },
+  ai:         { frontend: ['Next.js','TypeScript','shadcn/ui'],               backend: ['FastAPI (Python)','PostgreSQL','Redis'],               infra: ['AWS ECS','S3 + CloudFront','Docker'],                   ai: ['Claude / OpenAI API','LangChain','Pinecone (vector DB)'] },
+  ecommerce:  { frontend: ['Next.js','TypeScript','Tailwind CSS'],            backend: ['Node.js','PostgreSQL','Stripe Payments'],              infra: ['Vercel / AWS','CloudFront CDN','GitHub Actions'],       ai: [] },
+  enterprise: { frontend: ['React','TypeScript','Ant Design'],                backend: ['Node.js / NestJS','PostgreSQL + Redis','REST + GraphQL'], infra: ['AWS (ECS / RDS)','VPN / SSO','Terraform IaC'],       ai: [] },
+  mvp:        { frontend: ['Next.js','TypeScript','Tailwind CSS'],            backend: ['Supabase (BaaS)','PostgreSQL','Vercel Serverless'],    infra: ['Vercel (deploy)','Supabase Storage','GitHub Actions'],  ai: [] },
+};
+
+/* ── Estimate calculator ── */
+function calcEstimate(typeId, featureIds, packageId) {
+  const BASE_WEEKS = { saas:4, mobile:5, ai:5, ecommerce:4, enterprise:6, mvp:3 };
+  const BASE_COST  = { saas:8000, mobile:10000, ai:12000, ecommerce:9000, enterprise:14000, mvp:6000 };
   let weeks = BASE_WEEKS[typeId] || 4;
   let cost  = BASE_COST[typeId]  || 8000;
-  const allFeatures = FEATURE_GROUPS.flatMap(g => g.items);
-  features.forEach(fId => {
-    const f = allFeatures.find(x => x.id === fId);
+  featureIds.forEach(fId => {
+    const f = FEATURES_SIMPLE.find(x => x.id === fId);
     if (f) { weeks += f.weeks; cost += f.cost; }
   });
-  const mods = { starter: 0.85, growth: 1.0, scale: 1.15, enterprise: 1.3 };
-  cost = Math.round(cost * (mods[budgetId] || 1));
+  // Support package modifier
+  const pkgMods = { launch:0.9, care:1.0, growth:1.1, partner:1.2 };
+  cost = Math.round(cost * (pkgMods[packageId] || 1));
+  const pkg = SUPPORT_PACKAGES.find(p => p.id === packageId) || SUPPORT_PACKAGES[0];
+  const aijohnMin = Math.round(cost * 0.9 / 1000) * 1000;
+  const aijohnMax = Math.round(cost * 1.1 / 1000) * 1000;
   return {
     weeks: Math.ceil(weeks),
-    aijohn: { min: Math.round(cost * 0.9 / 1000) * 1000, max: Math.round(cost * 1.1 / 1000) * 1000 },
-    // North America: 3.8–4.5× more expensive
-    na:     { min: Math.round(cost * 3.8 * 0.9 / 1000) * 1000, max: Math.round(cost * 4.5 * 1.1 / 1000) * 1000 },
+    pkg,
+    aijohn: { min: aijohnMin, max: aijohnMax },
+    na:     { min: Math.round(aijohnMin*4.0/1000)*1000, max: Math.round(aijohnMax*5.0/1000)*1000 },
+    markets: MARKET_RATES.map(m => ({ ...m, min: m.highlight ? aijohnMin : Math.round(aijohnMin*m.multiplier/1000)*1000, max: m.highlight ? aijohnMax : Math.round(aijohnMax*m.multiplier/1000)*1000 })),
+    stack: TECH_STACKS[typeId] || TECH_STACKS.saas,
     phases: [
-      { name: 'Discovery & Architecture', duration: '1 week',                          pct: 10 },
-      { name: 'Core Backend & APIs',      duration: `${Math.ceil(weeks*0.30)} weeks`,  pct: 30 },
-      { name: 'Frontend & UI/UX',         duration: `${Math.ceil(weeks*0.25)} weeks`,  pct: 25 },
-      { name: 'AI / Integrations',        duration: `${Math.ceil(weeks*0.20)} weeks`,  pct: 20 },
-      { name: 'Testing & QA',             duration: `${Math.ceil(weeks*0.10)} weeks`,  pct: 10 },
-      { name: 'Deployment & Handover',    duration: '3–5 days',                        pct:  5 },
+      { name:'Discovery & Architecture', duration:'1 week',                         pct:10 },
+      { name:'Design & Prototyping',     duration:`${Math.ceil(weeks*0.15)} weeks`, pct:15 },
+      { name:'Core Build',               duration:`${Math.ceil(weeks*0.40)} weeks`, pct:40 },
+      { name:'Testing & Refinement',     duration:`${Math.ceil(weeks*0.20)} weeks`, pct:20 },
+      { name:'Launch & Handover',        duration:`${Math.ceil(weeks*0.10)} weeks`, pct:10 },
+      { name:'Post-Launch Support',      duration:'2 weeks',                         pct:5  },
     ],
   };
 }
 
-/* ── Simulated AI responses (used when API key not yet configured) ── */
-function getSimulatedResponse(exchange, context) {
-  const { projectType, idea } = context;
-  const responses = [
-    `Thanks for sharing that! Based on your idea — ${idea ? `"${idea.slice(0,80)}${idea.length>80?'…':''}"` : 'your project'} — I can see you're building something interesting. Let me ask a few quick questions to sharpen the estimate.\n\nFirst: **how many distinct user roles** will your product have? For example: Admin, Regular User, Guest — or is it single-role?`,
-    `Got it, that helps. Next question: **what's your target timeline for going live**? Are you aiming for a quick MVP in 6–8 weeks, or is this a phased build over several months?`,
-    `Perfect. One more: **will this product need to integrate with any third-party services**? Things like payment processors (Stripe), CRMs (HubSpot), or external APIs? This significantly affects the scope.`,
-    `Great, that's all I need! I have a clear picture of the scope now. Let me calculate your estimate — comparing AIJOHN's India-based engineering rates against typical North America agency pricing.`,
-  ];
-  return responses[Math.min(exchange, responses.length - 1)];
+/* ── JOHN's system prompt — tight and token-aware ── */
+const JOHN_SYSTEM = `You are JOHN, a warm and trusted senior consultant at AIJOHN Technosoft (India, $20–35/hr, senior engineers).
+Your job: have a natural, human conversation to understand what the client wants to build, then guide them through 3 simple steps using interactive cards.
+
+CONVERSATION FLOW:
+1. Greet warmly, ask what they want to build (1-2 sentences max)
+2. After they describe their idea, ask ONE clarifying question — focus on their goal or audience, not tech
+3. After their answer, say you have enough context and invite them to pick the project type from the cards
+4. After they pick a type, invite them to pick the features they want (simple options, no jargon)
+5. After features, ask them how they'd like to work together after launch — show support package cards
+6. After package selected, say you're building their estimate now
+
+RULES:
+- Keep every reply under 60 words
+- Never use bullet points or numbered lists in chat
+- Sound like a trusted advisor, not a salesperson — build confidence
+- Never ask more than one question at a time
+- When prompting card selection, end with exactly: [SHOW_TYPES] or [SHOW_FEATURES] or [SHOW_BUDGET]
+- After package selected, end with: [GENERATE_ESTIMATE]
+- Total conversation: max 6 exchanges`;
+
+/* ── Smart fallback — used only if Claude API is unavailable ── */
+function getFallback(stage) {
+  const map = {
+    greeting:     `Hey! I'm JOHN from AIJOHN. Great to meet you! Tell me — what are you looking to build? Just describe it in plain English, no technical details needed.`,
+    clarify:      `That sounds exciting! Quick question — who's the main audience for this? Knowing that helps me tailor the right approach for you.`,
+    showTypes:    `Perfect, I've got a good picture now. Pick the option that best describes what you're building. [SHOW_TYPES]`,
+    showFeatures: `Great choice! Now tell me what you'd like your product to do — just pick what feels right. [SHOW_FEATURES]`,
+    showBudget:   `Love the selections! One last thing — how would you like us to work together after we launch? [SHOW_BUDGET]`,
+    generate:     `Perfect, I have everything I need. Let me put your personalised estimate together now. [GENERATE_ESTIMATE]`,
+  };
+  return map[stage] || map.clarify;
 }
 
-/* ── Claude API call (via proxy) ── */
-async function callClaude(messages, systemPrompt) {
+/* ── Call Claude ──
+   Dev:  Vite proxies /api/chat → api.anthropic.com (see vite.config.js)
+         Body is sent in Anthropic format directly.
+   Prod: Vercel serverless function at /api/chat translates and forwards.
+────────────────────────────────────────────────── */
+async function callJohn(messages) {
   try {
     const res = await fetch(AI_PROXY_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages, systemPrompt, model: CLAUDE_MODEL }),
+      body: JSON.stringify({
+        // Anthropic format (used directly in dev via Vite proxy)
+        model:      CLAUDE_MODEL,
+        max_tokens: MAX_TOKENS,
+        system:     JOHN_SYSTEM,
+        messages,
+        // Also include wrapper fields for Vercel function in prod
+        systemPrompt: JOHN_SYSTEM,
+        maxTokens:    MAX_TOKENS,
+      }),
     });
-    if (!res.ok) throw new Error('proxy error');
+    if (!res.ok) {
+      console.error('[JOHN] API error', res.status, await res.text());
+      return null;
+    }
     const data = await res.json();
     return data.content?.[0]?.text || null;
-  } catch {
-    return null; // fall back to simulated
+  } catch (err) {
+    console.error('[JOHN] fetch failed:', err);
+    return null;
   }
 }
 
 const fadeUp = {
-  hidden:  { opacity: 0, y: 24 },
-  visible: (i=0) => ({ opacity: 1, y: 0, transition: { delay: i*0.06, duration: 0.45, ease: [0.4,0,0.2,1] } }),
+  hidden:  { opacity:0, y:20 },
+  visible: (i=0) => ({ opacity:1, y:0, transition:{ delay:i*0.05, duration:0.38, ease:[0.4,0,0.2,1] } }),
 };
 
-/* ══════════════════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════
+   MAIN COMPONENT
+══════════════════════════════════════════════════════ */
 export default function Estimate() {
   useSEO({
-    title: 'Get an Estimate',
-    description: 'Get an instant project estimate for your SaaS, MVP, or AI product. Tell us your idea, answer a few questions, and see a realistic timeline and cost range in minutes.',
+    title: 'Chat with JOHN — Get an Estimate',
+    description: 'Chat with JOHN, our AI consultant, to get a personalised project estimate. Timeline, tech stack, and pricing comparison vs North America — in minutes.',
     path: '/estimate',
   });
 
-  const [step,     setStep]     = useState(0); // 0=idea, 1-3=wizard, 4=chat, 5=result
-  const [idea,     setIdea]     = useState('');
-  const [type,     setType]     = useState(null);
-  const [features, setFeatures] = useState([]);
-  const [budget,   setBudget]   = useState(null);
-  const [form,     setForm]     = useState({ name: '', email: '' });
+  /* ── State ── */
+  const [phase, setPhase]         = useState('chat');      // 'chat' | 'result'
+  const [messages, setMessages]   = useState([]);
+  const [userInput, setUserInput] = useState('');
+  const [isTyping, setIsTyping]   = useState(false);
+  const [exchange, setExchange]   = useState(0);           // how many user turns
+  const [tokenCount, setTokenCount] = useState(0);        // rough token tracking
 
-  // Chat state
-  const [messages,    setMessages]    = useState([]);
-  const [userInput,   setUserInput]   = useState('');
-  const [aiTyping,    setAiTyping]    = useState(false);
-  const [chatExchanges, setChatExchanges] = useState(0);
-  const [chatDone,    setChatDone]    = useState(false);
+  /* ── Collected data ── */
+  const [projectType, setProjectType]   = useState(null);
+  const [features, setFeatures]         = useState([]);
+  const [budget, setBudget]             = useState(null);
+  const [result, setResult]             = useState(null);
 
-  // Result
-  const [result,   setResult]   = useState(null);
+  /* ── UI state for which card selector to show ── */
+  const [showCard, setShowCard]         = useState(null);  // null | 'types' | 'features' | 'budget'
+  const [featuresConfirmed, setFeaturesConfirmed] = useState(false); // tracks confirm state
 
-  const chatEndRef = useRef(null);
-  const ideaRef    = useRef(null);
+  const chatEndRef      = useRef(null);
+  const chatMessagesRef = useRef(null);
+  const inputRef        = useRef(null);
 
-  const scrollChat = () => chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  useEffect(scrollChat, [messages, aiTyping]);
+  // Scroll the messages container to bottom — never touches the page scroll
+  useEffect(() => {
+    const el = chatEndRef.current;
+    if (!el) return;
+    // Use scrollIntoView only within the container, not the page
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, [messages, isTyping, showCard]);
 
-  const toggleFeature = (id) =>
-    setFeatures(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]);
+  /* ── Parse JOHN's response for [SHOW_X] signals ── */
+  function parseSignal(text) {
+    if (text.includes('[SHOW_TYPES]'))       return 'types';
+    if (text.includes('[SHOW_FEATURES]'))    return 'features';
+    if (text.includes('[SHOW_BUDGET]'))      return 'budget';
+    if (text.includes('[GENERATE_ESTIMATE]')) return 'generate';
+    return null;
+  }
 
-  /* ── Start chat after wizard ── */
-  const startChat = useCallback(async () => {
-    setStep(4);
-    const systemPrompt = `You are a friendly, senior software requirements analyst at AIJOHN Technosoft.
-The user wants to build: "${idea}". Project type: ${type}. Features selected: ${features.join(', ') || 'none yet'}. Budget range: ${budget}.
-Your job: ask 3-4 short, smart questions one at a time to clarify scope, user roles, integrations, timeline, and scale.
-Keep each message to 2-3 sentences max. Be warm and conversational. After the 4th exchange, say you have enough info and will now generate the estimate.
-Do NOT ask about things already known (type, features, budget). Focus on: user roles, target timeline, third-party integrations, expected user volume.`;
+  function cleanText(text) {
+    return text
+      .replace('[SHOW_TYPES]', '')
+      .replace('[SHOW_FEATURES]', '')
+      .replace('[SHOW_BUDGET]', '')
+      .replace('[GENERATE_ESTIMATE]', '')
+      .trim();
+  }
 
-    const firstMsg = {
-      role: 'user',
-      content: `Hi! I want to build: ${idea || `a ${type} product`}`,
-    };
+  /* ── Handle JOHN's reply ── */
+  async function handleJohnReply(history, stage = null) {
+    setIsTyping(true);
 
-    setAiTyping(true);
-    const aiText = await callClaude([firstMsg], systemPrompt)
-      || getSimulatedResponse(0, { projectType: type, idea });
+    // Rough token counter for display (4 chars ≈ 1 token)
+    const usedTokens = history.reduce((sum, m) => sum + Math.ceil((m.content || '').length / 4), 0);
+    setTokenCount(Math.min(usedTokens, MAX_TOKENS));
 
-    setMessages([
-      { role: 'assistant', text: aiText, id: Date.now() },
-    ]);
-    setAiTyping(false);
-    setChatExchanges(1);
-  }, [idea, type, features, budget]);
+    // Try Claude first
+    let text = await callJohn(history);
+
+    // Smart fallback if Claude is unavailable
+    if (!text) {
+      text = getFallback(stage || 'clarify');
+    }
+
+    const signal      = parseSignal(text);
+    const cleanedText = cleanText(text);
+
+    // Natural typing delay based on response length
+    const delay = Math.min(400 + cleanedText.length * 8, 1400);
+    await new Promise(r => setTimeout(r, delay));
+
+    setMessages(prev => [...prev, { role: 'assistant', text: cleanedText, id: Date.now() }]);
+    setIsTyping(false);
+
+    if (signal === 'generate') {
+      setTimeout(() => {
+        const est = calcEstimate(projectType, features, budget);
+        setResult(est);
+        setPhase('result');
+      }, 800);
+    } else if (signal) {
+      setShowCard(signal);
+    }
+  }
+
+  /* ── Boot JOHN on mount ── */
+  useEffect(() => {
+    setTimeout(() => {
+      setMessages([{ role: 'assistant', text: getFallback('greeting'), id: Date.now() }]);
+    }, 400);
+  }, []); // intentionally empty — boot greeting once on mount
 
   /* ── Send user message ── */
   const sendMessage = useCallback(async () => {
     const text = userInput.trim();
-    if (!text || aiTyping) return;
+    if (!text || isTyping) return;
     setUserInput('');
 
-    const newMsg = { role: 'user', text, id: Date.now() };
-    setMessages(prev => [...prev, newMsg]);
+    const newUserMsg = { role: 'user', text, id: Date.now() };
+    setMessages(prev => [...prev, newUserMsg]);
+    const nextExchange = exchange + 1;
+    setExchange(nextExchange);
 
-    const exchangeNum = chatExchanges + 1;
-    const isLastExchange = exchangeNum >= 4;
+    const history = [...messages, newUserMsg].map(m => ({ role: m.role, content: m.text }));
+    // Stage hint for fallback — follow conversation flow
+    let stage = 'clarify';
+    if (nextExchange >= 2 && !projectType) stage = 'showTypes';
+    else if (projectType && !features.length) stage = 'showFeatures';
+    else if (projectType && !budget) stage = 'showBudget';
+    await handleJohnReply(history, stage);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userInput, isTyping, messages, exchange]);
 
-    if (isLastExchange) {
-      setAiTyping(true);
-      const finalText = `Perfect — I have everything I need! You've given me a clear picture of the scope. Let me now calculate your personalised estimate comparing **AIJOHN's rates** with typical **North America agency pricing**.`;
-      await new Promise(r => setTimeout(r, 900));
-      setMessages(prev => [...prev, { role: 'assistant', text: finalText, id: Date.now() }]);
-      setAiTyping(false);
-      setChatDone(true);
-      setChatExchanges(exchangeNum);
+  /* ── User selects a project type card ── */
+  const selectType = useCallback(async (typeId) => {
+    const pt = PROJECT_TYPES.find(p => p.id === typeId);
+    setProjectType(typeId);
+    setShowCard(null);
 
-      // Generate result
-      const est = calcEstimate(type, features, budget);
-      setResult(est);
-      return;
-    }
+    const selMsg = { role: 'user', text: `I selected: ${pt.label}`, id: Date.now() };
+    setMessages(prev => [...prev, selMsg]);
+    setExchange(prev => prev + 1);
 
-    setAiTyping(true);
-    const historyForApi = messages.map(m => ({ role: m.role, content: m.text }));
-    historyForApi.push({ role: 'user', content: text });
+    const history = [...messages, selMsg].map(m => ({ role: m.role, content: m.text }));
+    await handleJohnReply(history, 'showFeatures');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages]);
 
-    const systemPrompt = `You are a friendly requirements analyst at AIJOHN Technosoft.
-User is building: "${idea}". Type: ${type}. Features: ${features.join(', ')}. Budget: ${budget}.
-This is exchange ${exchangeNum} of 4. Ask one focused question about: user roles, timeline, integrations, or scale.
-Keep it brief (2-3 sentences). After exchange 4 you will wrap up.`;
+  /* ── User confirms features ── */
+  const confirmFeatures = useCallback(async () => {
+    setShowCard(null);
+    setFeaturesConfirmed(true);
 
-    const aiText = await callClaude(historyForApi, systemPrompt)
-      || getSimulatedResponse(exchangeNum - 1, { projectType: type, idea });
+    const labels = features.map(fId => FEATURES_SIMPLE.find(f => f.id === fId)?.label).filter(Boolean);
+    const selMsg = {
+      role: 'user',
+      text: labels.length ? `My features: ${labels.join(', ')}` : 'No specific features selected yet — keep it lean.',
+      id: Date.now()
+    };
+    setMessages(prev => [...prev, selMsg]);
+    setExchange(prev => prev + 1);
 
-    setMessages(prev => [...prev, { role: 'assistant', text: aiText, id: Date.now() }]);
-    setAiTyping(false);
-    setChatExchanges(exchangeNum);
-  }, [userInput, aiTyping, chatExchanges, messages, idea, type, features, budget]);
+    const history = [...messages, selMsg].map(m => ({ role: m.role, content: m.text }));
+    await handleJohnReply(history, 'showBudget');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages, features]);
 
-  const showResult = () => setStep(5);
+  /* ── User selects budget ── */
+  const selectBudget = useCallback(async (budgetId) => {
+    const b = SUPPORT_PACKAGES.find(x => x.id === budgetId);
+    setBudget(budgetId);
+    setShowCard(null);
+
+    const selMsg = { role: 'user', text: `I'd like the ${b.label} package.`, id: Date.now() };
+    setMessages(prev => [...prev, selMsg]);
+    setExchange(prev => prev + 1);
+
+    const history = [...messages, selMsg].map(m => ({ role: m.role, content: m.text }));
+    await handleJohnReply(history, 'generate');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages]);
+
+  const toggleFeature = (id) =>
+    setFeatures(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]);
+
   const restart = () => {
-    setStep(0); setIdea(''); setType(null); setFeatures([]); setBudget(null);
-    setForm({ name: '', email: '' }); setMessages([]); setUserInput('');
-    setAiTyping(false); setChatExchanges(0); setChatDone(false); setResult(null);
+    setPhase('chat'); setMessages([]); setUserInput(''); setIsTyping(false);
+    setExchange(0); setTokenCount(0); setProjectType(null); setFeatures([]);
+    setBudget(null); setResult(null); setShowCard(null); setFeaturesConfirmed(false);
+    setTimeout(() => {
+      setMessages([{ role: 'assistant', text: getFallback('greeting'), id: Date.now() }]);
+    }, 300);
   };
 
-  const progress = step <= 3 ? (step / 3) * 100 : 100;
-
+  /* ══════════════════════════════════════════════════
+     RENDER
+  ══════════════════════════════════════════════════ */
   return (
     <PageWrapper>
+
       {/* ── Hero ── */}
-      <section className="est-hero">
-        <div className="est-hero__bg" />
-        <div className="est-hero__overlay" />
-        <div className="container est-hero__inner">
-          <motion.div initial={{ opacity:0, y:32 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.6 }}>
+      <section className="john-hero">
+        <div className="john-hero__bg" />
+        <div className="john-hero__overlay" />
+        <div className="container john-hero__inner">
+          <motion.div initial={{ opacity:0, y:28 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.55 }}>
             <span className="section-tag" style={{ color:'#7CC2E8', background:'rgba(74,159,212,0.14)', borderColor:'rgba(74,159,212,0.28)' }}>
-              <Calculator size={12} /> Free AI-Powered Estimator
+              <Brain size={12} /> AI-Powered Estimator
             </span>
-            <h1 className="est-hero__title">
-              Describe Your Idea.<br/>
-              <span className="est-hero__accent">Get an Instant Estimate.</span>
+            <h1 className="john-hero__title">
+              Chat with <span className="john-hero__accent">JOHN.</span><br/>
+              Get Your Estimate.
             </h1>
-            <p className="est-hero__sub">
-              Tell us what you're building, answer a few quick questions, and our AI will
-              generate a detailed estimate — comparing AIJOHN rates with North America pricing.
+            <p className="john-hero__sub">
+              Describe your idea. JOHN will ask a couple of smart questions, then generate your personalised plan — timeline, tech stack, and pricing vs the world.
             </p>
-            <div className="est-hero__badges">
+            <div className="john-hero__badges">
               {[
-                { icon: Zap,           label: 'AI-Powered Chat'      },
-                { icon: Shield,        label: 'No Obligation'         },
-                { icon: TrendingDown,  label: 'Save 60–70% vs US/EU' },
+                { icon: Zap,          label: 'Powered by Claude Sonnet' },
+                { icon: Shield,       label: 'No Obligation'            },
+                { icon: TrendingDown, label: 'Save 60–75% vs US/EU'     },
               ].map(({ icon: Icon, label }) => (
-                <span key={label} className="est-hero__badge"><Icon size={13} /> {label}</span>
+                <span key={label} className="john-hero__badge"><Icon size={12}/> {label}</span>
               ))}
             </div>
           </motion.div>
         </div>
       </section>
 
-      {/* ── Wizard / Chat / Result ── */}
-      <section className="est-wizard-section">
-        <div className="container">
-          <AnimatePresence mode="wait">
+      {/* ══════════════════════════════════════════════
+          CHAT PHASE
+      ══════════════════════════════════════════════ */}
+      <AnimatePresence mode="wait">
+      {phase === 'chat' && (
+        <motion.section key="chat" className="john-chat-section"
+          initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}>
+          <div className="container">
+            <div className="john-chat-wrap">
 
-            {/* ════ STEP 0: Idea Input ════ */}
-            {step === 0 && (
-              <motion.div key="s0" className="est-wizard"
-                initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }}
-                exit={{ opacity:0, y:-20 }} transition={{ duration:0.4 }}>
-
-                <div className="est-idea-wrap">
-                  <div className="est-idea-header">
-                    <h2 className="est-step__title">What's your idea?</h2>
-                    <p className="est-step__sub">
-                      Describe what you want to build — a sentence or a paragraph, whatever feels natural.
-                      Our AI will use this to ask smarter questions.
-                    </p>
+              {/* Chat header */}
+              <div className="john-chat-header">
+                <div className="john-chat-header__left">
+                  <div className="john-avatar">
+                    <span>J</span>
                   </div>
-
-                  <div className="est-idea-box">
-                    <div className="est-idea-icon"><MessageSquare size={22} /></div>
-                    <textarea
-                      ref={ideaRef}
-                      className="est-idea-textarea"
-                      rows={5}
-                      placeholder="e.g. I want to build a SaaS platform where businesses can manage their customer support tickets using AI automation. It should have a dashboard, team management, and integrate with Slack..."
-                      value={idea}
-                      onChange={e => setIdea(e.target.value)}
-                    />
-                    <div className="est-idea-hint">
-                      {idea.length > 0
-                        ? `${idea.length} chars — looking good!`
-                        : 'Write at least a sentence to get the best estimate'}
+                  <div>
+                    <div className="john-chat-name">JOHN</div>
+                    <div className="john-chat-status">
+                      <span className="john-dot" />
+                      Senior Consultant · AIJOHN Technosoft · $20–35/hr
                     </div>
                   </div>
-
-                  <div className="est-idea-or">
-                    <span>or choose a quick start</span>
-                  </div>
-
-                  <div className="est-quickstart-grid">
-                    {[
-                      { label: 'SaaS Dashboard App',    text: 'I want to build a multi-tenant SaaS dashboard with user roles, analytics, and subscription billing.' },
-                      { label: 'Mobile App (iOS/Android)', text: 'I want to build a cross-platform mobile app for both iOS and Android with a backend API.' },
-                      { label: 'AI Chatbot Product',    text: 'I want to build an AI-powered chatbot product that uses LLMs to answer questions from a knowledge base.' },
-                      { label: 'E-Commerce Platform',   text: 'I want to build an e-commerce marketplace with vendor management, payments, and an admin dashboard.' },
-                    ].map(q => (
-                      <button key={q.label} className="est-quickstart-chip"
-                        onClick={() => { setIdea(q.text); }}>
-                        {q.label}
-                      </button>
-                    ))}
-                  </div>
-
-                  <div className="est-idea-actions">
-                    <button
-                      className="est-btn-next"
-                      onClick={() => setStep(1)}
-                    >
-                      Next: Project Type <ArrowRight size={15} />
-                    </button>
-                  </div>
                 </div>
-              </motion.div>
-            )}
-
-            {/* ════ STEPS 1–3: Wizard ════ */}
-            {step >= 1 && step <= 3 && (
-              <motion.div key="wizard" className="est-wizard"
-                initial={{ opacity:0, y:20 }} animate={{ opacity:1, y:0 }}
-                exit={{ opacity:0, y:-20 }} transition={{ duration:0.4 }}>
-
-                {/* Progress bar */}
-                <div className="est-progress">
-                  <div className="est-progress__bar">
-                    <motion.div className="est-progress__fill" animate={{ width: `${progress}%` }} transition={{ duration:0.4 }} />
-                  </div>
-                  <div className="est-progress__steps">
-                    {[1,2,3].map(s => (
-                      <div key={s} className={`est-progress__step ${s < step ? 'done' : s === step ? 'active' : ''}`}>
-                        {s < step ? <CheckCircle2 size={13}/> : s}
-                      </div>
-                    ))}
-                  </div>
-                  <div className="est-progress__labels">
-                    {['Project Type','Features','Budget'].map((l,i) => (
-                      <span key={l} className={`est-progress__label ${i+1 === step ? 'active' : ''}`}>{l}</span>
-                    ))}
-                  </div>
+                <div className="john-token-badge" title="Token usage">
+                  <Sparkles size={11}/> {tokenCount}/{MAX_TOKENS} tokens
                 </div>
+              </div>
 
-                <AnimatePresence mode="wait">
-                  {/* Step 1 */}
-                  {step === 1 && (
-                    <motion.div key="s1" className="est-step"
-                      initial={{ opacity:0, x:30 }} animate={{ opacity:1, x:0 }}
-                      exit={{ opacity:0, x:-30 }} transition={{ duration:0.3 }}>
-                      <h2 className="est-step__title">What type of product?</h2>
-                      <p className="est-step__sub">Choose the best fit — you can adjust later in the chat.</p>
-                      <div className="est-type-grid">
-                        {PROJECT_TYPES.map((pt, i) => {
-                          const Icon = pt.icon;
-                          return (
-                            <motion.button key={pt.id}
-                              className={`est-type-card ${type === pt.id ? 'selected' : ''}`}
-                              style={{ '--pt-color': pt.color }}
-                              onClick={() => { setType(pt.id); setTimeout(() => setStep(2), 260); }}
-                              custom={i} initial="hidden" animate="visible" variants={fadeUp}
-                              whileHover={{ y:-4 }}>
-                              <div className="est-type-card__icon"><Icon size={24}/></div>
-                              <div className="est-type-card__label">{pt.label}</div>
-                              <div className="est-type-card__desc">{pt.desc}</div>
-                              {type === pt.id && <div className="est-type-card__check"><CheckCircle2 size={15}/></div>}
-                            </motion.button>
-                          );
-                        })}
-                      </div>
-                      <div className="est-step__actions">
-                        <button className="est-btn-back" onClick={() => setStep(0)}><ArrowLeft size={14}/> Back</button>
-                      </div>
-                    </motion.div>
-                  )}
+              {/* Messages */}
+              <div className="john-messages" ref={chatMessagesRef}>
+                {messages.map((msg) => (
+                  <motion.div key={msg.id}
+                    className={`john-msg john-msg--${msg.role}`}
+                    initial={{ opacity:0, y:10 }} animate={{ opacity:1, y:0 }}
+                    transition={{ duration:0.3 }}>
+                    {msg.role === 'assistant' && (
+                      <div className="john-msg__avatar"><span>J</span></div>
+                    )}
+                    <div className="john-msg__bubble">
+                      {msg.text.split('\n').map((line, i) => {
+                        const parts = line.split(/\*\*(.*?)\*\*/g);
+                        return (
+                          <span key={i}>
+                            {parts.map((p, j) => j % 2 === 1 ? <strong key={j}>{p}</strong> : p)}
+                            {i < msg.text.split('\n').length - 1 && <br/>}
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                ))}
 
-                  {/* Step 2 */}
-                  {step === 2 && (
-                    <motion.div key="s2" className="est-step"
-                      initial={{ opacity:0, x:30 }} animate={{ opacity:1, x:0 }}
-                      exit={{ opacity:0, x:-30 }} transition={{ duration:0.3 }}>
-                      <h2 className="est-step__title">Which features do you need?</h2>
-                      <p className="est-step__sub">Select all that apply — don't worry if unsure, the AI will help clarify.</p>
-                      <div className="est-features-wrap">
-                        {FEATURE_GROUPS.map(group => (
-                          <div key={group.label} className="est-feature-group">
-                            <div className="est-feature-group__label">{group.label}</div>
-                            <div className="est-feature-chips">
-                              {group.items.map(item => (
-                                <button key={item.id}
-                                  className={`est-feature-chip ${features.includes(item.id) ? 'selected' : ''}`}
-                                  onClick={() => toggleFeature(item.id)}>
-                                  {features.includes(item.id) && <CheckCircle2 size={11}/>}
-                                  {item.label}
-                                </button>
-                              ))}
+                {/* Typing indicator */}
+                {isTyping && (
+                  <motion.div className="john-msg john-msg--assistant"
+                    initial={{ opacity:0 }} animate={{ opacity:1 }}>
+                    <div className="john-msg__avatar"><span>J</span></div>
+                    <div className="john-msg__bubble john-typing">
+                      <span/><span/><span/>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* ── Interactive card selectors (appear mid-chat) ── */}
+                <AnimatePresence>
+
+                  {/* ── 1. Project type — visual image cards ── */}
+                  {showCard === 'types' && !isTyping && (
+                    <motion.div className="john-card-selector"
+                      initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0 }}
+                      exit={{ opacity:0, y:-8 }} transition={{ duration:0.35 }}>
+                      <div className="john-card-selector__label">What best describes what you're building? ↓</div>
+                      <div className="john-type-grid">
+                        {PROJECT_TYPES.map((pt, i) => (
+                          <motion.button key={pt.id}
+                            className={`john-type-card ${projectType === pt.id ? 'selected' : ''}`}
+                            style={{ '--pt-color': pt.color, '--pt-grad': pt.gradient }}
+                            onClick={() => selectType(pt.id)}
+                            custom={i} initial="hidden" animate="visible" variants={fadeUp}
+                            whileHover={{ y:-4, scale:1.02 }}>
+                            <div className="john-type-card__img" style={{ backgroundImage:`url(${pt.image})` }}>
+                              <div className="john-type-card__img-overlay" style={{ background: pt.gradient + 'cc' }} />
+                              <span className="john-type-card__emoji">{pt.emoji}</span>
+                              {projectType === pt.id && (
+                                <div className="john-type-card__check"><CheckCircle2 size={16}/></div>
+                              )}
                             </div>
-                          </div>
-                        ))}
-                      </div>
-                      <div className="est-step__actions">
-                        <button className="est-btn-back" onClick={() => setStep(1)}><ArrowLeft size={14}/> Back</button>
-                        <button className="est-btn-next" onClick={() => setStep(3)}>Next: Budget <ArrowRight size={14}/></button>
-                      </div>
-                    </motion.div>
-                  )}
-
-                  {/* Step 3 */}
-                  {step === 3 && (
-                    <motion.div key="s3" className="est-step"
-                      initial={{ opacity:0, x:30 }} animate={{ opacity:1, x:0 }}
-                      exit={{ opacity:0, x:-30 }} transition={{ duration:0.3 }}>
-                      <h2 className="est-step__title">What's your budget range?</h2>
-                      <p className="est-step__sub">This calibrates scope. AIJOHN typically costs 60–70% less than equivalent US/EU agencies.</p>
-                      <div className="est-budget-grid">
-                        {BUDGETS.map((b, i) => (
-                          <motion.button key={b.id}
-                            className={`est-budget-card ${budget === b.id ? 'selected' : ''}`}
-                            onClick={() => { setBudget(b.id); }}
-                            custom={i} initial="hidden" animate="visible" variants={fadeUp}>
-                            <div className="est-budget-card__emoji">{b.icon}</div>
-                            <div className="est-budget-card__label">{b.label}</div>
-                            <div className="est-budget-card__desc">{b.desc}</div>
-                            {budget === b.id && <CheckCircle2 size={14} className="est-budget-card__check"/>}
+                            <div className="john-type-card__body">
+                              <div className="john-type-card__label">{pt.label}</div>
+                              <div className="john-type-card__plain">{pt.plain}</div>
+                              <div className="john-type-card__examples">{pt.examples}</div>
+                            </div>
                           </motion.button>
                         ))}
                       </div>
-                      <div className="est-step__actions">
-                        <button className="est-btn-back" onClick={() => setStep(2)}><ArrowLeft size={14}/> Back</button>
-                        <button className="est-btn-next" disabled={!budget}
-                          onClick={startChat}>
-                          <MessageSquare size={14}/> Chat with AI Advisor <ArrowRight size={14}/>
-                        </button>
+                    </motion.div>
+                  )}
+
+                  {/* ── 2. Features — simple emoji tiles ── */}
+                  {showCard === 'features' && !isTyping && (
+                    <motion.div className="john-card-selector"
+                      initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0 }}
+                      exit={{ opacity:0, y:-8 }} transition={{ duration:0.35 }}>
+                      <div className="john-card-selector__label">What should your product be able to do? ↓</div>
+                      <div className="john-feat-grid">
+                        {FEATURES_SIMPLE.map((item, i) => (
+                          <motion.button key={item.id}
+                            className={`john-feat-tile ${features.includes(item.id) ? 'selected' : ''}`}
+                            onClick={() => toggleFeature(item.id)}
+                            custom={i} initial="hidden" animate="visible" variants={fadeUp}
+                            whileHover={{ scale:1.03 }}>
+                            <div className="john-feat-tile__emoji">{item.emoji}</div>
+                            <div className="john-feat-tile__label">{item.label}</div>
+                            <div className="john-feat-tile__sub">{item.sub}</div>
+                            {features.includes(item.id) && (
+                              <div className="john-feat-tile__check"><CheckCircle2 size={13}/></div>
+                            )}
+                          </motion.button>
+                        ))}
+                      </div>
+                      <button className="john-confirm-btn" onClick={confirmFeatures}>
+                        <CheckCircle2 size={14}/> {features.length ? `I want these ${features.length} things` : 'Skip — keep it simple'} <ArrowRight size={13}/>
+                      </button>
+                    </motion.div>
+                  )}
+
+                  {/* ── 3. Support package — replaces raw budget ── */}
+                  {showCard === 'budget' && !isTyping && (
+                    <motion.div className="john-card-selector"
+                      initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0 }}
+                      exit={{ opacity:0, y:-8 }} transition={{ duration:0.35 }}>
+                      <div className="john-card-selector__label">How would you like us to work together? ↓</div>
+                      <div className="john-pkg-grid">
+                        {SUPPORT_PACKAGES.map((pkg, i) => (
+                          <motion.button key={pkg.id}
+                            className={`john-pkg-card ${budget === pkg.id ? 'selected' : ''}`}
+                            style={{ '--pkg-color': pkg.color, '--pkg-grad': pkg.gradient }}
+                            onClick={() => selectBudget(pkg.id)}
+                            custom={i} initial="hidden" animate="visible" variants={fadeUp}
+                            whileHover={{ y:-3 }}>
+                            {pkg.badge && <div className="john-pkg-badge">{pkg.badge}</div>}
+                            <div className="john-pkg-card__top" style={{ background: pkg.gradient }}>
+                              <span className="john-pkg-card__emoji">{pkg.emoji}</span>
+                            </div>
+                            <div className="john-pkg-card__body">
+                              <div className="john-pkg-card__label">{pkg.label}</div>
+                              <div className="john-pkg-card__tagline">{pkg.tagline}</div>
+                              <ul className="john-pkg-card__perks">
+                                {pkg.perks.map(p => (
+                                  <li key={p}><CheckCircle2 size={10}/>{p}</li>
+                                ))}
+                              </ul>
+                            </div>
+                            {budget === pkg.id && (
+                              <div className="john-pkg-selected"><CheckCircle2 size={14}/> Selected</div>
+                            )}
+                          </motion.button>
+                        ))}
                       </div>
                     </motion.div>
                   )}
                 </AnimatePresence>
+
+                <div ref={chatEndRef} />
+              </div>
+
+              {/* Input */}
+              {!showCard && (
+                <div className="john-input-row">
+                  <textarea
+                    ref={inputRef}
+                    className="john-input"
+                    rows={1}
+                    placeholder="Type your message…"
+                    value={userInput}
+                    onChange={e => setUserInput(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
+                    disabled={isTyping}
+                  />
+                  <button className="john-send-btn" onClick={sendMessage} disabled={isTyping || !userInput.trim()}>
+                    <Send size={16}/>
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+        </motion.section>
+      )}
+
+      {/* ══════════════════════════════════════════════
+          RESULT PHASE
+      ══════════════════════════════════════════════ */}
+      {phase === 'result' && result && (
+        <motion.section key="result" className="john-result-section"
+          initial={{ opacity:0 }} animate={{ opacity:1 }} transition={{ duration:0.5 }}>
+          <div className="container">
+            <div className="john-result">
+
+              {/* Header */}
+              <div className="john-result__header">
+                <motion.div className="john-result__check"
+                  initial={{ scale:0 }} animate={{ scale:1 }}
+                  transition={{ type:'spring', stiffness:280, damping:20, delay:0.2 }}>
+                  <CheckCircle2 size={26}/>
+                </motion.div>
+                <h2 className="john-result__title">Your Estimate is Ready!</h2>
+                <p className="john-result__sub">Based on your conversation with JOHN — here's your personalised build plan.</p>
+              </div>
+
+              {/* Savings banner */}
+              <motion.div className="john-savings-banner"
+                initial={{ opacity:0, scale:0.97 }} animate={{ opacity:1, scale:1 }}
+                transition={{ delay:0.3 }}>
+                <TrendingDown size={18}/>
+                <span>Save up to <strong>${(result.na.max - result.aijohn.max).toLocaleString()}</strong> building with AIJOHN</span>
+                <span className="john-savings-pct">~{Math.round((1 - result.aijohn.max / result.na.max)*100)}% savings</span>
               </motion.div>
-            )}
 
-            {/* ════ STEP 4: AI Chat ════ */}
-            {step === 4 && (
-              <motion.div key="chat" className="est-chat-wrap"
-                initial={{ opacity:0, y:24 }} animate={{ opacity:1, y:0 }}
-                exit={{ opacity:0, y:-20 }} transition={{ duration:0.45 }}>
-
-                <div className="est-chat-header">
-                  <div className="est-chat-header__left">
-                    <div className="est-chat-avatar">
-                      <Brain size={18}/>
-                    </div>
-                    <div>
-                      <div className="est-chat-name">AIJOHN AI Advisor</div>
-                      <div className="est-chat-status">
-                        <span className="est-chat-dot" />
-                        Requirement Gathering · {chatExchanges} of 4 questions
-                      </div>
-                    </div>
+              {/* AIJOHN hero card */}
+              <motion.div className="john-est-card john-est-card--main"
+                initial="hidden" whileInView="visible" viewport={{once:true}} variants={fadeUp}>
+                <div className="john-est-card__top">
+                  <div className="john-est-card__logo">
+                    <span className="john-est-card__logo-ai">AI</span><span className="john-est-card__logo-john">JOHN</span>
                   </div>
-                  {idea && (
-                    <div className="est-chat-idea-pill">
-                      <MessageSquare size={11}/> {idea.slice(0,48)}{idea.length>48?'…':''}
+                  <span className="john-est-card__tag">
+                    <MapPin size={10}/> India · IIT/NIT Engineers · ${AIJOHN_RATE.min}–${AIJOHN_RATE.max}/hr
+                  </span>
+                </div>
+                <div className="john-est-card__price">
+                  ${result.aijohn.min.toLocaleString()} – ${result.aijohn.max.toLocaleString()}
+                </div>
+                <div className="john-est-card__meta-row">
+                  <div className="john-est-card__timeline">
+                    <Clock size={12}/> {result.weeks} weeks to production
+                  </div>
+                  {result.pkg && (
+                    <div className="john-est-card__pkg-badge" style={{ background: result.pkg.gradient }}>
+                      {result.pkg.emoji} {result.pkg.label}
                     </div>
                   )}
                 </div>
+                <div className="john-est-card__divider"/>
+                <ul className="john-est-card__perks">
+                  {(result.pkg ? result.pkg.perks : ['Senior IIT/NIT engineers only','Fixed-price guarantee','30-day post-launch support']).map(p => (
+                    <li key={p}><CheckCircle2 size={12}/> {p}</li>
+                  ))}
+                  {!result.pkg && ['Daily standups & Friday live demos','Direct Slack · timezone-flexible'].map(p => (
+                    <li key={p}><CheckCircle2 size={12}/> {p}</li>
+                  ))}
+                </ul>
+                <Link to="/contact" className="john-est-card__cta">
+                  Start with AIJOHN <ArrowRight size={13}/>
+                </Link>
+              </motion.div>
 
-                <div className="est-chat-messages">
-                  {messages.map(msg => (
-                    <div key={msg.id} className={`est-chat-msg est-chat-msg--${msg.role}`}>
-                      {msg.role === 'assistant' && (
-                        <div className="est-chat-msg__avatar"><Brain size={14}/></div>
-                      )}
-                      <div className="est-chat-msg__bubble">
-                        {msg.text.split('\n').map((line, i) => {
-                          // Bold markdown **text**
-                          const parts = line.split(/\*\*(.*?)\*\*/g);
-                          return (
-                            <span key={i}>
-                              {parts.map((p, j) => j % 2 === 1 ? <strong key={j}>{p}</strong> : p)}
-                              {i < msg.text.split('\n').length - 1 && <br/>}
-                            </span>
-                          );
-                        })}
+              {/* Global market comparison */}
+              <motion.div className="john-market-table"
+                initial={{ opacity:0, y:18 }} whileInView={{ opacity:1, y:0 }}
+                viewport={{once:true}} transition={{ duration:0.4 }}>
+                <div className="john-section-head"><DollarSign size={15}/> Global Pricing — Same Project</div>
+                <p className="john-market-table__sub">Identical scope, vastly different cost depending on where you hire.</p>
+                {result.markets.map((m, i) => (
+                  <motion.div key={m.region}
+                    className={`john-market-row ${m.highlight ? 'john-market-row--highlight' : ''}`}
+                    initial={{ opacity:0, x:-10 }} whileInView={{ opacity:1, x:0 }}
+                    viewport={{once:true}} transition={{ delay:i*0.05 }}>
+                    <div className="john-market-row__left">
+                      <span className="john-market-row__flag">{m.flag}</span>
+                      <div>
+                        <div className="john-market-row__region">{m.region}</div>
+                        <div className="john-market-row__rate">{m.rate}</div>
+                      </div>
+                    </div>
+                    <div className="john-market-row__right">
+                      <div className="john-market-row__price">${m.min.toLocaleString()} – ${m.max.toLocaleString()}</div>
+                      {m.highlight
+                        ? <div className="john-market-row__best">✓ Best value</div>
+                        : <div className="john-market-row__extra">{Math.round((1 - result.aijohn.max/m.max)*100)}% more expensive</div>
+                      }
+                    </div>
+                  </motion.div>
+                ))}
+              </motion.div>
+
+              {/* Tech stack */}
+              <motion.div className="john-stack-card"
+                initial={{ opacity:0, y:18 }} whileInView={{ opacity:1, y:0 }}
+                viewport={{once:true}} transition={{ duration:0.4 }}>
+                <div className="john-section-head">
+                  <GitBranch size={15}/> Recommended Tech Stack
+                  <span className="john-stack-type">{PROJECT_TYPES.find(p => p.id === projectType)?.label || 'Your Project'}</span>
+                </div>
+                <div className="john-stack-groups">
+                  {[
+                    { label:'Frontend', icon: Globe,  items: result.stack.frontend },
+                    { label:'Backend',  icon: Server, items: result.stack.backend  },
+                    { label:'Infra',    icon: Cloud,  items: result.stack.infra    },
+                    ...(result.stack.ai.length ? [{ label:'AI Layer', icon: Brain, items: result.stack.ai }] : []),
+                  ].map(({ label, icon: Icon, items }) => (
+                    <div key={label} className="john-stack-group">
+                      <div className="john-stack-group__label"><Icon size={11}/> {label}</div>
+                      <div className="john-stack-chips">
+                        {items.map(item => <span key={item} className="john-stack-chip">{item}</span>)}
                       </div>
                     </div>
                   ))}
-                  {aiTyping && (
-                    <div className="est-chat-msg est-chat-msg--assistant">
-                      <div className="est-chat-msg__avatar"><Brain size={14}/></div>
-                      <div className="est-chat-msg__bubble est-chat-typing">
-                        <span/><span/><span/>
-                      </div>
-                    </div>
-                  )}
-                  <div ref={chatEndRef} />
                 </div>
-
-                {!chatDone ? (
-                  <div className="est-chat-input-row">
-                    <textarea
-                      className="est-chat-input"
-                      rows={2}
-                      placeholder="Type your answer here…"
-                      value={userInput}
-                      onChange={e => setUserInput(e.target.value)}
-                      onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
-                      disabled={aiTyping}
-                    />
-                    <button className="est-chat-send" onClick={sendMessage} disabled={aiTyping || !userInput.trim()}>
-                      <Send size={16}/>
-                    </button>
-                  </div>
-                ) : (
-                  <motion.div className="est-chat-done-row"
-                    initial={{ opacity:0, y:12 }} animate={{ opacity:1, y:0 }}>
-                    <p className="est-chat-done-text">Requirements gathered! Your estimate is ready.</p>
-                    <button className="est-btn-next" onClick={showResult}>
-                      <Sparkles size={15}/> View My Estimate <ArrowRight size={15}/>
-                    </button>
-                  </motion.div>
-                )}
               </motion.div>
-            )}
 
-            {/* ════ STEP 5: Dual Estimate Results ════ */}
-            {step === 5 && result && (
-              <motion.div key="result" className="est-result"
-                initial={{ opacity:0, y:28 }} animate={{ opacity:1, y:0 }}
-                transition={{ duration:0.5 }}>
-
-                {/* Header */}
-                <div className="est-result__header">
-                  <motion.div className="est-result__check"
-                    initial={{ scale:0 }} animate={{ scale:1 }}
-                    transition={{ type:'spring', stiffness:300, damping:20, delay:0.2 }}>
-                    <CheckCircle2 size={28}/>
-                  </motion.div>
-                  <h2 className="est-result__title">Your Estimate is Ready!</h2>
-                  <p className="est-result__sub">We've compared AIJOHN's pricing against typical North America agency rates for the same project.</p>
-                </div>
-
-                {/* Savings Banner */}
-                <motion.div className="est-savings-banner"
-                  initial={{ opacity:0, scale:0.96 }} animate={{ opacity:1, scale:1 }}
-                  transition={{ delay:0.3, duration:0.4 }}>
-                  <TrendingDown size={20}/>
-                  <span>
-                    Save up to <strong>${(result.na.max - result.aijohn.max).toLocaleString()}</strong> by building with AIJOHN
-                  </span>
-                  <span className="est-savings-pct">
-                    ~{Math.round((1 - result.aijohn.max / result.na.max) * 100)}% savings
-                  </span>
-                </motion.div>
-
-                {/* Side-by-Side Estimate Cards */}
-                <div className="est-dual-grid">
-
-                  {/* AIJOHN Card */}
-                  <motion.div className="est-est-card est-est-card--aijohn"
-                    initial="hidden" whileInView="visible" viewport={{once:true}} variants={fadeUp} custom={0}>
-                    <div className="est-est-card__header">
-                      <div className="est-est-card__logo">
-                        <span className="est-est-card__logo-ai">AI</span><span className="est-est-card__logo-john">JOHN</span>
+              {/* Timeline phases */}
+              <motion.div className="john-phases-card"
+                initial={{ opacity:0, y:18 }} whileInView={{ opacity:1, y:0 }}
+                viewport={{once:true}} transition={{ duration:0.4 }}>
+                <div className="john-section-head"><BarChart3 size={15}/> Project Timeline — {result.weeks} Weeks</div>
+                <div className="john-phases-list">
+                  {result.phases.map((phase, i) => (
+                    <motion.div key={phase.name} className="john-phase"
+                      initial={{ opacity:0, x:-12 }} whileInView={{ opacity:1, x:0 }}
+                      viewport={{once:true}} transition={{ delay:i*0.06 }}>
+                      <div className="john-phase__dot">{i+1}</div>
+                      <div className="john-phase__info">
+                        <div className="john-phase__name">{phase.name}</div>
+                        <div className="john-phase__dur">{phase.duration}</div>
                       </div>
-                      <span className="est-est-card__tag est-est-card__tag--india">
-                        <MapPin size={11}/> India · IIT/NIT Engineers
-                      </span>
-                    </div>
-                    <div className="est-est-card__price">
-                      <span className="est-est-card__currency">$</span>
-                      {result.aijohn.min.toLocaleString()} – ${result.aijohn.max.toLocaleString()}
-                    </div>
-                    <div className="est-est-card__timeline">
-                      <Clock size={13}/> {result.weeks} weeks to production
-                    </div>
-                    <div className="est-est-card__divider"/>
-                    <ul className="est-est-card__perks">
-                      {[
-                        'Senior IIT/NIT engineers only',
-                        'Daily standups & Friday demos',
-                        'Fixed-price guarantee — no surprises',
-                        '30-day post-launch support included',
-                        'Direct Slack communication',
-                        '6–8 week MVP capability',
-                      ].map(p => (
-                        <li key={p}><CheckCircle2 size={13}/> {p}</li>
-                      ))}
-                    </ul>
-                    <Link to="/contact" className="est-est-card__cta est-est-card__cta--primary">
-                      Start with AIJOHN <ArrowRight size={14}/>
+                      <div className="john-phase__bar-wrap">
+                        <motion.div className="john-phase__bar"
+                          initial={{ width:0 }} whileInView={{ width:`${phase.pct}%` }}
+                          viewport={{once:true}} transition={{ duration:0.7, delay:i*0.07 }}/>
+                        <span className="john-phase__pct">{phase.pct}%</span>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+
+              {/* CTA */}
+              <motion.div className="john-result-cta"
+                initial={{ opacity:0, y:18 }} whileInView={{ opacity:1, y:0 }}
+                viewport={{once:true}}>
+                <div className="john-result-cta__glow"/>
+                <div className="john-result-cta__content">
+                  <h3 className="john-result-cta__title">Ready to make it real?</h3>
+                  <p className="john-result-cta__sub">Book a free 30-min call and we'll deliver a fixed-price proposal within 48 hours.</p>
+                  <div className="john-result-cta__btns">
+                    <a href="https://calendly.com/aijohn" target="_blank" rel="noopener noreferrer" className="john-cta-primary">
+                      Book Free Scoping Call <ArrowRight size={14}/>
+                    </a>
+                    <Link to="/contact" className="john-cta-secondary">
+                      Send Us Your Idea <Send size={12}/>
                     </Link>
-                  </motion.div>
-
-                  {/* North America Card */}
-                  <motion.div className="est-est-card est-est-card--na"
-                    initial="hidden" whileInView="visible" viewport={{once:true}} variants={fadeUp} custom={1}>
-                    <div className="est-est-card__header">
-                      <div className="est-est-card__na-label">North America</div>
-                      <span className="est-est-card__tag est-est-card__tag--na">
-                        <MapPin size={11}/> US / Canada Agencies
-                      </span>
-                    </div>
-                    <div className="est-est-card__price est-est-card__price--na">
-                      <span className="est-est-card__currency">$</span>
-                      {result.na.min.toLocaleString()} – ${result.na.max.toLocaleString()}
-                    </div>
-                    <div className="est-est-card__timeline est-est-card__timeline--na">
-                      <Clock size={13}/> {result.weeks + 2}–{result.weeks + 6} weeks typically
-                    </div>
-                    <div className="est-est-card__divider"/>
-                    <ul className="est-est-card__perks est-est-card__perks--na">
-                      {[
-                        'Mixed seniority teams (juniors included)',
-                        'Weekly check-ins standard',
-                        'Time & material billing common',
-                        'No post-launch support included',
-                        'Account manager as middleman',
-                        'Slower ramp-up typical',
-                      ].map(p => (
-                        <li key={p}><span className="est-na-cross">✕</span> {p}</li>
-                      ))}
-                    </ul>
-                    <div className="est-est-card__cta est-est-card__cta--na">
-                      For comparison only
-                    </div>
-                  </motion.div>
-                </div>
-
-                {/* Timeline Phases */}
-                <motion.div className="est-phases-card"
-                  initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }}
-                  viewport={{once:true}} transition={{ duration:0.45, delay:0.1 }}>
-                  <div className="est-phases-card__header">
-                    <BarChart3 size={17}/> AIJOHN Project Timeline — {result.weeks} Weeks
                   </div>
-                  <div className="est-phases-list">
-                    {result.phases.map((phase, i) => (
-                      <motion.div key={phase.name} className="est-phase"
-                        initial={{ opacity:0, x:-16 }} whileInView={{ opacity:1, x:0 }}
-                        viewport={{once:true}} transition={{ delay: i*0.07 }}>
-                        <div className="est-phase__left">
-                          <div className="est-phase__dot">{i+1}</div>
-                          <div>
-                            <div className="est-phase__name">{phase.name}</div>
-                            <div className="est-phase__dur">{phase.duration}</div>
-                          </div>
-                        </div>
-                        <div className="est-phase__bar-wrap">
-                          <motion.div className="est-phase__bar"
-                            initial={{ width:0 }} whileInView={{ width:`${phase.pct}%` }}
-                            viewport={{once:true}} transition={{ duration:0.7, delay: i*0.08 }}/>
-                          <span className="est-phase__pct">{phase.pct}%</span>
-                        </div>
-                      </motion.div>
-                    ))}
+                  <div className="john-result-cta__note">
+                    <CheckCircle2 size={11} style={{color:'#34d399'}}/> Reply in 24h &nbsp;·&nbsp;
+                    <CheckCircle2 size={11} style={{color:'#34d399'}}/> Fixed-price &nbsp;·&nbsp;
+                    <CheckCircle2 size={11} style={{color:'#34d399'}}/> No lock-in
                   </div>
-                </motion.div>
-
-                {/* CTA */}
-                <motion.div className="est-result__cta"
-                  initial={{ opacity:0, y:20 }} whileInView={{ opacity:1, y:0 }}
-                  viewport={{once:true}} transition={{ duration:0.45 }}>
-                  <div className="est-result__cta-glow"/>
-                  <div className="est-result__cta-content">
-                    <h3 className="est-result__cta-title">Ready to make it real?</h3>
-                    <p className="est-result__cta-sub">
-                      This estimate is based on your inputs. Book a free 30-min call and we'll
-                      deliver a precise, fixed-price proposal within 48 hours.
-                    </p>
-                    <div className="est-result__cta-btns">
-                      <a href="https://calendly.com/aijohn" target="_blank" rel="noopener noreferrer"
-                        className="btn-hero-primary">
-                        Book Free Scoping Call <ArrowRight size={15}/>
-                      </a>
-                      <Link to="/contact" className="est-btn-contact">
-                        Send Us Your Idea <Send size={13}/>
-                      </Link>
-                    </div>
-                    <div className="est-result__cta-note">
-                      <CheckCircle2 size={12} style={{color:'#34d399'}}/> Response within 24 hours &nbsp;·&nbsp;
-                      <CheckCircle2 size={12} style={{color:'#34d399'}}/> Fixed-price guarantee &nbsp;·&nbsp;
-                      <CheckCircle2 size={12} style={{color:'#34d399'}}/> No lock-in
-                    </div>
-                  </div>
-                </motion.div>
-
-                <div className="est-result__restart">
-                  <button className="est-btn-restart" onClick={restart}>
-                    <RefreshCw size={13}/> Start a new estimate
-                  </button>
                 </div>
               </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </section>
 
-      {/* ── Trust Section ── */}
-      <section className="section est-trust-section">
+              <div className="john-restart">
+                <button className="john-restart-btn" onClick={restart}>
+                  <RefreshCw size={13}/> Start a new estimate
+                </button>
+              </div>
+
+            </div>
+          </div>
+        </motion.section>
+      )}
+      </AnimatePresence>
+
+      {/* ── Trust section ── */}
+      <section className="section john-trust-section">
         <div className="container">
           <div className="section-center" data-aos="fade-up">
             <span className="section-tag"><Shield size={12}/> Why Trust Our Estimates</span>
             <h2 className="section-title">Honest Numbers, Every Time</h2>
             <p className="section-subtitle">10+ shipped SaaS products. Our estimates are based on real delivery data.</p>
           </div>
-          <div className="est-trust-grid">
+          <div className="john-trust-grid">
             {[
-              { icon: BarChart3, color:'#2176AE', title:'Real Delivery Data',      desc:'Every estimate is calibrated from 10+ live projects. No inflated buffers, no surprise invoices.' },
-              { icon: Shield,    color:'#7C3AED', title:'Fixed-Price Contracts',   desc:"We quote a price and stick to it. You'll never get a bill for scope creep we didn't warn you about." },
-              { icon: Zap,       color:'#059669', title:'6–8 Week MVPs',           desc:"Most MVPs ship in 6–8 weeks. We know because we've done it — not because a sales deck said so." },
-              { icon: Award,     color:'#D97706', title:'Senior Engineers Only',   desc:'IIT/NIT grad engineers handle your project. No juniors, no outsourcing, no surprises.' },
+              { icon:BarChart3, color:'#2176AE', title:'Real Delivery Data',    desc:'Every estimate is calibrated from 10+ live projects. No inflated buffers, no surprise invoices.' },
+              { icon:Shield,    color:'#7C3AED', title:'Fixed-Price Contracts', desc:"We quote a price and stick to it. You'll never get a bill for scope creep we didn't warn you about." },
+              { icon:Zap,       color:'#059669', title:'6–8 Week MVPs',         desc:"Most MVPs ship in 6–8 weeks. We know because we've done it." },
+              { icon:Award,     color:'#D97706', title:'Senior Engineers Only',  desc:'IIT/NIT grad engineers handle your project. No juniors, no outsourcing.' },
             ].map((t, i) => {
               const Icon = t.icon;
               return (
-                <motion.div key={t.title} className="est-trust-card"
+                <motion.div key={t.title} className="john-trust-card"
                   style={{ '--tc-color': t.color }}
                   custom={i} initial="hidden" whileInView="visible"
                   viewport={{once:true, margin:'-60px'}} variants={fadeUp}>
-                  <div className="est-trust-card__icon"><Icon size={20}/></div>
-                  <h3 className="est-trust-card__title">{t.title}</h3>
-                  <p className="est-trust-card__desc">{t.desc}</p>
+                  <div className="john-trust-card__icon"><Icon size={20}/></div>
+                  <h3 className="john-trust-card__title">{t.title}</h3>
+                  <p className="john-trust-card__desc">{t.desc}</p>
                 </motion.div>
               );
             })}
