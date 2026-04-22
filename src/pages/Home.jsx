@@ -10,6 +10,7 @@ import {
 import PageWrapper from '../components/PageWrapper';
 import ParticleCanvas from '../components/ParticleCanvas';
 import TextCycler from '../components/TextCycler';
+import { useSEO } from '../utils/seo';
 import './Home.css';
 
 /* ── Hero Slides ────────────────────────────────────────────────── */
@@ -291,7 +292,11 @@ const fadeUp = {
 
 /* ── Page ────────────────────────────────────────────────────────── */
 export default function Home() {
-  useEffect(() => { document.title = 'AIJOHN Technosoft | AI-Native SaaS Studio'; }, []);
+  useSEO({
+    rawTitle: 'AIJOHN Technosoft | AI-Native SaaS Studio',
+    description: 'AIJOHN Technosoft is an AI-native SaaS studio shipping enterprise products in 6-8 weeks. Fixed-price MVPs, AI features, and cloud platforms built for production — not demos.',
+    path: '/',
+  });
   return (
     <PageWrapper>
       <HeroSection />

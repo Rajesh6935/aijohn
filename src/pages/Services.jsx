@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -7,6 +7,7 @@ import {
   Layers, Code2
 } from 'lucide-react';
 import PageWrapper from '../components/PageWrapper';
+import { useSEO } from '../utils/seo';
 import './Services.css';
 
 /* Icon continuous-animation specs per service */
@@ -119,7 +120,11 @@ const fadeUp = {
 
 export default function Services() {
   const [expanded, setExpanded] = useState(null);
-  useEffect(() => { document.title = 'Services | AIJOHN Technosoft'; }, []);
+  useSEO({
+    title: 'Services',
+    description: 'Nine production-grade services: AI-native SaaS, rapid MVPs, web & mobile development, cloud DevOps, enterprise SaaS, AI/ML, marketing automation, and legacy modernisation.',
+    path: '/services',
+  });
 
   const toggle = (i) => setExpanded(prev => (prev === i ? null : i));
 

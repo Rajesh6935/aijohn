@@ -1,0 +1,7 @@
+# robots.txt for https://aijohn.in
+
+User-agent: *
+Allow: /
+
+# Point crawlers at the sitemap
+Sitemap: https://aijohn.in/sitemap.xml
