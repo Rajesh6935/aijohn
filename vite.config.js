@@ -41,7 +41,7 @@ export default defineConfig(({ mode }) => {
               'content-type':      'application/json',
             },
             body: JSON.stringify({
-              model:      model      || 'claude-sonnet-4-5',
+              model:      model      || 'claude-sonnet-4-6',
               max_tokens: Math.min(maxTokens || max_tokens || 300, 800),
               system:     systemPrompt || system || 'You are a helpful AI assistant.',
               messages,

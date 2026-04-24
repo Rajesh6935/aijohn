@@ -2,12 +2,13 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import {
-  Globe, Smartphone, Brain, Cloud, ShoppingCart, Building2,
-  CheckCircle2, ArrowRight, Send, Rocket, Sparkles, TrendingDown,
+  Globe, Brain, Cloud,
+  CheckCircle2, ArrowRight, Send, Sparkles, TrendingDown,
   MapPin, RefreshCw, GitBranch, Server, Clock, BarChart3,
-  DollarSign, Shield, Zap, Award
+  DollarSign, Shield, Zap, HelpCircle
 } from 'lucide-react';
 import PageWrapper from '../components/PageWrapper';
+import JohnAvatar from '../components/JohnAvatar';
 import { useSEO } from '../utils/seo';
 import './Estimate.css';
 
@@ -15,7 +16,7 @@ import './Estimate.css';
    CONFIG
 ══════════════════════════════════════════════════════ */
 const AI_PROXY_URL  = '/api/chat';
-const CLAUDE_MODEL  = 'claude-sonnet-4-5';   // Sonnet for JOHN — smarter conversation
+const CLAUDE_MODEL  = 'claude-sonnet-4-6';   // Sonnet for JOHN — smarter conversation
 const MAX_TOKENS    = 800;                    // hard cap per conversation
 
 const AIJOHN_RATE   = { min: 20, max: 35 };
@@ -155,11 +156,18 @@ const TECH_STACKS = {
 };
 
 /* ── Estimate calculator ── */
-function calcEstimate(typeId, featureIds, packageId) {
+function calcEstimate(typeIds, featureIds, packageId) {
+  const ids = Array.isArray(typeIds) && typeIds.length ? typeIds : ['saas'];
   const BASE_WEEKS = { saas:4, mobile:5, ai:5, ecommerce:4, enterprise:6, mvp:3 };
   const BASE_COST  = { saas:8000, mobile:10000, ai:12000, ecommerce:9000, enterprise:14000, mvp:6000 };
-  let weeks = BASE_WEEKS[typeId] || 4;
-  let cost  = BASE_COST[typeId]  || 8000;
+  const primaryId  = ids[0];
+  let weeks = BASE_WEEKS[primaryId] || 4;
+  let cost  = BASE_COST[primaryId]  || 8000;
+  // Additional platforms share some codebase — 60% of base cost each
+  ids.slice(1).forEach(tId => {
+    weeks = Math.max(weeks, BASE_WEEKS[tId] || 4);
+    cost += Math.round((BASE_COST[tId] || 8000) * 0.6);
+  });
   featureIds.forEach(fId => {
     const f = FEATURES_SIMPLE.find(x => x.id === fId);
     if (f) { weeks += f.weeks; cost += f.cost; }
@@ -176,7 +184,7 @@ function calcEstimate(typeId, featureIds, packageId) {
     aijohn: { min: aijohnMin, max: aijohnMax },
     na:     { min: Math.round(aijohnMin*4.0/1000)*1000, max: Math.round(aijohnMax*5.0/1000)*1000 },
     markets: MARKET_RATES.map(m => ({ ...m, min: m.highlight ? aijohnMin : Math.round(aijohnMin*m.multiplier/1000)*1000, max: m.highlight ? aijohnMax : Math.round(aijohnMax*m.multiplier/1000)*1000 })),
-    stack: TECH_STACKS[typeId] || TECH_STACKS.saas,
+    stack: TECH_STACKS[primaryId] || TECH_STACKS.saas,
     phases: [
       { name:'Discovery & Architecture', duration:'1 week',                         pct:10 },
       { name:'Design & Prototyping',     duration:`${Math.ceil(weeks*0.15)} weeks`, pct:15 },
@@ -279,26 +287,54 @@ export default function Estimate() {
   const [tokenCount, setTokenCount] = useState(0);        // rough token tracking
 
   /* ── Collected data ── */
-  const [projectType, setProjectType]   = useState(null);
+  const [projectType, setProjectType]   = useState([]);   // array — multi-select
   const [features, setFeatures]         = useState([]);
   const [budget, setBudget]             = useState(null);
   const [result, setResult]             = useState(null);
 
   /* ── UI state for which card selector to show ── */
   const [showCard, setShowCard]         = useState(null);  // null | 'types' | 'features' | 'budget'
-  const [featuresConfirmed, setFeaturesConfirmed] = useState(false); // tracks confirm state
+  const [featuresConfirmed, setFeaturesConfirmed] = useState(false);
+
+  const [talkingMsgId, setTalkingMsgId] = useState(null);
 
   const chatEndRef      = useRef(null);
   const chatMessagesRef = useRef(null);
   const inputRef        = useRef(null);
+  const talkTimerRef    = useRef(null);
+  // Refs so generate-callback always reads latest values (bypasses stale closure)
+  const projectTypeRef  = useRef([]);
+  const featuresRef     = useRef([]);
+  const budgetRef       = useRef(null);
 
-  // Scroll the messages container to bottom — never touches the page scroll
   useEffect(() => {
-    const el = chatEndRef.current;
-    if (!el) return;
-    // Use scrollIntoView only within the container, not the page
-    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    if (isTyping) return;
+    const last = messages[messages.length - 1];
+    if (last?.role === 'assistant') {
+      clearTimeout(talkTimerRef.current);
+      setTalkingMsgId(last.id);
+      talkTimerRef.current = setTimeout(() => setTalkingMsgId(null), 2600);
+    }
+    return () => clearTimeout(talkTimerRef.current);
+  }, [messages, isTyping]);
+
+  useEffect(() => {
+    const container = chatMessagesRef.current;
+    if (!container) return;
+    container.scrollTop = container.scrollHeight;
   }, [messages, isTyping, showCard]);
+
+  // Keep refs in sync for generate callback
+  useEffect(() => { projectTypeRef.current = projectType; }, [projectType]);
+  useEffect(() => { featuresRef.current    = features;    }, [features]);
+  useEffect(() => { budgetRef.current      = budget;      }, [budget]);
+
+  // Auto-focus input whenever it's visible and idle
+  useEffect(() => {
+    if (showCard || isTyping) return;
+    const t = setTimeout(() => inputRef.current?.focus(), 60);
+    return () => clearTimeout(t);
+  }, [showCard, isTyping, messages]);
 
   /* ── Parse JOHN's response for [SHOW_X] signals ── */
   function parseSignal(text) {
@@ -346,7 +382,7 @@ export default function Estimate() {
 
     if (signal === 'generate') {
       setTimeout(() => {
-        const est = calcEstimate(projectType, features, budget);
+        const est = calcEstimate(projectTypeRef.current, featuresRef.current, budgetRef.current);
         setResult(est);
         setPhase('result');
       }, 800);
@@ -374,27 +410,57 @@ export default function Estimate() {
     setExchange(nextExchange);
 
     const history = [...messages, newUserMsg].map(m => ({ role: m.role, content: m.text }));
-    // Stage hint for fallback — follow conversation flow
     let stage = 'clarify';
-    if (nextExchange >= 2 && !projectType) stage = 'showTypes';
-    else if (projectType && !features.length) stage = 'showFeatures';
-    else if (projectType && !budget) stage = 'showBudget';
+    if (nextExchange >= 2 && !projectTypeRef.current.length) stage = 'showTypes';
+    else if (projectTypeRef.current.length && !featuresRef.current.length) stage = 'showFeatures';
+    else if (projectTypeRef.current.length && !budgetRef.current) stage = 'showBudget';
     await handleJohnReply(history, stage);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userInput, isTyping, messages, exchange]);
 
-  /* ── User selects a project type card ── */
-  const selectType = useCallback(async (typeId) => {
-    const pt = PROJECT_TYPES.find(p => p.id === typeId);
-    setProjectType(typeId);
-    setShowCard(null);
+  /* ── Toggle a project type (multi-select) ── */
+  const toggleType = (typeId) =>
+    setProjectType(prev => prev.includes(typeId) ? prev.filter(t => t !== typeId) : [...prev, typeId]);
 
-    const selMsg = { role: 'user', text: `I selected: ${pt.label}`, id: Date.now() };
+  /* ── Confirm selected project types ── */
+  const confirmTypes = useCallback(async () => {
+    const types = projectTypeRef.current;
+    setShowCard(null);
+    const labels = types.map(tId => PROJECT_TYPES.find(p => p.id === tId)?.label).filter(Boolean);
+    const selMsg = {
+      role: 'user',
+      text: labels.length ? `I'm building: ${labels.join(' + ')}` : 'Not sure what type yet — open to suggestions.',
+      id: Date.now()
+    };
     setMessages(prev => [...prev, selMsg]);
     setExchange(prev => prev + 1);
-
     const history = [...messages, selMsg].map(m => ({ role: m.role, content: m.text }));
     await handleJohnReply(history, 'showFeatures');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages]);
+
+  /* ── Skip a step ── */
+  const skipStep = useCallback(async (step) => {
+    setShowCard(null);
+    let text = '';
+    if (step === 'types') {
+      setProjectType(['saas']);
+      projectTypeRef.current = ['saas'];
+      text = "Not sure what type yet — let's keep it flexible for now.";
+    } else if (step === 'features') {
+      setFeaturesConfirmed(true);
+      text = "Not sure about features yet — keeping it simple for now.";
+    } else if (step === 'budget') {
+      setBudget('care');
+      budgetRef.current = 'care';
+      text = "Not sure about the support plan — let's figure it out later.";
+    }
+    const selMsg = { role: 'user', text, id: Date.now() };
+    setMessages(prev => [...prev, selMsg]);
+    setExchange(prev => prev + 1);
+    const history = [...messages, selMsg].map(m => ({ role: m.role, content: m.text }));
+    const nextStage = step === 'types' ? 'showFeatures' : step === 'features' ? 'showBudget' : 'generate';
+    await handleJohnReply(history, nextStage);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
 
@@ -437,8 +503,9 @@ export default function Estimate() {
 
   const restart = () => {
     setPhase('chat'); setMessages([]); setUserInput(''); setIsTyping(false);
-    setExchange(0); setTokenCount(0); setProjectType(null); setFeatures([]);
+    setExchange(0); setTokenCount(0); setProjectType([]); setFeatures([]);
     setBudget(null); setResult(null); setShowCard(null); setFeaturesConfirmed(false);
+    projectTypeRef.current = []; featuresRef.current = []; budgetRef.current = null;
     setTimeout(() => {
       setMessages([{ role: 'assistant', text: getFallback('greeting'), id: Date.now() }]);
     }, 300);
@@ -492,9 +559,7 @@ export default function Estimate() {
               {/* Chat header */}
               <div className="john-chat-header">
                 <div className="john-chat-header__left">
-                  <div className="john-avatar">
-                    <span>J</span>
-                  </div>
+                  <JohnAvatar state={isTyping ? 'thinking' : 'idle'} size="md" />
                   <div>
                     <div className="john-chat-name">JOHN</div>
                     <div className="john-chat-status">
@@ -516,7 +581,7 @@ export default function Estimate() {
                     initial={{ opacity:0, y:10 }} animate={{ opacity:1, y:0 }}
                     transition={{ duration:0.3 }}>
                     {msg.role === 'assistant' && (
-                      <div className="john-msg__avatar"><span>J</span></div>
+                      <JohnAvatar state={msg.id === talkingMsgId ? 'talking' : 'idle'} size="sm" />
                     )}
                     <div className="john-msg__bubble">
                       {msg.text.split('\n').map((line, i) => {
@@ -536,7 +601,7 @@ export default function Estimate() {
                 {isTyping && (
                   <motion.div className="john-msg john-msg--assistant"
                     initial={{ opacity:0 }} animate={{ opacity:1 }}>
-                    <div className="john-msg__avatar"><span>J</span></div>
+                    <JohnAvatar state="thinking" size="sm" />
                     <div className="john-msg__bubble john-typing">
                       <span/><span/><span/>
                     </div>
@@ -546,24 +611,25 @@ export default function Estimate() {
                 {/* ── Interactive card selectors (appear mid-chat) ── */}
                 <AnimatePresence>
 
-                  {/* ── 1. Project type — visual image cards ── */}
+                  {/* ── 1. Project type — multi-select image cards ── */}
                   {showCard === 'types' && !isTyping && (
                     <motion.div className="john-card-selector"
                       initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0 }}
                       exit={{ opacity:0, y:-8 }} transition={{ duration:0.35 }}>
-                      <div className="john-card-selector__label">What best describes what you're building? ↓</div>
+                      <div className="john-card-selector__label">Pick every platform you want to build for ↓ <span className="john-card-selector__hint">select all that apply</span></div>
                       <div className="john-type-grid">
                         {PROJECT_TYPES.map((pt, i) => (
                           <motion.button key={pt.id}
-                            className={`john-type-card ${projectType === pt.id ? 'selected' : ''}`}
+                            className={`john-type-card ${projectType.includes(pt.id) ? 'selected' : ''}`}
                             style={{ '--pt-color': pt.color, '--pt-grad': pt.gradient }}
-                            onClick={() => selectType(pt.id)}
+                            onClick={() => toggleType(pt.id)}
                             custom={i} initial="hidden" animate="visible" variants={fadeUp}
                             whileHover={{ y:-4, scale:1.02 }}>
-                            <div className="john-type-card__img" style={{ backgroundImage:`url(${pt.image})` }}>
+                            <div className="john-type-card__img">
+                              <div className="john-type-card__img-bg" style={{ backgroundImage:`url(${pt.image})` }} />
                               <div className="john-type-card__img-overlay" style={{ background: pt.gradient + 'cc' }} />
                               <span className="john-type-card__emoji">{pt.emoji}</span>
-                              {projectType === pt.id && (
+                              {projectType.includes(pt.id) && (
                                 <div className="john-type-card__check"><CheckCircle2 size={16}/></div>
                               )}
                             </div>
@@ -575,6 +641,15 @@ export default function Estimate() {
                           </motion.button>
                         ))}
                       </div>
+                      <button className="john-confirm-btn" onClick={confirmTypes} disabled={!projectType.length}
+                        style={{ opacity: projectType.length ? 1 : 0.45 }}>
+                        <CheckCircle2 size={14}/>
+                        {projectType.length ? `Continue with ${projectType.length} platform${projectType.length > 1 ? 's' : ''}` : 'Select at least one above'}
+                        <ArrowRight size={13}/>
+                      </button>
+                      <button className="john-skip-btn" onClick={() => skipStep('types')}>
+                        <HelpCircle size={12}/> Not sure — skip this step
+                      </button>
                     </motion.div>
                   )}
 
@@ -601,7 +676,10 @@ export default function Estimate() {
                         ))}
                       </div>
                       <button className="john-confirm-btn" onClick={confirmFeatures}>
-                        <CheckCircle2 size={14}/> {features.length ? `I want these ${features.length} things` : 'Skip — keep it simple'} <ArrowRight size={13}/>
+                        <CheckCircle2 size={14}/> {features.length ? `Add these ${features.length} feature${features.length > 1 ? 's' : ''}` : 'Keep it lean — no extras'} <ArrowRight size={13}/>
+                      </button>
+                      <button className="john-skip-btn" onClick={() => skipStep('features')}>
+                        <HelpCircle size={12}/> Not sure — skip this step
                       </button>
                     </motion.div>
                   )}
@@ -639,6 +717,9 @@ export default function Estimate() {
                           </motion.button>
                         ))}
                       </div>
+                      <button className="john-skip-btn" onClick={() => skipStep('budget')}>
+                        <HelpCircle size={12}/> Not sure — skip this step
+                      </button>
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -771,7 +852,7 @@ export default function Estimate() {
                 viewport={{once:true}} transition={{ duration:0.4 }}>
                 <div className="john-section-head">
                   <GitBranch size={15}/> Recommended Tech Stack
-                  <span className="john-stack-type">{PROJECT_TYPES.find(p => p.id === projectType)?.label || 'Your Project'}</span>
+                  <span className="john-stack-type">{projectType.map(tId => PROJECT_TYPES.find(p => p.id === tId)?.label).filter(Boolean).join(' + ') || 'Your Project'}</span>
                 </div>
                 <div className="john-stack-groups">
                   {[
@@ -852,36 +933,6 @@ export default function Estimate() {
       )}
       </AnimatePresence>
 
-      {/* ── Trust section ── */}
-      <section className="section john-trust-section">
-        <div className="container">
-          <div className="section-center" data-aos="fade-up">
-            <span className="section-tag"><Shield size={12}/> Why Trust Our Estimates</span>
-            <h2 className="section-title">Honest Numbers, Every Time</h2>
-            <p className="section-subtitle">10+ shipped SaaS products. Our estimates are based on real delivery data.</p>
-          </div>
-          <div className="john-trust-grid">
-            {[
-              { icon:BarChart3, color:'#2176AE', title:'Real Delivery Data',    desc:'Every estimate is calibrated from 10+ live projects. No inflated buffers, no surprise invoices.' },
-              { icon:Shield,    color:'#7C3AED', title:'Fixed-Price Contracts', desc:"We quote a price and stick to it. You'll never get a bill for scope creep we didn't warn you about." },
-              { icon:Zap,       color:'#059669', title:'6–8 Week MVPs',         desc:"Most MVPs ship in 6–8 weeks. We know because we've done it." },
-              { icon:Award,     color:'#D97706', title:'Senior Engineers Only',  desc:'IIT/NIT grad engineers handle your project. No juniors, no outsourcing.' },
-            ].map((t, i) => {
-              const Icon = t.icon;
-              return (
-                <motion.div key={t.title} className="john-trust-card"
-                  style={{ '--tc-color': t.color }}
-                  custom={i} initial="hidden" whileInView="visible"
-                  viewport={{once:true, margin:'-60px'}} variants={fadeUp}>
-                  <div className="john-trust-card__icon"><Icon size={20}/></div>
-                  <h3 className="john-trust-card__title">{t.title}</h3>
-                  <p className="john-trust-card__desc">{t.desc}</p>
-                </motion.div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
     </PageWrapper>
   );
 }

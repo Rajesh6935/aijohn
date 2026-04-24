@@ -43,7 +43,7 @@ export default async function handler(req, res) {
         'content-type':      'application/json',
       },
       body: JSON.stringify({
-        model:      model || 'claude-sonnet-4-5',
+        model:      model || 'claude-sonnet-4-6',
         max_tokens: Math.min(maxTokens || 300, 800),   // hard cap at 800 per call
         system:     systemPrompt || 'You are a helpful AI assistant.',
         messages,

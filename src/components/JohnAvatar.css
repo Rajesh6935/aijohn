@@ -1,0 +1,240 @@
+/* ═══════════════════════════════════════════
+   JOHN — Animated Robot Avatar
+   States: idle | thinking | talking
+═══════════════════════════════════════════ */
+
+.jav {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  justify-content: center;
+}
+.jav--md { width: 46px; height: 46px; }
+.jav--sm { width: 30px; height: 30px; }
+
+/* ── inner wrapper — this whole unit animates ── */
+.jav__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transform-origin: center center;
+}
+
+/* ── Antenna (md only) ── */
+.jav__antenna {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: -1px;
+}
+.jav--sm .jav__antenna { display: none; }
+
+.jav__ant-ball {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #4A9FD4;
+  box-shadow: 0 0 7px rgba(74,159,212,0.75);
+  flex-shrink: 0;
+}
+.jav__ant-stick {
+  width: 2px; height: 6px;
+  background: linear-gradient(180deg, #4A9FD4 0%, #1a5a8a 100%);
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+/* ── Head circle ── */
+.jav__head {
+  border-radius: 50%;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(145deg, #2b82c4 0%, #0b3460 100%);
+  box-shadow: 0 4px 16px rgba(33,118,174,0.45), inset 0 1px 0 rgba(255,255,255,0.12);
+  flex-shrink: 0;
+  overflow: hidden;
+}
+.jav--md .jav__head { width: 40px; height: 40px; }
+.jav--sm .jav__head { width: 30px; height: 30px; }
+
+/* top gloss */
+.jav__shine {
+  position: absolute; top: 3px; left: 50%;
+  transform: translateX(-50%);
+  width: 55%; height: 38%; border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(255,255,255,0.18) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+/* ── Visor (dark screen on face) ── */
+.jav__visor {
+  position: relative;
+  background: rgba(4,12,26,0.78);
+  border: 1px solid rgba(74,159,212,0.22);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+}
+.jav--md .jav__visor { width: 28px; height: 19px; border-radius: 6px; }
+.jav--sm .jav__visor { width: 19px; height: 13px; border-radius: 4px; }
+
+/* ── Eyes ── */
+.jav__eyes { display: flex; align-items: center; }
+.jav--md .jav__eyes { gap: 7px; }
+.jav--sm .jav__eyes { gap: 4px; }
+
+.jav__eye {
+  border-radius: 50%;
+  background: #4A9FD4;
+  box-shadow: 0 0 6px rgba(74,159,212,0.95);
+  position: relative;
+  flex-shrink: 0;
+  transition: background 0.25s, box-shadow 0.25s;
+}
+.jav--md .jav__eye { width: 6px; height: 6px; }
+.jav--sm .jav__eye { width: 4px; height: 4px; }
+
+/* eye highlight dot */
+.jav__eye::after {
+  content: '';
+  position: absolute; top: 1px; right: 1px;
+  width: 2px; height: 2px; border-radius: 50%;
+  background: rgba(255,255,255,0.7);
+}
+
+/* ── Mouth ── */
+.jav__mouth {
+  background: rgba(74,159,212,0.5);
+  border-radius: 100px;
+  flex-shrink: 0;
+  transition: background 0.25s;
+}
+.jav--md .jav__mouth { width: 12px; height: 2px; }
+.jav--sm .jav__mouth { width: 8px; height: 2px; }
+
+/* ── Think dots (hidden unless thinking) ── */
+.jav__think-dots {
+  display: none;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+.jav__think-dots span {
+  width: 3px; height: 3px; border-radius: 50%;
+  background: #f59e0b;
+  display: block;
+  animation: jav-think-dot 0.75s ease-in-out infinite;
+}
+.jav__think-dots span:nth-child(2) { animation-delay: 0.15s; }
+.jav__think-dots span:nth-child(3) { animation-delay: 0.30s; }
+@keyframes jav-think-dot {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+  30% { transform: translateY(-2px); opacity: 1; }
+}
+
+/* ═══════════════════════════════════════════
+   IDLE — gentle float, occasional blink
+═══════════════════════════════════════════ */
+.jav--idle .jav__inner {
+  animation: jav-float 2.8s ease-in-out infinite;
+}
+.jav--idle .jav__eye {
+  animation: jav-blink 4.5s ease-in-out infinite;
+}
+.jav--idle .jav__eye--r { animation-delay: 0.12s; }
+.jav--idle .jav__ant-ball { animation: jav-glow-slow 2.8s ease-in-out infinite; }
+
+@keyframes jav-float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-3px); }
+}
+@keyframes jav-blink {
+  0%, 83%, 100% { transform: scaleY(1); }
+  87%           { transform: scaleY(0.08); }
+  91%           { transform: scaleY(1); }
+}
+@keyframes jav-glow-slow {
+  0%, 100% { box-shadow: 0 0 5px rgba(74,159,212,0.5); }
+  50%      { box-shadow: 0 0 12px rgba(74,159,212,0.95); }
+}
+
+/* ═══════════════════════════════════════════
+   THINKING — head tilts side-to-side,
+   amber scanning eyes, visor shows dots
+═══════════════════════════════════════════ */
+.jav--thinking .jav__inner {
+  animation: jav-think-tilt 1.9s ease-in-out infinite;
+}
+.jav--thinking .jav__eye {
+  background: #f59e0b;
+  box-shadow: 0 0 9px rgba(245,158,11,0.95);
+  animation: jav-eye-scan 1.9s ease-in-out infinite;
+}
+.jav--thinking .jav__mouth { display: none; }
+.jav--thinking .jav__think-dots { display: flex; }
+.jav--thinking .jav__ant-ball {
+  background: #f59e0b;
+  animation: jav-glow-think 0.9s ease-in-out infinite;
+  box-shadow: 0 0 7px rgba(245,158,11,0.7);
+}
+.jav--thinking .jav__ant-stick {
+  background: linear-gradient(180deg, #f59e0b 0%, #b45309 100%);
+}
+
+@keyframes jav-think-tilt {
+  0%, 100% { transform: rotate(-8deg) translateY(1px); }
+  50%      { transform: rotate(8deg) translateY(-1px); }
+}
+@keyframes jav-eye-scan {
+  0%, 100% { transform: translateX(-2px); }
+  50%      { transform: translateX(2px); }
+}
+@keyframes jav-glow-think {
+  0%, 100% { box-shadow: 0 0 4px rgba(245,158,11,0.5); }
+  50%      { box-shadow: 0 0 14px rgba(245,158,11,1); }
+}
+
+/* ═══════════════════════════════════════════
+   TALKING — energetic bob, green eyes,
+   mouth opens & closes
+═══════════════════════════════════════════ */
+.jav--talking .jav__inner {
+  animation: jav-talk-bob 0.46s ease-in-out infinite;
+}
+.jav--talking .jav__eye {
+  background: #10B981;
+  box-shadow: 0 0 9px rgba(16,185,129,0.95);
+  animation: jav-eye-talk 0.46s ease-in-out infinite;
+}
+.jav--talking .jav__mouth {
+  background: rgba(16,185,129,0.65);
+  animation: jav-mouth-talk 0.36s ease-in-out infinite;
+}
+.jav--talking .jav__ant-ball {
+  background: #10B981;
+  box-shadow: 0 0 7px rgba(16,185,129,0.7);
+  animation: jav-glow-talk 0.46s ease-in-out infinite;
+}
+.jav--talking .jav__ant-stick {
+  background: linear-gradient(180deg, #10B981 0%, #065f46 100%);
+}
+
+@keyframes jav-talk-bob {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  50%      { transform: translateY(-2.5px) scale(1.025); }
+}
+@keyframes jav-eye-talk {
+  0%, 100% { transform: scaleY(1); }
+  45%      { transform: scaleY(0.45); }
+}
+@keyframes jav-mouth-talk {
+  0%, 100% { height: 2px; border-radius: 100px; }
+  50%      { height: 5px; border-radius: 4px 4px 7px 7px; }
+}
+@keyframes jav-glow-talk {
+  0%, 100% { box-shadow: 0 0 5px rgba(16,185,129,0.6); }
+  50%      { box-shadow: 0 0 14px rgba(16,185,129,1); }
+}

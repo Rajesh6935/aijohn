@@ -22,6 +22,7 @@ import CaseStudy from './pages/CaseStudy';
 import Contact   from './pages/Contact';
 import Team      from './pages/Team';
 import Estimate  from './pages/Estimate';
+import WebApp    from './pages/WebApp';
 
 /* ── Animated route switcher ── */
 function AnimatedRoutes() {
@@ -31,6 +32,7 @@ function AnimatedRoutes() {
       <Routes location={location} key={location.pathname}>
         <Route path="/"           element={<Home />}      />
         <Route path="/services"   element={<Services />}  />
+        <Route path="/services/web-development" element={<WebApp />} />
         <Route path="/services/:slug" element={<ServiceDetail />} />
         <Route path="/about"      element={<About />}     />
         <Route path="/team"       element={<Team />}      />
