@@ -5,7 +5,7 @@ import {
   Globe, Brain, Cloud,
   CheckCircle2, ArrowRight, Send, Sparkles, TrendingDown,
   MapPin, RefreshCw, GitBranch, Server, Clock, BarChart3,
-  DollarSign, Shield, Zap, HelpCircle
+  DollarSign, Zap, HelpCircle, Shield
 } from 'lucide-react';
 import PageWrapper from '../components/PageWrapper';
 import JohnAvatar from '../components/JohnAvatar';
@@ -33,12 +33,21 @@ const MARKET_RATES = [
 /* ── Project types — visual cards with real imagery ── */
 const PROJECT_TYPES = [
   {
+    id: 'basic', color: '#6366F1',
+    gradient: 'linear-gradient(135deg,#4338ca,#6366F1)',
+    image: 'https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?auto=format&fit=crop&w=600&q=60',
+    emoji: '💻',
+    label: 'Basic Website',
+    plain: 'Landing page, portfolio or brochure site',
+    examples: 'Portfolio · Sales page · Business site',
+  },
+  {
     id: 'saas', color: '#2176AE',
     gradient: 'linear-gradient(135deg,#1a4fa3,#2176AE)',
     image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=60',
     emoji: '🌐',
-    label: 'Website / Web App',
-    plain: 'A product people use in their browser',
+    label: 'Full-Stack Web App',
+    plain: 'A full product people use in their browser',
     examples: 'Booking platform · Dashboard · Portal',
   },
   {
@@ -147,6 +156,7 @@ const SUPPORT_PACKAGES = [
 
 /* ── Tech stacks ── */
 const TECH_STACKS = {
+  basic:      { frontend: ['HTML / CSS / JS','WordPress / Webflow','Tailwind CSS'], backend: ['Static hosting','CMS integration','Contact forms'], infra: ['Netlify / Vercel','CDN delivery','SSL included'],        ai: [] },
   saas:       { frontend: ['React / Next.js','TypeScript','Tailwind CSS'],    backend: ['Node.js / Express','PostgreSQL','Supabase'],          infra: ['AWS (EC2 + RDS)','CloudFront CDN','GitHub Actions'],    ai: [] },
   mobile:     { frontend: ['React Native','Expo','TypeScript'],               backend: ['Node.js / Fastify','PostgreSQL','Firebase Auth'],      infra: ['AWS Amplify','S3 Storage','GitHub Actions'],            ai: [] },
   ai:         { frontend: ['Next.js','TypeScript','shadcn/ui'],               backend: ['FastAPI (Python)','PostgreSQL','Redis'],               infra: ['AWS ECS','S3 + CloudFront','Docker'],                   ai: ['Claude / OpenAI API','LangChain','Pinecone (vector DB)'] },
@@ -158,8 +168,8 @@ const TECH_STACKS = {
 /* ── Estimate calculator ── */
 function calcEstimate(typeIds, featureIds, packageId) {
   const ids = Array.isArray(typeIds) && typeIds.length ? typeIds : ['saas'];
-  const BASE_WEEKS = { saas:4, mobile:5, ai:5, ecommerce:4, enterprise:6, mvp:3 };
-  const BASE_COST  = { saas:8000, mobile:10000, ai:12000, ecommerce:9000, enterprise:14000, mvp:6000 };
+  const BASE_WEEKS = { basic:2, saas:4, mobile:5, ai:5, ecommerce:4, enterprise:6, mvp:3 };
+  const BASE_COST  = { basic:3000, saas:8000, mobile:10000, ai:12000, ecommerce:9000, enterprise:14000, mvp:6000 };
   const primaryId  = ids[0];
   let weeks = BASE_WEEKS[primaryId] || 4;
   let cost  = BASE_COST[primaryId]  || 8000;
@@ -176,8 +186,8 @@ function calcEstimate(typeIds, featureIds, packageId) {
   const pkgMods = { launch:0.9, care:1.0, growth:1.1, partner:1.2 };
   cost = Math.round(cost * (pkgMods[packageId] || 1));
   const pkg = SUPPORT_PACKAGES.find(p => p.id === packageId) || SUPPORT_PACKAGES[0];
-  const aijohnMin = Math.round(cost * 0.9 / 1000) * 1000;
-  const aijohnMax = Math.round(cost * 1.1 / 1000) * 1000;
+  const aijohnMin = Math.round(cost * 0.63 / 1000) * 1000;  // 0.9 × 0.7 — 30% reduction
+  const aijohnMax = Math.round(cost * 0.77 / 1000) * 1000;  // 1.1 × 0.7 — 30% reduction
   return {
     weeks: Math.ceil(weeks),
     pkg,
@@ -197,35 +207,32 @@ function calcEstimate(typeIds, featureIds, packageId) {
 }
 
 /* ── JOHN's system prompt — tight and token-aware ── */
-const JOHN_SYSTEM = `You are JOHN, a warm and trusted senior consultant at AIJOHN Technosoft (India, $20–35/hr, senior engineers).
-Your job: have a natural, human conversation to understand what the client wants to build, then guide them through 3 simple steps using interactive cards.
+const JOHN_SYSTEM = `You are JOHN, senior consultant at AIJOHN Technosoft (India, $20–35/hr). Guide clients through 3 steps using interactive cards.
 
-CONVERSATION FLOW:
-1. Greet warmly, ask what they want to build (1-2 sentences max)
-2. After they describe their idea, ask ONE clarifying question — focus on their goal or audience, not tech
-3. After their answer, say you have enough context and invite them to pick the project type from the cards
-4. After they pick a type, invite them to pick the features they want (simple options, no jargon)
-5. After features, ask them how they'd like to work together after launch — show support package cards
-6. After package selected, say you're building their estimate now
+FLOW:
+1. Greet as: "Hi! I'm JOHN, AI consultant at AIJOHN Technosoft. Tell me about the product you want to build." (match this tone exactly)
+2. Ask ONE question about their goal or users
+3. Prompt type selection [SHOW_TYPES]
+4. After type — prompt feature selection [SHOW_FEATURES]
+5. After features — prompt support plan [SHOW_BUDGET]
+6. After plan — [GENERATE_ESTIMATE]
 
 RULES:
-- Keep every reply under 60 words
-- Never use bullet points or numbered lists in chat
-- Sound like a trusted advisor, not a salesperson — build confidence
-- Never ask more than one question at a time
-- When prompting card selection, end with exactly: [SHOW_TYPES] or [SHOW_FEATURES] or [SHOW_BUDGET]
-- After package selected, end with: [GENERATE_ESTIMATE]
-- Total conversation: max 6 exchanges`;
+- Max 20 words per reply. Friendly and brief.
+- No bullet points or lists in chat
+- One question at a time only
+- End with exact signal token when prompting cards
+- Max 6 exchanges total`;
 
 /* ── Smart fallback — used only if Claude API is unavailable ── */
 function getFallback(stage) {
   const map = {
-    greeting:     `Hey! I'm JOHN from AIJOHN. Great to meet you! Tell me — what are you looking to build? Just describe it in plain English, no technical details needed.`,
-    clarify:      `That sounds exciting! Quick question — who's the main audience for this? Knowing that helps me tailor the right approach for you.`,
-    showTypes:    `Perfect, I've got a good picture now. Pick the option that best describes what you're building. [SHOW_TYPES]`,
-    showFeatures: `Great choice! Now tell me what you'd like your product to do — just pick what feels right. [SHOW_FEATURES]`,
-    showBudget:   `Love the selections! One last thing — how would you like us to work together after we launch? [SHOW_BUDGET]`,
-    generate:     `Perfect, I have everything I need. Let me put your personalised estimate together now. [GENERATE_ESTIMATE]`,
+    greeting:     `Hi! I'm JOHN, AI consultant at AIJOHN Technosoft. Tell me about the product you want to build.`,
+    clarify:      `Love it! Quick one — who's the main user for this?`,
+    showTypes:    `Got it. Pick the option that fits your project best. [SHOW_TYPES]`,
+    showFeatures: `Great choice! Select the features your product needs. [SHOW_FEATURES]`,
+    showBudget:   `Almost there! How would you like us to support you after launch? [SHOW_BUDGET]`,
+    generate:     `Perfect. Putting together your custom estimate now. [GENERATE_ESTIMATE]`,
   };
   return map[stage] || map.clarify;
 }
@@ -298,10 +305,16 @@ export default function Estimate() {
 
   const [talkingMsgId, setTalkingMsgId] = useState(null);
 
-  const chatEndRef      = useRef(null);
-  const chatMessagesRef = useRef(null);
-  const inputRef        = useRef(null);
-  const talkTimerRef    = useRef(null);
+  const [chatLocked, setChatLocked] = useState(false);
+
+  const chatEndRef         = useRef(null);
+  const chatMessagesRef    = useRef(null);
+  const inputRef           = useRef(null);
+  const chatSectionRef     = useRef(null);
+  const chatAnchorRef      = useRef(null);
+  const talkTimerRef       = useRef(null);
+  const unlockTimestampRef = useRef(0);
+  const lockScheduledRef   = useRef(false);
   // Refs so generate-callback always reads latest values (bypasses stale closure)
   const projectTypeRef  = useRef([]);
   const featuresRef     = useRef([]);
@@ -321,7 +334,7 @@ export default function Estimate() {
   useEffect(() => {
     const container = chatMessagesRef.current;
     if (!container) return;
-    container.scrollTop = container.scrollHeight;
+    requestAnimationFrame(() => { container.scrollTop = container.scrollHeight; });
   }, [messages, isTyping, showCard]);
 
   // Keep refs in sync for generate callback
@@ -335,6 +348,67 @@ export default function Estimate() {
     const t = setTimeout(() => inputRef.current?.focus(), 60);
     return () => clearTimeout(t);
   }, [showCard, isTyping, messages]);
+
+  // Lock chat when 90% of the chat box is visible — smooth-scroll to align first
+  useEffect(() => {
+    if (phase !== 'chat') return;
+    const check = () => {
+      if (chatLocked || lockScheduledRef.current) return;
+      if (Date.now() - unlockTimestampRef.current < 1500) return;
+      const el = chatAnchorRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const vh = window.innerHeight;
+      const visible = Math.max(0, Math.min(rect.bottom, vh) - Math.max(rect.top, 0));
+      if (visible / rect.height >= 0.9) {
+        lockScheduledRef.current = true;
+        // Smooth-scroll so chat top aligns just below the navbar, then lock
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setTimeout(() => {
+          setChatLocked(true);
+          lockScheduledRef.current = false;
+        }, 480);
+      }
+    };
+    window.addEventListener('scroll', check, { passive: true });
+    check();
+    return () => {
+      window.removeEventListener('scroll', check);
+      lockScheduledRef.current = false;
+    };
+  }, [chatLocked, phase]);
+
+  // Click outside chat → unlock
+  useEffect(() => {
+    if (!chatLocked) return;
+    const unlock = (e) => {
+      if (chatSectionRef.current && !chatSectionRef.current.contains(e.target)) {
+        setChatLocked(false);
+        unlockTimestampRef.current = Date.now();
+      }
+    };
+    document.addEventListener('mousedown', unlock);
+    return () => document.removeEventListener('mousedown', unlock);
+  }, [chatLocked]);
+
+  // Body scroll lock + input focus when chat is locked
+  useEffect(() => {
+    if (chatLocked) {
+      document.body.style.overflow = 'hidden';
+      requestAnimationFrame(() => { if (!showCard && !isTyping) inputRef.current?.focus(); });
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => { document.body.style.overflow = ''; };
+  }, [chatLocked, showCard, isTyping]);
+
+  // Release lock when phase changes away from chat
+  useEffect(() => {
+    if (phase !== 'chat') {
+      setChatLocked(false);
+      document.body.style.overflow = '';
+    }
+  }, [phase]);
 
   /* ── Parse JOHN's response for [SHOW_X] signals ── */
   function parseSignal(text) {
@@ -502,6 +576,7 @@ export default function Estimate() {
     setFeatures(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id]);
 
   const restart = () => {
+    setChatLocked(false);
     setPhase('chat'); setMessages([]); setUserInput(''); setIsTyping(false);
     setExchange(0); setTokenCount(0); setProjectType([]); setFeatures([]);
     setBudget(null); setResult(null); setShowCard(null); setFeaturesConfirmed(false);
@@ -517,43 +592,48 @@ export default function Estimate() {
   return (
     <PageWrapper>
 
-      {/* ── Hero ── */}
-      <section className="john-hero">
-        <div className="john-hero__bg" />
-        <div className="john-hero__overlay" />
-        <div className="container john-hero__inner">
-          <motion.div initial={{ opacity:0, y:28 }} animate={{ opacity:1, y:0 }} transition={{ duration:0.55 }}>
-            <span className="section-tag" style={{ color:'#7CC2E8', background:'rgba(74,159,212,0.14)', borderColor:'rgba(74,159,212,0.28)' }}>
-              <Brain size={12} /> AI-Powered Estimator
-            </span>
-            <h1 className="john-hero__title">
-              Chat with <span className="john-hero__accent">JOHN.</span><br/>
-              Get Your Estimate.
-            </h1>
-            <p className="john-hero__sub">
-              Describe your idea. JOHN will ask a couple of smart questions, then generate your personalised plan — timeline, tech stack, and pricing vs the world.
-            </p>
-            <div className="john-hero__badges">
-              {[
-                { icon: Zap,          label: 'Powered by Claude Sonnet' },
-                { icon: Shield,       label: 'No Obligation'            },
-                { icon: TrendingDown, label: 'Save 60–75% vs US/EU'     },
-              ].map(({ icon: Icon, label }) => (
-                <span key={label} className="john-hero__badge"><Icon size={12}/> {label}</span>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
+      <AnimatePresence mode="wait">
 
       {/* ══════════════════════════════════════════════
-          CHAT PHASE
+          CHAT PHASE — hero + chat panel
       ══════════════════════════════════════════════ */}
-      <AnimatePresence mode="wait">
       {phase === 'chat' && (
-        <motion.section key="chat" className="john-chat-section"
+        <motion.div key="chat-phase"
           initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }}>
-          <div className="container">
+
+          {/* ── Hero ── */}
+          <section className="john-hero">
+            <div className="john-hero__bg" />
+            <div className="john-hero__overlay" />
+            <div className="container john-hero__inner">
+              <motion.div
+                initial={{ opacity:0, y:24 }} animate={{ opacity:1, y:0 }}
+                transition={{ duration:0.6, ease:[0.4,0,0.2,1] }}>
+                <span className="section-tag" style={{ marginBottom:18, display:'inline-flex' }}>
+                  <Sparkles size={12}/> AI Estimation
+                </span>
+                <h1 className="john-hero__title">
+                  Chat with <span className="john-hero__accent">JOHN.</span><br/>
+                  Get Your Estimate.
+                </h1>
+                <p className="john-hero__sub">
+                  Tell JOHN what you want to build. In minutes you'll have a real timeline,
+                  tech stack, and price — compared to global rates.
+                </p>
+                <div className="john-hero__badges">
+                  <span className="john-hero__badge"><Zap size={13} color="#4A9FD4"/> Powered by Claude Sonnet</span>
+                  <span className="john-hero__badge"><Shield size={13} color="#34d399"/> No Obligation</span>
+                  <span className="john-hero__badge"><TrendingDown size={13} color="#f59e0b"/> Save 60–75% vs US rates</span>
+                </div>
+              </motion.div>
+            </div>
+          </section>
+
+          {/* ── Chat anchor — chat panel lives here ── */}
+          <div ref={chatAnchorRef} className="john-chat-anchor">
+            <section ref={chatSectionRef}
+              className={`john-chat-section${chatLocked ? ' john-chat-section--locked' : ''}`}>
+          <div className="john-chat-layout">
             <div className="john-chat-wrap">
 
               {/* Chat header */}
@@ -747,7 +827,9 @@ export default function Estimate() {
               )}
             </div>
           </div>
-        </motion.section>
+            </section>
+          </div>
+        </motion.div>
       )}
 
       {/* ══════════════════════════════════════════════
@@ -936,3 +1018,4 @@ export default function Estimate() {
     </PageWrapper>
   );
 }
+

@@ -9,7 +9,7 @@ import './Navbar.css';
 
 const SERVICES_DROPDOWN = [
   { icon: Globe,       color: '#2176AE', label: 'Web App Development',   sub: 'React · Rails · Node.js',      to: '/services/web-development' },
-  { icon: Smartphone,  color: '#7C3AED', label: 'Mobile App Development', sub: 'iOS · Android · React Native', to: '/services' },
+  { icon: Smartphone,  color: '#7C3AED', label: 'Mobile App Development', sub: 'iOS · Android · React Native', to: '/services/mobile-app-development' },
   { icon: Brain,       color: '#0891B2', label: 'AI & Machine Learning',  sub: 'GPT-4o · LangChain · RAG',     to: '/services' },
   { icon: Cloud,       color: '#059669', label: 'Cloud & DevOps',         sub: 'AWS · Docker · Kubernetes',    to: '/services' },
   { icon: Megaphone,   color: '#D97706', label: 'Marketing Automation',   sub: 'Email · CRM · Drip',           to: '/services' },

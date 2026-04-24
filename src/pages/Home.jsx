@@ -318,6 +318,12 @@ function HeroSection() {
   const [slide, setSlide] = useState(0);
   const current = SLIDES[slide];
   const videoRef = useRef(null);
+  const [videoReady, setVideoReady] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setVideoReady(true), 80);
+    return () => clearTimeout(t);
+  }, []);
 
   /* Auto-advance: video slide waits for onEnded; other slides use timeout */
   useEffect(() => {
@@ -360,7 +366,7 @@ function HeroSection() {
         onEnded={handleVideoEnded}
         style={{
           opacity: current.showVideo ? 1 : 0,
-          transition: 'opacity 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+          transition: videoReady ? 'opacity 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'none',
         }}
       >
         <source src="/hero-video.mp4" type="video/mp4" />

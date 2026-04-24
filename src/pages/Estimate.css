@@ -4,53 +4,88 @@
 
 /* ── Hero ── */
 .john-hero {
-  position: relative; padding: 140px 0 80px; overflow: hidden;
+  position: relative;
+  padding: 140px 0 90px;
+  overflow: hidden;
   background: #07101f;
 }
 .john-hero__bg {
   position: absolute; inset: 0; z-index: 0;
-  background-image: url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1920&q=60');
-  background-size: cover; background-position: center; opacity: 0.1;
+  background-image: url('https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fit=crop&w=1400&q=60');
+  background-size: cover; background-position: center; opacity: 0.08;
 }
 .john-hero__overlay {
   position: absolute; inset: 0; z-index: 1;
   background:
-    radial-gradient(ellipse 70% 80% at 50% 0%, rgba(74,159,212,0.2) 0%, transparent 65%),
-    linear-gradient(180deg, rgba(7,16,31,0.4) 0%, #07101f 100%);
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(33,118,174,0.2) 0%, transparent 70%),
+    linear-gradient(180deg, rgba(7,16,31,0.3) 0%, rgba(7,16,31,0.92) 100%);
 }
-.john-hero__inner { position: relative; z-index: 2; }
+.john-hero__inner {
+  position: relative; z-index: 2;
+  text-align: center; max-width: 680px; margin: 0 auto; padding: 0 24px;
+}
 .john-hero__title {
-  font-size: clamp(2.4rem, 5vw, 3.6rem); font-weight: 900; color: #fff;
-  line-height: 1.1; letter-spacing: -0.03em; margin: 14px 0 18px;
+  font-size: clamp(2.4rem, 5vw, 3.6rem);
+  font-weight: 900; color: #fff;
+  letter-spacing: -0.03em; line-height: 1.1;
+  margin-top: 14px; margin-bottom: 18px;
 }
 .john-hero__accent {
-  background: linear-gradient(135deg, #4A9FD4 0%, #90d4f7 100%);
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  background: linear-gradient(135deg, #4A9FD4, #90d4f7);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 .john-hero__sub {
-  font-size: 1.05rem; color: rgba(255,255,255,0.58); max-width: 540px;
-  line-height: 1.78; margin-bottom: 28px;
+  font-size: 1.05rem; color: rgba(255,255,255,0.55);
+  line-height: 1.78; margin-bottom: 32px;
+  max-width: 500px; margin-left: auto; margin-right: auto;
 }
-.john-hero__badges { display: flex; gap: 12px; flex-wrap: wrap; }
+.john-hero__badges {
+  display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;
+}
 .john-hero__badge {
   display: inline-flex; align-items: center; gap: 7px;
-  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.13);
-  border-radius: 100px; padding: 7px 16px;
-  font-size: 0.79rem; font-weight: 600; color: rgba(255,255,255,0.7);
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+  padding: 8px 16px; border-radius: 100px;
+  font-size: 0.82rem; font-weight: 600; color: rgba(255,255,255,0.75);
   backdrop-filter: blur(8px);
 }
 
-/* ── Chat section ── */
+/* ── Chat anchor — maintains space in flow ── */
+.john-chat-anchor {
+  position: relative;
+  height: calc(100vh - 74px);
+  height: calc(100dvh - 74px);
+  min-height: 560px;
+  /* offset so scrollIntoView(block:'start') lands just below the fixed navbar */
+  scroll-margin-top: 74px;
+}
+
+/* ── Chat section — fills anchor absolutely; body scroll is locked when chatLocked ── */
 .john-chat-section {
   background: linear-gradient(160deg, #eef3fb 0%, #e6eef8 50%, #ecf2fb 100%);
-  padding: 52px 0 80px; min-height: 70vh;
+  position: absolute; inset: 0;
+  display: flex; flex-direction: column;
+  overflow: hidden; padding: 0;
+  transition: box-shadow 0.3s ease;
+}
+.john-chat-section--locked {
+  /* No fixed positioning — the anchor is already aligned to the viewport via
+     scrollIntoView + scroll-margin-top. Body overflow:hidden (set via JS) keeps
+     it in place so the user can chat without the page drifting. */
+  box-shadow: 0 0 0 2px rgba(33, 118, 174, 0.22), 0 0 48px rgba(33, 118, 174, 0.07);
+}
+.john-chat-layout {
+  flex: 1; min-height: 0;
+  display: flex; flex-direction: column;
+  max-width: 820px; width: 100%; margin: 0 auto;
+  padding: 14px 16px 0;
 }
 .john-chat-wrap {
-  max-width: 740px; margin: 0 auto;
-  background: #fff; border-radius: 24px;
-  box-shadow: 0 8px 60px rgba(0,0,0,0.11);
+  flex: 1; min-height: 0;
+  background: #fff; border-radius: 20px 20px 0 0;
+  box-shadow: 0 -4px 32px rgba(0,0,0,0.1);
   display: flex; flex-direction: column;
-  height: 640px;
   overflow: hidden;
 }
 
@@ -82,12 +117,10 @@
   font-size: 0.72rem; font-weight: 600; color: rgba(255,255,255,0.45);
 }
 
-/* ── Messages — scrollable area, fills all space between header and input ── */
+/* ── Messages — scrollable area ── */
 .john-messages {
-  flex: 1;
-  min-height: 0;           /* critical: lets flex child shrink below content size */
-  overflow-y: auto;
-  overflow-x: hidden;
+  flex: 1; min-height: 0;
+  overflow-y: auto; overflow-x: hidden;
   padding: 22px 22px 12px;
   display: flex; flex-direction: column; gap: 14px;
   background: #f7faff;
@@ -99,21 +132,21 @@
 .john-messages::-webkit-scrollbar-thumb:hover { background: rgba(33,118,174,0.35); }
 
 /* Individual messages */
-.john-msg { display: flex; align-items: flex-end; gap: 9px; }
+.john-msg { display: flex; align-items: flex-end; gap: 10px; }
 .john-msg--user { flex-direction: row-reverse; }
 .john-msg__bubble {
-  max-width: 80%; padding: 12px 16px; border-radius: 18px;
-  font-size: 0.92rem; line-height: 1.72; font-family: var(--font);
+  max-width: 78%; padding: 13px 17px; border-radius: 20px;
+  font-size: 0.93rem; line-height: 1.74; font-family: var(--font);
 }
 .john-msg--assistant .john-msg__bubble {
   background: #fff; color: var(--navy);
-  border-radius: 4px 18px 18px 18px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+  border-radius: 4px 20px 20px 20px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.09), 0 0 0 1px rgba(33,118,174,0.06);
 }
 .john-msg--user .john-msg__bubble {
-  background: linear-gradient(135deg, #2176AE, #4A9FD4);
-  color: #fff; border-radius: 18px 18px 4px 18px;
-  box-shadow: 0 4px 14px rgba(33,118,174,0.28);
+  background: linear-gradient(135deg, #1a5f8f, #2176AE, #3d8fc4);
+  color: #fff; border-radius: 20px 20px 4px 20px;
+  box-shadow: 0 6px 20px rgba(33,118,174,0.35);
 }
 
 /* Typing indicator */
@@ -353,38 +386,51 @@
   background: color-mix(in srgb, var(--pkg-color) 6%, #fff);
 }
 
-/* ── Input row — pinned to bottom, never shrinks ── */
+/* ── Input row — pinned to bottom ── */
 .john-input-row {
   display: flex; align-items: flex-end; gap: 10px;
-  padding: 12px 18px 16px; background: #fff;
-  border-top: 1px solid rgba(0,0,0,0.07);
-  flex-shrink: 0;   /* always visible, never squished by messages growing */
+  padding: 14px 18px 18px; background: #fff;
+  border-top: 1px solid rgba(33,118,174,0.08);
+  flex-shrink: 0; position: relative;
+}
+.john-input-row::before {
+  content: ''; position: absolute; top: 0; left: 18px; right: 18px; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(33,118,174,0.3) 40%, rgba(74,159,212,0.35) 60%, transparent);
 }
 .john-input {
-  flex: 1; border: 1.5px solid rgba(33,118,174,0.17); border-radius: 14px;
-  padding: 11px 16px; font-size: 0.91rem; font-family: var(--font);
-  color: var(--navy); background: #f8faff; outline: none;
-  resize: none; transition: border-color 0.2s, box-shadow 0.2s; line-height: 1.6;
-  max-height: 120px; overflow-y: auto;
+  flex: 1; border: 1.5px solid rgba(33,118,174,0.2); border-radius: 16px;
+  padding: 12px 18px; font-size: 0.93rem; font-family: var(--font);
+  color: var(--navy); background: #f5f8ff; outline: none;
+  resize: none; transition: border-color 0.22s, box-shadow 0.22s, background 0.22s;
+  line-height: 1.6; max-height: 120px; overflow-y: auto;
 }
-.john-input:focus { border-color: var(--blue-dark); background: #fff; box-shadow: 0 0 0 3px rgba(33,118,174,0.09); }
-.john-input::placeholder { color: rgba(0,0,0,0.27); }
-.john-input:disabled { opacity: 0.5; }
+.john-input:focus {
+  border-color: #2176AE; background: #fff;
+  box-shadow: 0 0 0 3px rgba(33,118,174,0.1), 0 2px 16px rgba(33,118,174,0.08);
+}
+.john-input::placeholder { color: rgba(0,0,0,0.3); }
+.john-input:disabled { opacity: 0.45; }
 .john-send-btn {
-  width: 44px; height: 44px; border-radius: 12px; flex-shrink: 0;
-  background: var(--blue-dark); color: #fff; border: none; cursor: pointer;
+  width: 46px; height: 46px; border-radius: 14px; flex-shrink: 0;
+  background: linear-gradient(135deg, #2176AE, #1a5f8f);
+  color: #fff; border: none; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 4px 14px rgba(33,118,174,0.3); transition: all 0.2s;
+  box-shadow: 0 4px 16px rgba(33,118,174,0.4); transition: all 0.2s;
 }
-.john-send-btn:hover:not(:disabled) { background: #1a6899; transform: scale(1.06); }
-.john-send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+.john-send-btn:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1a6899, #154f78);
+  transform: scale(1.07); box-shadow: 0 6px 22px rgba(33,118,174,0.5);
+}
+.john-send-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
 
 /* ════════════════════════════════════════
    RESULT SECTION
 ════════════════════════════════════════ */
 .john-result-section {
   background: linear-gradient(160deg, #eef3fb 0%, #e6eef8 100%);
-  padding: 52px 0 80px;
+  min-height: calc(100dvh - 74px);
+  margin-top: 74px;
+  padding: 48px 20px 80px;
 }
 .john-result { max-width: 860px; margin: 0 auto; }
 
@@ -615,7 +661,11 @@
 
 /* ════ RESPONSIVE ════ */
 @media (max-width: 768px) {
-  .john-chat-wrap     { height: 580px; border-radius: 18px; }
+  .john-hero          { padding: 110px 0 60px; }
+  .john-chat-anchor   { height: calc(100vh - 64px); height: calc(100dvh - 64px); scroll-margin-top: 64px; }
+  .john-result-section { margin-top: 64px; }
+  .john-chat-layout   { padding: 8px 8px 0; }
+  .john-chat-wrap     { border-radius: 16px 16px 0 0; }
   .john-type-grid     { grid-template-columns: repeat(2, 1fr); }
   .john-feat-grid     { grid-template-columns: 1fr; }
   .john-pkg-grid      { grid-template-columns: 1fr; }
@@ -625,6 +675,11 @@
   .john-est-card__top { flex-wrap: wrap; }
 }
 @media (max-width: 560px) {
+  .john-hero          { padding: 100px 0 50px; }
+  .john-hero__title   { font-size: 2rem; }
+  .john-hero__sub     { font-size: 0.93rem; }
+  .john-chat-layout   { padding: 0; }
+  .john-chat-wrap     { border-radius: 0; }
   .john-type-grid     { grid-template-columns: 1fr 1fr; }
   .john-savings-banner { flex-direction: column; text-align: center; gap: 8px; }
   .john-msg__bubble   { max-width: 90%; }
