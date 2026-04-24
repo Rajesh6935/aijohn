@@ -8,7 +8,7 @@ import {
 import './Navbar.css';
 
 const SERVICES_DROPDOWN = [
-  { icon: Globe,       color: '#2176AE', label: 'Web App Development',   sub: 'React · Rails · Node.js',      to: '/services' },
+  { icon: Globe,       color: '#2176AE', label: 'Web App Development',   sub: 'React · Rails · Node.js',      to: '/services/web-development' },
   { icon: Smartphone,  color: '#7C3AED', label: 'Mobile App Development', sub: 'iOS · Android · React Native', to: '/services' },
   { icon: Brain,       color: '#0891B2', label: 'AI & Machine Learning',  sub: 'GPT-4o · LangChain · RAG',     to: '/services' },
   { icon: Cloud,       color: '#059669', label: 'Cloud & DevOps',         sub: 'AWS · Docker · Kubernetes',    to: '/services' },
