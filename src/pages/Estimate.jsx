@@ -46,7 +46,7 @@ const PROJECT_TYPES = [
     gradient: 'linear-gradient(135deg,#1a4fa3,#2176AE)',
     image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=60',
     emoji: '🌐',
-    label: 'Full-Stack Web App',
+    label: 'Web Platform',
     plain: 'A full product people use in their browser',
     examples: 'Booking platform · Dashboard · Portal',
   },
@@ -58,15 +58,6 @@ const PROJECT_TYPES = [
     label: 'Mobile App',
     plain: 'An app on iPhone or Android',
     examples: 'Delivery · Fitness · On-demand service',
-  },
-  {
-    id: 'ecommerce', color: '#059669',
-    gradient: 'linear-gradient(135deg,#065f46,#059669)',
-    image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=600&q=60',
-    emoji: '🛍️',
-    label: 'Online Store',
-    plain: 'Sell products or services online',
-    examples: 'Marketplace · Subscription · Retail',
   },
   {
     id: 'ai', color: '#0891B2',
@@ -82,7 +73,7 @@ const PROJECT_TYPES = [
     gradient: 'linear-gradient(135deg,#92400e,#D97706)',
     image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=600&q=60',
     emoji: '🏢',
-    label: 'Internal Business Tool',
+    label: 'Business Tool',
     plain: 'Software just for your team',
     examples: 'CRM · HR tool · Operations system',
   },
@@ -91,22 +82,31 @@ const PROJECT_TYPES = [
     gradient: 'linear-gradient(135deg,#9d174d,#EC4899)',
     image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=600&q=60',
     emoji: '🚀',
-    label: 'Quick Launch / MVP',
+    label: 'Quick Launch',
     plain: 'Get something live fast to test the idea',
     examples: '6–8 week · Lean · Investor-ready',
+  },
+  {
+    id: 'automation', color: '#7C3AED',
+    gradient: 'linear-gradient(135deg,#4c1d95,#7C3AED)',
+    image: 'https://images.unsplash.com/photo-1518186285589-2f7649de83e0?auto=format&fit=crop&w=600&q=60',
+    emoji: '⚙️',
+    label: 'Automation / Integration',
+    plain: 'Connect systems and automate workflows',
+    examples: 'CRM · Zapier-style · Data pipelines',
   },
 ];
 
 /* ── Features — plain English, client-friendly, 8 options max ── */
 const FEATURES_SIMPLE = [
-  { id: 'users',    emoji: '👤', label: 'User Accounts',       sub: 'People can sign up & log in',              weeks: 1,   cost: 2000 },
-  { id: 'payments', emoji: '💳', label: 'Take Payments',       sub: 'Accept cards, subscriptions, invoices',    weeks: 1.5, cost: 3000 },
-  { id: 'admin',    emoji: '📊', label: 'Admin Dashboard',     sub: 'Manage everything from one place',         weeks: 2,   cost: 4000 },
-  { id: 'notify',   emoji: '🔔', label: 'Notifications',       sub: 'Email, SMS or push alerts to users',       weeks: 1,   cost: 1800 },
-  { id: 'search',   emoji: '🔍', label: 'Search & Filters',    sub: 'Find anything quickly in the app',         weeks: 1,   cost: 2000 },
-  { id: 'ai',       emoji: '🤖', label: 'AI Assistant',        sub: 'Smart chat, recommendations or automation',weeks: 2,   cost: 5000 },
-  { id: 'realtime', emoji: '⚡', label: 'Live / Real-Time',    sub: 'Chat, live updates, live tracking',        weeks: 1.5, cost: 3500 },
-  { id: 'files',    emoji: '📁', label: 'File Uploads',        sub: 'Photos, documents, videos',                weeks: 0.5, cost: 1200 },
+  { id: 'users',    emoji: '👤', color: '#2176AE', label: 'User Accounts',    sub: 'Sign up & log in',           weeks: 1,   cost: 2000 },
+  { id: 'payments', emoji: '💳', color: '#059669', label: 'Take Payments',    sub: 'Cards & subscriptions',      weeks: 1.5, cost: 3000 },
+  { id: 'admin',    emoji: '📊', color: '#7C3AED', label: 'Admin Dashboard',  sub: 'Manage from one place',      weeks: 2,   cost: 4000 },
+  { id: 'notify',   emoji: '🔔', color: '#D97706', label: 'Notifications',    sub: 'Email & push alerts',        weeks: 1,   cost: 1800 },
+  { id: 'search',   emoji: '🔍', color: '#0891B2', label: 'Search & Filters', sub: 'Find anything fast',         weeks: 1,   cost: 2000 },
+  { id: 'ai',       emoji: '🤖', color: '#EC4899', label: 'AI Assistant',     sub: 'Smart chat & automation',    weeks: 2,   cost: 5000 },
+  { id: 'realtime', emoji: '⚡', color: '#F97316', label: 'Live Updates',     sub: 'Real-time chat & tracking',  weeks: 1.5, cost: 3500 },
+  { id: 'files',    emoji: '📁', color: '#DC2626', label: 'File Uploads',     sub: 'Photos, docs & videos',      weeks: 0.5, cost: 1200 },
 ];
 
 /* ── Support packages — replaces raw budget picker ── */
@@ -118,6 +118,7 @@ const SUPPORT_PACKAGES = [
     gradient: 'linear-gradient(135deg,#1e3a5f,#2176AE)',
     label: 'Just Build It',
     tagline: 'One-time project, you take it from there',
+    price: 'From $8K',
     perks: ['Full handover of code & docs','2 weeks of launch support','Direct Slack during build'],
     weeks: 'modifier:0.9',
   },
@@ -128,6 +129,7 @@ const SUPPORT_PACKAGES = [
     gradient: 'linear-gradient(135deg,#064e3b,#059669)',
     label: 'Build + Care Plan',
     tagline: 'We build it, then keep it healthy for you',
+    price: '$299/mo after launch',
     perks: ['Everything in Build','Monthly updates & bug fixes','Hosting managed by us','Priority response within 24h'],
     badge: 'Most Popular',
     weeks: 'modifier:1.0',
@@ -139,6 +141,7 @@ const SUPPORT_PACKAGES = [
     gradient: 'linear-gradient(135deg,#4c1d95,#7C3AED)',
     label: 'Build + Grow Together',
     tagline: 'Ongoing dev team on-call as you scale',
+    price: '$799/mo — save 60% vs US',
     perks: ['Everything in Care Plan','Dedicated dev hours per month','New features on demand','Monthly strategy call with our team'],
     weeks: 'modifier:1.1',
   },
@@ -149,6 +152,7 @@ const SUPPORT_PACKAGES = [
     gradient: 'linear-gradient(135deg,#78350f,#D97706)',
     label: 'Full Tech Partner',
     tagline: 'We become your in-house engineering team',
+    price: 'Custom — fraction of US cost',
     perks: ['Everything in Grow Together','Full-time dedicated engineers','You focus on business, we own the tech','Quarterly roadmap planning sessions'],
     weeks: 'modifier:1.2',
   },
@@ -743,6 +747,7 @@ export default function Estimate() {
                         {FEATURES_SIMPLE.map((item, i) => (
                           <motion.button key={item.id}
                             className={`john-feat-tile ${features.includes(item.id) ? 'selected' : ''}`}
+                            style={{ '--feat-color': item.color }}
                             onClick={() => toggleFeature(item.id)}
                             custom={i} initial="hidden" animate="visible" variants={fadeUp}
                             whileHover={{ scale:1.03 }}>
@@ -756,7 +761,7 @@ export default function Estimate() {
                         ))}
                       </div>
                       <button className="john-confirm-btn" onClick={confirmFeatures}>
-                        <CheckCircle2 size={14}/> {features.length ? `Add these ${features.length} feature${features.length > 1 ? 's' : ''}` : 'Keep it lean — no extras'} <ArrowRight size={13}/>
+                        <CheckCircle2 size={14}/> {features.length ? `Done — ${features.length} selected ✓` : 'Skip this step →'} <ArrowRight size={13}/>
                       </button>
                       <button className="john-skip-btn" onClick={() => skipStep('features')}>
                         <HelpCircle size={12}/> Not sure — skip this step
@@ -785,6 +790,7 @@ export default function Estimate() {
                             <div className="john-pkg-card__body">
                               <div className="john-pkg-card__label">{pkg.label}</div>
                               <div className="john-pkg-card__tagline">{pkg.tagline}</div>
+                              {pkg.price && <div className="john-pkg-price">{pkg.price}</div>}
                               <ul className="john-pkg-card__perks">
                                 {pkg.perks.map(p => (
                                   <li key={p}><CheckCircle2 size={10}/>{p}</li>

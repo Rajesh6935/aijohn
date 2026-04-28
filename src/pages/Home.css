@@ -38,18 +38,23 @@
   filter: brightness(1.07); color: #fff;
 }
 .btn-hero-outline {
-  display: inline-flex; align-items: center; gap: 8px;
+  display: inline-flex; align-items: center; gap: 9px;
   padding: 14px 30px; border-radius: 100px;
   font-size: 0.97rem; font-weight: 700;
-  background: rgba(255,255,255,0.07);
-  color: rgba(255,255,255,0.85); border: 1.5px solid rgba(255,255,255,0.22);
+  background: rgba(255,255,255,0.10);
+  color: #fff;
+  border: 1.5px solid rgba(255,255,255,0.55);
   cursor: pointer; text-decoration: none;
-  transition: transform 0.22s, box-shadow 0.22s, background 0.22s, border-color 0.22s;
+  box-shadow: none;
   backdrop-filter: blur(6px);
+  transition: background 0.22s ease, border-color 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease;
 }
 .btn-hero-outline:hover {
-  background: rgba(255,255,255,0.13); border-color: rgba(255,255,255,0.4);
-  transform: translateY(-2px); box-shadow: 0 4px 20px rgba(0,0,0,0.2); color: #fff;
+  background: rgba(255,255,255,0.20);
+  border-color: rgba(255,255,255,0.85);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.18);
+  color: #fff;
 }
 
 /* ── Hero — Carousel with Cinematic Video ───────────────────────── */
@@ -78,6 +83,7 @@
   object-fit: cover; z-index: 1;
   opacity: 0.45; /* let slide bg show through */
   mix-blend-mode: luminosity;
+  background: #07101f;
   will-change: transform, opacity;
   animation: hero-video-drift 32s ease-in-out infinite alternate;
   transform-origin: center center;
@@ -753,7 +759,7 @@ a.home-build-card-link {
 /* Groups layout */
 .home-tech-groups {
   position: relative; z-index: 1;
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px;
 }
 
 /* Card — white glass on light bg */
@@ -762,7 +768,7 @@ a.home-build-card-link {
   background: rgba(255,255,255,0.80);
   border: 1px solid rgba(0,0,0,0.07);
   border-top: 3px solid color-mix(in srgb, var(--group-color, #2176AE) 70%, transparent);
-  border-radius: 20px; padding: 28px;
+  border-radius: 20px; padding: 22px 20px;
   transition: transform 0.35s, box-shadow 0.35s, background 0.35s;
   box-shadow: 0 4px 20px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.04);
 }
@@ -799,35 +805,35 @@ a.home-build-card-link {
 .home-tech-group__label { font-size: 0.95rem; font-weight: 800; color: var(--navy); line-height: 1.2; }
 .home-tech-group__desc  { font-size: 0.76rem; color: var(--gray); margin-top: 3px; line-height: 1.5; }
 
-/* Pills grid — always visible, clean and sharp */
+/* Pills grid — 2 columns, 8 items = 4 clean rows */
 .home-tech-group__pills {
-  display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 7px;
   position: relative; z-index: 1;
-  opacity: 1;
-  transition: opacity 0.35s ease;
 }
 .home-tech-pill {
-  display: flex; flex-direction: column; align-items: center; gap: 7px;
-  padding: 12px 8px; border-radius: 10px; cursor: default;
-  background: rgba(238,243,255,0.80);
-  border: 1px solid rgba(0,0,0,0.08);
+  display: flex; flex-direction: row; align-items: center; gap: 9px;
+  padding: 9px 11px; border-radius: 10px; cursor: default;
+  background: rgba(238,243,255,0.75);
+  border: 1px solid rgba(0,0,0,0.07);
   transition: background 0.22s, transform 0.22s, box-shadow 0.22s, border-color 0.22s;
+  min-width: 0;
 }
 .home-tech-pill:hover {
-  background: color-mix(in srgb, var(--group-color, #2176AE) 12%, #fff);
-  border-color: color-mix(in srgb, var(--group-color, #2176AE) 35%, transparent);
-  transform: translateY(-4px) scale(1.04);
-  box-shadow: 0 8px 20px color-mix(in srgb, var(--group-color, #2176AE) 18%, transparent);
+  background: color-mix(in srgb, var(--group-color, #2176AE) 10%, #fff);
+  border-color: color-mix(in srgb, var(--group-color, #2176AE) 30%, transparent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px color-mix(in srgb, var(--group-color, #2176AE) 16%, transparent);
 }
 .home-tech-pill__img {
-  width: 32px; height: 32px; object-fit: contain; flex-shrink: 0;
-  filter: none; /* no blur, always sharp */
+  width: 26px; height: 26px; object-fit: contain; flex-shrink: 0;
   transition: transform 0.22s;
 }
-.home-tech-pill:hover .home-tech-pill__img { transform: scale(1.12); }
+.home-tech-pill:hover .home-tech-pill__img { transform: scale(1.1); }
 .home-tech-pill__name {
-  font-size: 0.70rem; font-weight: 700; color: #334155; white-space: nowrap;
-  overflow: hidden; text-overflow: ellipsis; text-align: center;
+  font-size: 0.72rem; font-weight: 700; color: #334155;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
 }
 .home-tech-pill:hover .home-tech-pill__name {
   color: color-mix(in srgb, var(--group-color, #2176AE) 90%, #000);
@@ -1319,7 +1325,6 @@ a.home-build-card-link {
   .home-process-grid::before { display: none; }
   .home-hero__inner      { max-width: 100%; }
   .home-hero__title      { margin-bottom: 16px; }
-  .home-tech-group__pills { grid-template-columns: repeat(2, 1fr); }
   .home-tech-groups      { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 768px) {
@@ -1331,7 +1336,10 @@ a.home-build-card-link {
   .home-estoras-section::before,
   .home-estoras-section::after { width: 120px; }
   .home-estoras__stats   { gap: 20px; }
-  .home-tech-group__pills { grid-template-columns: repeat(2, 1fr); }
+  .home-tech-groups       { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .home-tech-group__pills { grid-template-columns: repeat(2, 1fr); gap: 6px; }
+  .home-tech-pill         { padding: 8px 9px; }
+  .home-tech-pill__img    { width: 22px; height: 22px; }
   .home-hero__ctas { flex-direction: column; align-items: flex-start; }
   .home-hero__ctas .btn-hero-primary,
   .home-hero__ctas .btn-hero-outline { width: 100%; justify-content: center; }
@@ -1342,7 +1350,15 @@ a.home-build-card-link {
   .home-cta-card         { padding: 40px 20px; }
   .home-estoras-section::before,
   .home-estoras-section::after { display: none; }
-  .home-tech-group__pills { grid-template-columns: repeat(2, 1fr); }
   .home-hero__line1 { font-size: clamp(1.5rem, 8.5vw, 2rem) !important; }
   .home-hero__line2 { font-size: clamp(1.25rem, 7vw, 1.7rem) !important; }
+}
+@media (max-width: 540px) {
+  .home-tech-groups       { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .home-tech-group__pills { gap: 5px; }
+  .home-tech-pill         { padding: 7px 8px; }
+  .home-tech-pill__img    { width: 20px; height: 20px; }
+  .home-tech-pill__name   { font-size: 0.68rem; }
 }

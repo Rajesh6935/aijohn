@@ -22,8 +22,12 @@ import CaseStudy from './pages/CaseStudy';
 import Contact   from './pages/Contact';
 import Team      from './pages/Team';
 import Estimate  from './pages/Estimate';
-import WebApp    from './pages/WebApp';
-import MobileApp from './pages/MobileApp';
+import WebApp           from './pages/WebApp';
+import MobileApp         from './pages/MobileApp';
+import AIMLPage          from './pages/AIMLPage';
+import CloudDevOpsPage   from './pages/CloudDevOpsPage';
+import MarketingAutoPage from './pages/MarketingAutoPage';
+import LegacyModPage     from './pages/LegacyModPage';
 
 /* ── Animated route switcher ── */
 function AnimatedRoutes() {
@@ -33,8 +37,12 @@ function AnimatedRoutes() {
       <Routes location={location} key={location.pathname}>
         <Route path="/"           element={<Home />}      />
         <Route path="/services"   element={<Services />}  />
-        <Route path="/services/web-development"        element={<WebApp />}    />
-        <Route path="/services/mobile-app-development" element={<MobileApp />} />
+        <Route path="/services/web-development"          element={<WebApp />}           />
+        <Route path="/services/mobile-app-development"   element={<MobileApp />}        />
+        <Route path="/services/ai-machine-learning"      element={<AIMLPage />}         />
+        <Route path="/services/cloud-devops"             element={<CloudDevOpsPage />}  />
+        <Route path="/services/marketing-automation"     element={<MarketingAutoPage />}/>
+        <Route path="/services/legacy-modernization"     element={<LegacyModPage />}    />
         <Route path="/services/:slug" element={<ServiceDetail />} />
         <Route path="/about"      element={<About />}     />
         <Route path="/team"       element={<Team />}      />

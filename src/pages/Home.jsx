@@ -5,7 +5,8 @@ import {
   ArrowRight, CheckCircle2, ChevronLeft, ChevronRight,
   Globe, Code2, Smartphone, Cloud, Cpu, Brain, Rocket, Bot,
   Building2, Users, TrendingUp, ShoppingCart, Sparkles, Zap,
-  Shield, Award, Server, Layers, BarChart3, Search, Star, MessageSquare
+  Shield, Award, Server, Layers, BarChart3, Search, Star, MessageSquare,
+  Megaphone, RefreshCw
 } from 'lucide-react';
 import PageWrapper from '../components/PageWrapper';
 import ParticleCanvas from '../components/ParticleCanvas';
@@ -101,20 +102,12 @@ const TRUST_ITEMS = [
 
 const BUILD_CARDS = [
   {
-    icon: Brain, color: '#2563eb',
-    title: 'AI-Native SaaS',
-    tag: 'GPT-4o · LangChain',
+    icon: Brain, color: '#7C3AED',
+    title: 'AI & Machine Learning',
+    tag: 'GPT-4o · LangChain · RAG',
     desc: 'LLM features, AI pipelines, vector search, and intelligent workflows that actually ship to production.',
     img: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fit=crop&w=800&q=60',
-    slug: 'ai-native-saas',
-  },
-  {
-    icon: Rocket, color: '#f97316',
-    title: 'MVP in 6–8 Weeks',
-    tag: '0 → Live, Fast',
-    desc: 'Validated product in your market before competitors blink. Architected to scale from day one.',
-    img: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=60',
-    slug: 'mvp-development',
+    slug: 'ai-machine-learning',
   },
   {
     icon: Globe, color: '#0891b2',
@@ -127,26 +120,34 @@ const BUILD_CARDS = [
   {
     icon: Smartphone, color: '#16a34a',
     title: 'Mobile App Development',
-    tag: 'iOS · Android',
+    tag: 'iOS · Android · React Native',
     desc: 'Native-quality mobile apps shipped in parallel with your web product. One team, full stack.',
     img: 'https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=800&q=60',
-    slug: 'mobile-development',
+    slug: 'mobile-app-development',
   },
   {
     icon: Cloud, color: '#0891b2',
     title: 'Cloud & DevOps',
-    tag: 'AWS · Kubernetes',
+    tag: 'AWS · Kubernetes · Terraform',
     desc: 'Zero-downtime infrastructure, auto-scaling, CI/CD pipelines, and 99.9% uptime SLAs.',
     img: 'https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?auto=format&fit=crop&w=800&q=60',
     slug: 'cloud-devops',
   },
   {
-    icon: Building2, color: '#2563eb',
-    title: 'Enterprise SaaS',
-    tag: 'Multi-tenant · SOC-2',
-    desc: 'Complex platforms for 100K+ users. Microservices, Kubernetes, enterprise security baked in.',
+    icon: Megaphone, color: '#D97706',
+    title: 'Marketing Automation',
+    tag: 'Email · CRM · Drip',
+    desc: 'AI-powered campaigns, lead scoring, CRM integrations, and retention workflows that run on autopilot.',
+    img: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=800&q=60',
+    slug: 'marketing-automation',
+  },
+  {
+    icon: RefreshCw, color: '#DC2626',
+    title: 'Legacy Modernisation',
+    tag: 'Migration · Refactor · Lift',
+    desc: 'Transform monolithic legacy systems into modern, scalable architectures — zero data loss guaranteed.',
     img: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=60',
-    slug: 'enterprise-saas',
+    slug: 'legacy-modernization',
   },
 ];
 
@@ -318,12 +319,7 @@ function HeroSection() {
   const [slide, setSlide] = useState(0);
   const current = SLIDES[slide];
   const videoRef = useRef(null);
-  const [videoReady, setVideoReady] = useState(false);
-
-  useEffect(() => {
-    const t = setTimeout(() => setVideoReady(true), 80);
-    return () => clearTimeout(t);
-  }, []);
+  const [videoLoaded, setVideoLoaded] = useState(false);
 
   /* Auto-advance: video slide waits for onEnded; other slides use timeout */
   useEffect(() => {
@@ -363,10 +359,12 @@ function HeroSection() {
         ref={videoRef}
         className="hero-video-bg"
         autoPlay muted playsInline preload="auto"
+        poster=""
         onEnded={handleVideoEnded}
+        onCanPlayThrough={() => setVideoLoaded(true)}
         style={{
-          opacity: current.showVideo ? 1 : 0,
-          transition: videoReady ? 'opacity 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'none',
+          opacity: current.showVideo && videoLoaded ? 1 : 0,
+          transition: 'opacity 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
         }}
       >
         <source src="/hero-video.mp4" type="video/mp4" />
