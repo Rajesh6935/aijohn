@@ -346,19 +346,20 @@ function HeroSection() {
 
   return (
     <section className="home-hero">
-      {/* Slide background images — never shown on video slide */}
+      {/* Slide background images — slide 0 shows until video is ready */}
       {SLIDES.map((s, i) => (
         <div key={s.id}
-          className={`hero-slide-bg${(i === slide && !s.showVideo) ? ' hero-slide-bg--active' : ''}`}
+          className={`hero-slide-bg${(i === slide && (!s.showVideo || !videoLoaded)) ? ' hero-slide-bg--active' : ''}`}
           style={{ backgroundImage: `url(${s.bg})` }}
         />
       ))}
 
-      {/* Cinematic video — full opacity on slide 0, hidden on others */}
+      {/* Cinematic video — fades in over the image once buffered */}
       <video
         ref={videoRef}
         className="hero-video-bg"
         autoPlay muted playsInline preload="auto"
+        poster={SLIDES[0].bg}
         onEnded={handleVideoEnded}
         onCanPlayThrough={() => setVideoLoaded(true)}
         style={{

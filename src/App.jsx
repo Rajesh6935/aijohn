@@ -3,6 +3,7 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
+  Navigate,
   useLocation,
 } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
@@ -51,7 +52,7 @@ function AnimatedRoutes() {
         <Route path="/contact"    element={<Contact />}   />
         <Route path="/privacy"    element={<SimpleTextPage title="Privacy Policy"   />} />
         <Route path="/terms"      element={<SimpleTextPage title="Terms of Service" />} />
-        <Route path="*"           element={<NotFound />}  />
+        <Route path="*"           element={<Navigate to="/" replace />}  />
       </Routes>
     </AnimatePresence>
   );
