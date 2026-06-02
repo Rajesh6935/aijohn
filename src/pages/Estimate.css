@@ -511,6 +511,15 @@
   font-size: 2rem; font-weight: 900; color: var(--navy);
   letter-spacing: -0.03em; margin-bottom: 10px;
 }
+.john-est-card__price-note {
+  font-size: 0.95rem; font-weight: 600; color: var(--blue-dark);
+  letter-spacing: 0; margin-left: 6px;
+}
+.john-est-card__large-note {
+  font-size: 0.84rem; color: var(--gray-dark); line-height: 1.6;
+  background: rgba(33,118,174,0.07); border: 1px solid rgba(33,118,174,0.15);
+  border-radius: 10px; padding: 12px 14px; margin-bottom: 14px;
+}
 .john-est-card__meta-row {
   display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 16px;
 }

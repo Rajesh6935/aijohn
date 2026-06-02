@@ -140,15 +140,15 @@ const SUPPORT_PACKAGES = [
 
 /* ── Features — expanded with images, 9 items in 3 rows of 3 ── */
 const FEATURES_SIMPLE = [
-  { id: 'users',    emoji: '👤', color: '#2176AE', label: 'User Accounts',      sub: 'Sign up & log in',            img: 'https://images.unsplash.com/photo-1633174524827-db00a6b7bc74?auto=format&fit=crop&w=400&q=50', weeks: 1,   cost: 2000 },
-  { id: 'payments', emoji: '💳', color: '#2176AE', label: 'Take Payments',      sub: 'Cards & subscriptions',       img: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=400&q=50', weeks: 1.5, cost: 3000 },
-  { id: 'admin',    emoji: '📊', color: '#2176AE', label: 'Admin Dashboard',    sub: 'Manage from one place',       img: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=400&q=50', weeks: 2,   cost: 4000 },
-  { id: 'notify',   emoji: '🔔', color: '#2176AE', label: 'Notifications',      sub: 'Email & push alerts',         img: 'https://images.unsplash.com/photo-1596526131083-e8c633c948d2?auto=format&fit=crop&w=400&q=50', weeks: 1,   cost: 1800 },
-  { id: 'search',   emoji: '🔍', color: '#2176AE', label: 'Search & Filters',   sub: 'Find anything fast',          img: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=400&q=50', weeks: 1,   cost: 2000 },
-  { id: 'ai',       emoji: '🤖', color: '#2176AE', label: 'AI Assistant',       sub: 'Smart chat & automation',     img: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fit=crop&w=400&q=50', weeks: 2,   cost: 5000 },
-  { id: 'realtime', emoji: '⚡', color: '#2176AE', label: 'Live Updates',        sub: 'Real-time chat & tracking',   img: 'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?auto=format&fit=crop&w=400&q=50', weeks: 1.5, cost: 3500 },
-  { id: 'files',    emoji: '📁', color: '#2176AE', label: 'File Uploads',        sub: 'Photos, docs & videos',       img: 'https://images.unsplash.com/photo-1618477247222-acbdb0e159b3?auto=format&fit=crop&w=400&q=50', weeks: 0.5, cost: 1200 },
-  { id: 'analytics',emoji: '📈', color: '#2176AE', label: 'Analytics',           sub: 'Track usage & growth',        img: 'https://images.unsplash.com/photo-1543286386-713bdd548da4?auto=format&fit=crop&w=400&q=50', weeks: 1,   cost: 2500 },
+  { id: 'users',    emoji: '👤', color: '#2176AE', label: 'User Accounts',      sub: 'Sign up & log in',            img: 'https://images.unsplash.com/photo-1633174524827-db00a6b7bc74?auto=format&fit=crop&w=400&q=50', weeks: 1,   cost: 700  },
+  { id: 'payments', emoji: '💳', color: '#2176AE', label: 'Take Payments',      sub: 'Cards & subscriptions',       img: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=400&q=50', weeks: 1.5, cost: 1000 },
+  { id: 'admin',    emoji: '📊', color: '#2176AE', label: 'Admin Dashboard',    sub: 'Manage from one place',       img: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=400&q=50', weeks: 2,   cost: 1400 },
+  { id: 'notify',   emoji: '🔔', color: '#2176AE', label: 'Notifications',      sub: 'Email & push alerts',         img: 'https://images.unsplash.com/photo-1596526131083-e8c633c948d2?auto=format&fit=crop&w=400&q=50', weeks: 1,   cost: 600  },
+  { id: 'search',   emoji: '🔍', color: '#2176AE', label: 'Search & Filters',   sub: 'Find anything fast',          img: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=400&q=50', weeks: 1,   cost: 700  },
+  { id: 'ai',       emoji: '🤖', color: '#2176AE', label: 'AI Assistant',       sub: 'Smart chat & automation',     img: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fit=crop&w=400&q=50', weeks: 2,   cost: 1800 },
+  { id: 'realtime', emoji: '⚡', color: '#2176AE', label: 'Live Updates',        sub: 'Real-time chat & tracking',   img: 'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?auto=format&fit=crop&w=400&q=50', weeks: 1.5, cost: 1200 },
+  { id: 'files',    emoji: '📁', color: '#2176AE', label: 'File Uploads',        sub: 'Photos, docs & videos',       img: 'https://images.unsplash.com/photo-1618477247222-acbdb0e159b3?auto=format&fit=crop&w=400&q=50', weeks: 0.5, cost: 400  },
+  { id: 'analytics',emoji: '📈', color: '#2176AE', label: 'Analytics',           sub: 'Track usage & growth',        img: 'https://images.unsplash.com/photo-1543286386-713bdd548da4?auto=format&fit=crop&w=400&q=50', weeks: 1,   cost: 800  },
 ];
 
 /* ── Tech stacks ── */
@@ -166,18 +166,19 @@ const TECH_STACKS = {
    BASE_COST = AIJOHN's actual price (what the client pays us)
    NA rates are 4-5× that to show savings comparison
 ── */
+const MAX_PROJECT_COST = 25000;
+
 function calcEstimate(typeIds, featureIds, packageId) {
   const ids = Array.isArray(typeIds) && typeIds.length ? typeIds : ['saas'];
-  // AIJOHN prices — basic starts at $3K as the entry point
   const BASE_WEEKS = { basic:2, saas:4, mobile:5, ai:5, ecommerce:4, enterprise:6, mvp:3 };
-  const BASE_COST  = { basic:3000, saas:8000, mobile:10000, ai:12000, ecommerce:9000, enterprise:14000, mvp:6000 };
+  const BASE_COST  = { basic:1000, saas:3000, mobile:3500, ai:4000, ecommerce:3200, enterprise:5000, mvp:2000 };
   const primaryId  = ids[0];
   let weeks = BASE_WEEKS[primaryId] || 4;
-  let cost  = BASE_COST[primaryId]  || 8000;
-  // Additional platforms share some codebase — 60% of base cost each
+  let cost  = BASE_COST[primaryId]  || 3000;
+  // Additional platforms share codebase — 60% of base each
   ids.slice(1).forEach(tId => {
     weeks = Math.max(weeks, BASE_WEEKS[tId] || 4);
-    cost += Math.round((BASE_COST[tId] || 8000) * 0.6);
+    cost += Math.round((BASE_COST[tId] || 3000) * 0.6);
   });
   featureIds.forEach(fId => {
     const f = FEATURES_SIMPLE.find(x => x.id === fId);
@@ -187,12 +188,19 @@ function calcEstimate(typeIds, featureIds, packageId) {
   const pkgMods = { launch:0.9, care:1.0, growth:1.1, partner:1.2 };
   cost = Math.round(cost * (pkgMods[packageId] || 1));
   const pkg = SUPPORT_PACKAGES.find(p => p.id === packageId) || SUPPORT_PACKAGES[0];
-  // AIJOHN price IS the base — show a ±10% range, rounded to nearest $500
-  const aijohnMin = Math.round(cost * 0.90 / 500) * 500;
-  const aijohnMax = Math.round(cost * 1.10 / 500) * 500;
+  // ±10% range, rounded to nearest $500
+  let aijohnMin = Math.round(cost * 0.90 / 500) * 500;
+  let aijohnMax = Math.round(cost * 1.10 / 500) * 500;
+  // Flag large projects — cap display at $25K, prompt a call instead
+  const isLargeProject = aijohnMax > MAX_PROJECT_COST;
+  if (isLargeProject) {
+    aijohnMin = MAX_PROJECT_COST;
+    aijohnMax = MAX_PROJECT_COST;
+  }
   return {
     weeks: Math.ceil(weeks),
     pkg,
+    isLargeProject,
     aijohn: { min: aijohnMin, max: aijohnMax },
     na:     { min: Math.round(aijohnMin*4.0/1000)*1000, max: Math.round(aijohnMax*5.0/1000)*1000 },
     markets: MARKET_RATES.map(m => ({ ...m, min: m.highlight ? aijohnMin : Math.round(aijohnMin*m.multiplier/1000)*1000, max: m.highlight ? aijohnMax : Math.round(aijohnMax*m.multiplier/1000)*1000 })),
@@ -916,8 +924,16 @@ export default function Estimate() {
                   </span>
                 </div>
                 <div className="john-est-card__price">
-                  ${result.aijohn.min.toLocaleString()} – ${result.aijohn.max.toLocaleString()}
+                  {result.isLargeProject
+                    ? <>$25,000+ <span className="john-est-card__price-note">Let's talk scope</span></>
+                    : <>${result.aijohn.min.toLocaleString()} – ${result.aijohn.max.toLocaleString()}</>
+                  }
                 </div>
+                {result.isLargeProject && (
+                  <div className="john-est-card__large-note">
+                    🚀 This is a larger build — exact pricing depends on final scope. Book a free call and we'll give you a fixed quote within 48 hours.
+                  </div>
+                )}
                 <div className="john-est-card__meta-row">
                   <div className="john-est-card__timeline">
                     <Clock size={12}/> {result.weeks} weeks to production

@@ -280,9 +280,9 @@ const TESTIMONIALS = [
     rating: 5, initials: 'AL', color: '#0891b2',
   },
   {
-    quote: "We came with a rough concept and they returned a full architecture doc in 3 days. The MVP was live in 6 weeks, on budget. Our investors were genuinely impressed with the speed and the code quality. Best engineering partner we've worked with.",
-    author: 'Marcus Osei', role: 'Founder & CEO', company: 'Logiflex', stage: 'Pre-Seed · AI SaaS',
-    rating: 5, initials: 'MO', color: '#16a34a',
+    quote: "We've partnered with AIJOHN across multiple projects under Archive Digital Marketing — from client platforms in real estate and e-commerce to custom marketing dashboards. Every delivery has been on time, on budget, and genuinely impressive in quality. They're the engineering team we trust when our clients need something built right.",
+    author: 'Daniel Kacic', role: 'General Management', company: 'Archive Digital Marketing', stage: 'archivedigital.com',
+    rating: 5, initials: 'DK', color: '#16a34a',
   },
 ];
 
