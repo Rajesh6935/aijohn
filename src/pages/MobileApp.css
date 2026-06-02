@@ -303,14 +303,71 @@
 .ma-stat__label { font-size: 0.82rem; color: rgba(255,255,255,0.38); margin-top: 6px; }
 
 /* ══════════════════════════════════════════════
-   SECTION WRAPPERS
+   SECTION WRAPPERS — alternating light / dark
 ══════════════════════════════════════════════ */
 .ma-section { position: relative; overflow: hidden; padding: 100px 0; }
-.ma-section--dark { background: #0d0920; }
-.ma-section--light { background: #f7f5ff; }
+
+/* ── DARK sections — deep navy/purple with animated strips + floating squares ── */
+.ma-section--dark {
+  background: #0d0920;
+}
+
+/* Moving diagonal strip overlay */
+.ma-section--dark::before {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background-image: repeating-linear-gradient(
+    -55deg,
+    rgba(124,58,237,0.055) 0px,
+    rgba(124,58,237,0.055) 1.5px,
+    transparent 1.5px,
+    transparent 38px
+  );
+  animation: ma-stripe-scroll 12s linear infinite;
+}
+
+/* Floating decorative squares — dark sections */
+.ma-section--dark::after {
+  content: '';
+  position: absolute; pointer-events: none; z-index: 0;
+  width: 180px; height: 180px;
+  top: 12%; right: 6%;
+  border: 1.5px solid rgba(168,85,247,0.12);
+  border-radius: 18px;
+  transform: rotate(18deg);
+  animation: ma-sq-float 9s ease-in-out infinite;
+}
+
+/* ── LIGHT sections — soft off-white with subtle dot grid + moving bordered squares ── */
+.ma-section--light {
+  background: #f8f6ff;
+}
+
+/* Dot-grid overlay */
+.ma-section--light::before {
+  content: '';
+  position: absolute; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    radial-gradient(circle, rgba(124,58,237,0.12) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Floating decorative square — light sections */
+.ma-section--light::after {
+  content: '';
+  position: absolute; pointer-events: none; z-index: 0;
+  width: 160px; height: 160px;
+  bottom: 8%; left: 4%;
+  border: 2px solid rgba(124,58,237,0.1);
+  border-radius: 20px;
+  transform: rotate(-14deg);
+  animation: ma-sq-float 11s ease-in-out infinite reverse;
+}
+
+/* ── STACK section keeps its own look ── */
 .ma-section--stack { background: linear-gradient(160deg, #0a0614 0%, #0f0626 100%); }
 
-/* Horizontal stripe overlay on dark sections */
+/* ── Legacy stripe div (still used on some dark sections) ── */
 .ma-section__stripes {
   position: absolute; inset: 0; pointer-events: none; z-index: 0;
   background-image: repeating-linear-gradient(
@@ -329,8 +386,47 @@
     transparent 2px,
     transparent 32px
   );
-  animation: ma-stripe-move 8s linear infinite;
+  animation: ma-stripe-scroll 8s linear infinite;
 }
+
+/* ── Extra floating squares injected via JSX inside each section ── */
+.ma-deco-sq {
+  position: absolute; pointer-events: none; z-index: 0;
+  border-radius: 12px;
+  animation: ma-sq-float var(--sq-dur, 10s) ease-in-out infinite;
+  animation-delay: var(--sq-delay, 0s);
+}
+.ma-section--dark .ma-deco-sq {
+  border: 1.5px solid rgba(168,85,247,0.14);
+  background: rgba(124,58,237,0.04);
+}
+.ma-section--light .ma-deco-sq {
+  border: 1.5px solid rgba(124,58,237,0.1);
+  background: rgba(124,58,237,0.03);
+}
+
+/* ── Animations ── */
+@keyframes ma-stripe-scroll {
+  from { background-position: 0 0; }
+  to   { background-position: 0 200px; }
+}
+@keyframes ma-sq-float {
+  0%, 100% { transform: translateY(0px)   rotate(var(--sq-rot, 15deg)); }
+  50%       { transform: translateY(-18px) rotate(calc(var(--sq-rot, 15deg) + 6deg)); }
+}
+
+/* Fix: all section content must sit above decorative layers */
+.ma-section > .container { position: relative; z-index: 1; }
+
+/* ── Light section text — switch to dark colours ── */
+.ma-section--light .ma-section-tag {
+  color: #7c3aed; border-color: rgba(124,58,237,0.25);
+  background: rgba(124,58,237,0.07);
+}
+.ma-section--light .ma-section-h2 { color: #0a0614; }
+.ma-section--light .ma-section-sub { color: rgba(10,6,20,0.55); }
+.ma-section--light .ma-section-h2--dark { color: #0a0614; }
+.ma-section--light .ma-section-sub--dark { color: rgba(10,6,20,0.55); }
 
 /* Section headings */
 .ma-section-head { text-align: center; margin-bottom: 64px; position: relative; z-index: 1; }
@@ -499,12 +595,13 @@
 .ma-process-step {
   display: flex; align-items: flex-start; gap: 16px;
   padding: 22px 24px; border-radius: 18px;
-  background: #fff; border: 1.5px solid rgba(0,0,0,0.07);
-  box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+  background: #fff; border: 1.5px solid rgba(124,58,237,0.1);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
   transition: box-shadow 0.25s, transform 0.25s;
 }
 .ma-process-step:hover {
-  box-shadow: 0 8px 30px rgba(0,0,0,0.1); transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(124,58,237,0.14); transform: translateY(-3px);
+  border-color: rgba(124,58,237,0.28);
 }
 .ma-process-step__num {
   font-size: 0.65rem; font-weight: 900; letter-spacing: 0.04em;
@@ -523,7 +620,7 @@
   margin-bottom: 5px; letter-spacing: -0.01em;
 }
 .ma-process-step__desc {
-  font-size: 0.81rem; color: rgba(10,6,20,0.52); line-height: 1.65;
+  font-size: 0.81rem; color: rgba(10,6,20,0.54); line-height: 1.65;
 }
 
 /* ══════════════════════════════════════════════

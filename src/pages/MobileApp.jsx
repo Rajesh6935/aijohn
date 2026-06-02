@@ -398,6 +398,8 @@ export default function MobileApp() {
 
       {/* ══════════ WHAT WE BUILD ══════════ */}
       <section className="ma-section ma-section--light">
+        <div className="ma-deco-sq" style={{width:100,height:100,top:'8%',right:'5%','--sq-rot':'15deg','--sq-dur':'12s','--sq-delay':'0s'}}/>
+        <div className="ma-deco-sq" style={{width:50,height:50,bottom:'14%',left:'7%','--sq-rot':'-25deg','--sq-dur':'9s','--sq-delay':'1.8s'}}/>
         <div className="container">
           <motion.div className="ma-section-head"
             initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
@@ -483,6 +485,8 @@ export default function MobileApp() {
 
       {/* ══════════ PLATFORM DEEP DIVE ══════════ */}
       <section className="ma-section ma-section--light">
+        <div className="ma-deco-sq" style={{width:120,height:120,bottom:'10%',right:'3%','--sq-rot':'-10deg','--sq-dur':'15s','--sq-delay':'0.5s'}}/>
+        <div className="ma-deco-sq" style={{width:44,height:44,top:'20%',left:'4%','--sq-rot':'35deg','--sq-dur':'10s','--sq-delay':'2s'}}/>
         <div className="container">
           <motion.div className="ma-section-head"
             initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
@@ -532,6 +536,9 @@ export default function MobileApp() {
       {/* ══════════ BACKEND INTEGRATION ══════════ */}
       <section className="ma-section ma-section--dark">
         <div className="ma-section__stripes ma-section__stripes--diagonal" />
+        <div className="ma-deco-sq" style={{width:90,height:90,top:'10%',left:'3%','--sq-rot':'22deg','--sq-dur':'8s','--sq-delay':'0s'}}/>
+        <div className="ma-deco-sq" style={{width:54,height:54,bottom:'18%',right:'8%','--sq-rot':'-12deg','--sq-dur':'13s','--sq-delay':'2s'}}/>
+        <div className="ma-deco-sq" style={{width:36,height:36,top:'55%',left:'48%','--sq-rot':'45deg','--sq-dur':'16s','--sq-delay':'1s'}}/>
         <div className="container">
           <motion.div className="ma-section-head"
             initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
@@ -606,6 +613,9 @@ export default function MobileApp() {
       {/* ══════════ TECH STACK ══════════ */}
       <section className="ma-section ma-section--dark">
         <div className="ma-section__stripes" />
+        <div className="ma-deco-sq" style={{width:110,height:110,top:'8%',right:'4%','--sq-rot':'-18deg','--sq-dur':'11s','--sq-delay':'0.5s'}}/>
+        <div className="ma-deco-sq" style={{width:60,height:60,bottom:'12%',left:'6%','--sq-rot':'30deg','--sq-dur':'14s','--sq-delay':'3s'}}/>
+        <div className="ma-deco-sq" style={{width:40,height:40,top:'45%',right:'22%','--sq-rot':'10deg','--sq-dur':'9s','--sq-delay':'1.5s'}}/>
         <div className="container">
           <motion.div className="ma-section-head"
             initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
@@ -672,6 +682,9 @@ export default function MobileApp() {
       {/* ══════════ MAINTENANCE ══════════ */}
       <section className="ma-section ma-section--dark">
         <div className="ma-section__stripes ma-section__stripes--diagonal" />
+        <div className="ma-deco-sq" style={{width:80,height:80,top:'15%',left:'5%','--sq-rot':'28deg','--sq-dur':'10s','--sq-delay':'0s'}}/>
+        <div className="ma-deco-sq" style={{width:48,height:48,bottom:'20%',right:'10%','--sq-rot':'-20deg','--sq-dur':'12s','--sq-delay':'2.5s'}}/>
+        <div className="ma-deco-sq" style={{width:32,height:32,top:'60%',left:'30%','--sq-rot':'55deg','--sq-dur':'18s','--sq-delay':'1s'}}/>
         <div className="container">
           <motion.div className="ma-section-head"
             initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
