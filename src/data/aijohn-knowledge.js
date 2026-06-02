@@ -8,9 +8,9 @@
 export const COMPANY = {
   name: 'AIJOHN Technosoft',
   tagline: 'AI-Native SaaS Studio — IIT/NIT Engineers',
-  email: 'hello@aijohn.in',
+  email: 'contact@aijohn.org',
   calendly: 'https://calendly.com/aijohn',
-  location: 'Kochi, India | Vancouver, Canada (Estoras Group)',
+  location: 'Jangareddygudem, Andhra Pradesh, India | Vancouver, Canada (Estoras Group)',
   founded: '2020',
   teamSize: '8 core engineers',
   productsShipped: '10+',
@@ -171,7 +171,7 @@ export const AIJOHN_SYSTEM_PROMPT = `You are an expert AI product advisor for AI
 COMPANY:
 - AIJOHN Technosoft, founded ${COMPANY.founded}
 - Team: ${COMPANY.teamSize}, all IIT/NIT graduates
-- Based in Kochi, India. Partner: Estoras Group, Vancouver Canada
+- Based in Jangareddygudem, Andhra Pradesh, India. Partner: Estoras Group, Vancouver Canada
 - Speciality: AI-powered SaaS MVPs, enterprise platforms, mobile apps
 - Rate: $25–$40/hr (vs $80–$150/hr US/EU = 60-75% savings)
 
@@ -207,6 +207,6 @@ TONE: Be warm, professional, and helpful. Ask clarifying questions to understand
 
 When asked about timeline or cost, ask: What type of product? How many users expected? What integrations needed? Any AI features?
 
-If you don't know something specific, say "Let me connect you with our team — book a free call at calendly.com/aijohn" or suggest emailing hello@aijohn.in.
+If you don't know something specific, say "Let me connect you with our team — book a free call at calendly.com/aijohn" or suggest emailing contact@aijohn.org.
 
 Keep responses concise (under 200 words). Use bullet points sparingly. Be conversational.`;

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>AIJOHN Website — Full QA Report</title>
+<style>
+  :root {
+    --navy: #0D1B2A; --blue: #2176AE; --green: #059669;
+    --red: #DC2626; --orange: #D97706; --gray: #6B7280;
+    --bg: #F5F7FA; --white: #fff; --radius: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--navy); line-height: 1.6; }
+  .wrapper { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+
+  /* Header */
+  .report-header { background: var(--navy); color: #fff; border-radius: var(--radius); padding: 36px 40px; margin-bottom: 36px; }
+  .report-header h1 { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.02em; }
+  .report-header .meta { margin-top: 10px; font-size: 0.88rem; opacity: 0.65; display: flex; gap: 24px; flex-wrap: wrap; }
+  .report-header .tag { background: rgba(255,255,255,0.12); border-radius: 20px; padding: 3px 12px; font-size: 0.78rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; }
+
+  /* Score card */
+  .score-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 14px; margin-bottom: 36px; }
+  .score-card { background: var(--white); border-radius: var(--radius); padding: 20px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .score-card .num { font-size: 2.2rem; font-weight: 900; }
+  .score-card .lbl { font-size: 0.78rem; color: var(--gray); margin-top: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; }
+  .score-card.red .num { color: var(--red); }
+  .score-card.orange .num { color: var(--orange); }
+  .score-card.green .num { color: var(--green); }
+  .score-card.blue .num { color: var(--blue); }
+
+  /* Sections */
+  .section { background: var(--white); border-radius: var(--radius); padding: 28px 32px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+  .section h2 { font-size: 1.15rem; font-weight: 800; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
+  .section h2 .icon { width: 28px; height: 28px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; flex-shrink: 0; }
+
+  /* Findings table */
+  table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+  th { text-align: left; padding: 8px 12px; background: var(--bg); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gray); font-weight: 700; }
+  td { padding: 10px 12px; border-bottom: 1px solid #EEF2F7; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: #fafbfc; }
+
+  /* Severity badges */
+  .sev { display: inline-block; border-radius: 20px; padding: 2px 10px; font-size: 0.73rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; white-space: nowrap; }
+  .sev-crit  { background: #FEE2E2; color: #991B1B; }
+  .sev-high  { background: #FEF3C7; color: #92400E; }
+  .sev-med   { background: #DBEAFE; color: #1e40af; }
+  .sev-low   { background: #D1FAE5; color: #065F46; }
+  .sev-info  { background: #F3F4F6; color: #374151; }
+
+  /* Code */
+  code { background: #EEF2F7; border-radius: 4px; padding: 1px 6px; font-family: 'Cascadia Code', 'Courier New', monospace; font-size: 0.82em; color: #1e40af; }
+
+  /* File path */
+  .file { font-size: 0.78rem; color: var(--gray); font-family: 'Cascadia Code', monospace; }
+
+  /* Fix note */
+  .fix { font-size: 0.82rem; color: #374151; margin-top: 4px; }
+  .fix strong { color: var(--navy); }
+
+  /* Summary bullets */
+  .bullets li { padding: 5px 0; font-size: 0.9rem; }
+  .bullets li::before { content: '✓ '; color: var(--green); font-weight: 700; }
+  .ok-list { list-style: none; padding: 0; }
+
+  /* Footer */
+  .report-footer { text-align: center; font-size: 0.82rem; color: var(--gray); margin-top: 48px; }
+
+  /* Pass items */
+  .pass-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 8px; }
+  .pass-item { background: #F0FDF4; border: 1px solid #BBF7D0; border-radius: 8px; padding: 10px 14px; font-size: 0.85rem; color: #065F46; display: flex; align-items: center; gap: 8px; }
+</style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="report-header">
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:14px;">
+      <span class="tag">QA Report</span>
+      <span class="tag">Full Source Audit</span>
+    </div>
+    <h1>AIJOHN Technosoft — Website QA Report</h1>
+    <div class="meta">
+      <span>🌐 http://localhost:5173 (aijohn.in)</span>
+      <span>📅 April 29, 2026</span>
+      <span>🔍 Static source analysis + ESLint audit</span>
+    </div>
+  </div>
+
+  <!-- Score Summary -->
+  <div class="score-row">
+    <div class="score-card red">
+      <div class="num">2</div>
+      <div class="lbl">🔴 Critical</div>
+    </div>
+    <div class="score-card orange">
+      <div class="num">6</div>
+      <div class="lbl">🟡 High</div>
+    </div>
+    <div class="score-card blue">
+      <div class="num">9</div>
+      <div class="lbl">🔵 Medium</div>
+    </div>
+    <div class="score-card green">
+      <div class="num">5</div>
+      <div class="lbl">🟢 Low / Info</div>
+    </div>
+    <div class="score-card green">
+      <div class="num">33</div>
+      <div class="lbl">ESLint Errors</div>
+    </div>
+  </div>
+
+  <!-- ── CRITICAL ── -->
+  <div class="section">
+    <h2><span class="icon" style="background:#FEE2E2">🔴</span> Critical — Fix Before Launch</h2>
+    <table>
+      <thead>
+        <tr><th>Finding</th><th>Severity</th><th>File / Location</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <strong>Contact form will never send — hardcoded EmailJS placeholders</strong>
+            <div class="fix">
+              <code>emailjs.sendForm('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', ..., 'YOUR_PUBLIC_KEY')</code><br/>
+              The form looks complete to users but silently fails on every submission. The <code>.env.example</code> defines the correct <code>VITE_EMAILJS_*</code> env vars, but Contact.jsx uses raw string placeholders instead of reading them. Fix: replace with <code>import.meta.env.VITE_EMAILJS_SERVICE_ID</code> etc.
+            </div>
+            <div class="file">src/pages/Contact.jsx : line 57</div>
+          </td>
+          <td><span class="sev sev-crit">Critical</span></td>
+          <td><span class="file">Contact.jsx</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong>/privacy and /terms routes are dead — pages silently not rendered</strong>
+            <div class="fix">
+              <code>src/styles/App.jsx</code> defines <code>/privacy</code> and <code>/terms</code> routes with a <code>SimpleTextPage</code> component, but the real <code>src/App.jsx</code> (the one <code>main.jsx</code> actually imports) has <strong>no routes for these pages</strong>. Clicking Privacy Policy or Terms of Service in the footer hits the 404 fallback. Fix: add the <code>/privacy</code> and <code>/terms</code> routes to <code>src/App.jsx</code>, or delete <code>src/styles/App.jsx</code> (it's a stale duplicate).
+            </div>
+            <div class="file">src/App.jsx + src/components/Footer.jsx : lines 228–230</div>
+          </td>
+          <td><span class="sev sev-crit">Critical</span></td>
+          <td><span class="file">App.jsx / Footer.jsx</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── HIGH ── -->
+  <div class="section">
+    <h2><span class="icon" style="background:#FEF3C7">🟡</span> High — Broken or Misleading</h2>
+    <table>
+      <thead>
+        <tr><th>Finding</th><th>Severity</th><th>File / Location</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <strong>Footer "Mobile App Development" link uses wrong slug</strong>
+            <div class="fix">Footer links to <code>/services/mobile-development</code> but the App route is <code>/services/mobile-app-development</code>. This hits the <code>ServiceDetail</code> catch-all with a slug that has no data, showing a blank/broken page. Navbar dropdown correctly uses <code>mobile-app-development</code>.</div>
+            <div class="file">src/components/Footer.jsx : line 59</div>
+          </td>
+          <td><span class="sev sev-high">High</span></td>
+          <td><span class="file">Footer.jsx</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Footer services links to non-existent routes: /services/ai-native-saas, /services/mvp-development, /services/enterprise-saas</strong>
+            <div class="fix">All three hit the <code>ServiceDetail</code> catch-all. While ServiceDetail does have data for <code>ai-native-saas</code> and <code>mvp-development</code>, these slugs are not registered as explicit App routes — they work via the <code>:slug</code> wildcard but are missing from the sitemap/canonical flow. <code>enterprise-saas</code> has no ServiceDetail data at all — it renders an empty page. Add a route or remove the footer link.</div>
+            <div class="file">src/components/Footer.jsx : lines 56–61</div>
+          </td>
+          <td><span class="sev sev-high">High</span></td>
+          <td><span class="file">Footer.jsx</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Sitemap slug mismatch: <code>legacy-modernisation</code> (British) vs route <code>legacy-modernization</code> (American)</strong>
+            <div class="fix">Sitemap uses <code>/services/legacy-modernisation</code> but App.jsx registers <code>/services/legacy-modernization</code>. Google will crawl a URL that 404s. Fix the sitemap entry to match the route.</div>
+            <div class="file">public/sitemap.xml</div>
+          </td>
+          <td><span class="sev sev-high">High</span></td>
+          <td><span class="file">sitemap.xml</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Inconsistent email address across site: <code>contact@aijohn.org</code> vs <code>contact@aijohn.in</code></strong>
+            <div class="fix">
+              Footer, Contact page links/error messages, and Privacy/Terms pages all use <code>contact@aijohn.org</code>. The SEO meta description in Contact.jsx and the ChatBot fallback use <code>contact@aijohn.in</code> / <code>hello@aijohn.in</code>. If only one domain is live, all references should be unified. Three different addresses (<code>contact@aijohn.org</code>, <code>contact@aijohn.in</code>, <code>hello@aijohn.in</code>) found.
+            </div>
+            <div class="file">Contact.jsx lines 18, 27, 182, 189 · Footer.jsx line 121 · aijohn-knowledge.js line 11</div>
+          </td>
+          <td><span class="sev sev-high">High</span></td>
+          <td><span class="file">Multiple files</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong>ChatBot / Estimate AI feature needs <code>ANTHROPIC_API_KEY</code> — no graceful degradation UI</strong>
+            <div class="fix">Vite plugin serves <code>/api/chat</code> but returns <code>503</code> if <code>ANTHROPIC_API_KEY</code> is missing from <code>.env.local</code>. ChatBot catches the error and shows a fallback message, but the Estimate page AI flow may leave users stuck. Confirm the key is set in production (Vercel env var) and add a visible "AI unavailable" banner rather than a spinner freeze.</div>
+            <div class="file">vite.config.js · src/components/ChatBot.jsx · src/pages/Estimate.jsx</div>
+          </td>
+          <td><span class="sev sev-high">High</span></td>
+          <td><span class="file">Estimate.jsx / ChatBot.jsx</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Dead duplicate file <code>src/styles/App.jsx</code> — never imported but contains conflicting route logic</strong>
+            <div class="fix"><code>main.jsx</code> imports from <code>./App.jsx</code>, not <code>./styles/App.jsx</code>. The styles version defines different routes (no Team, Estimate, service detail pages) and the SimpleTextPage for Privacy/Terms that never runs. This is a maintenance hazard and caused confusion about where Privacy/Terms live. Should be deleted.</div>
+            <div class="file">src/styles/App.jsx</div>
+          </td>
+          <td><span class="sev sev-high">High</span></td>
+          <td><span class="file">src/styles/App.jsx</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── MEDIUM ── -->
+  <div class="section">
+    <h2><span class="icon" style="background:#DBEAFE">🔵</span> Medium — Code Quality & UX</h2>
+    <table>
+      <thead>
+        <tr><th>Finding</th><th>Severity</th><th>File / Location</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <strong>33 ESLint errors across 14 files</strong>
+            <div class="fix">Most prevalent: <code>motion</code> imported but unused in 13 files (they use it in JSX, so likely a false positive from named imports vs destructuring — but should be verified). More critical: 4 instances of <code>setState()</code> called synchronously inside <code>useEffect</code> (Navbar, Estimate ×3) which React 19 flags as causing cascading renders. Also: unused variables <code>isFirst</code>, <code>inputRef</code>, <code>featuresConfirmed</code>, <code>stagger</code>, <code>Icon</code> in multiple components.</div>
+            <div class="file">Run <code>npx eslint src/</code> to see full output</div>
+          </td>
+          <td><span class="sev sev-med">Medium</span></td>
+          <td><span class="file">14 source files</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Location inconsistency: Contact page says "Kochi, Kerala" but Footer says "Jangareddygudem, Andhra Pradesh"</strong>
+            <div class="fix">The <code>INFO_ITEMS</code> array in Contact.jsx lists <code>Kochi, Kerala, India</code> as the location. The Footer office block shows the full address as <code>Jangareddygudem, Andhra Pradesh 534447</code>. Pick one consistent address.</div>
+            <div class="file">Contact.jsx line 21 · Footer.jsx line 118</div>
+          </td>
+          <td><span class="sev sev-med">Medium</span></td>
+          <td><span class="file">Contact.jsx / Footer.jsx</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Hero video is only 4.3 MB but has no WebM fallback and no <code>poster</code> attribute</strong>
+            <div class="fix">The <code>&lt;video&gt;</code> tag has <code>poster=""</code> (empty string), so while the video loads there's a black flash before the background image appears. Provide a real poster image (first frame or hero background). Also add a WebM version for better browser support and smaller file size.</div>
+            <div class="file">src/pages/Home.jsx — HeroSection</div>
+          </td>
+          <td><span class="sev sev-med">Medium</span></td>
+          <td><span class="file">Home.jsx</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Sitemap includes pages that don't have matching App routes: <code>/services/ai-native-saas</code>, <code>/services/mvp-development</code>, <code>/services/mobile-development</code>, <code>/services/enterprise-saas</code></strong>
+            <div class="fix">These are submitted to search engines but rely on the <code>:slug</code> catch-all. Some have no content in ServiceDetail data (<code>enterprise-saas</code>). Either register explicit routes or remove from sitemap.</div>
+            <div class="file">public/sitemap.xml</div>
+          </td>
+          <td><span class="sev sev-med">Medium</span></td>
+          <td><span class="file">sitemap.xml</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Logo PNG is 213 KB — too large for a navbar asset</strong>
+            <div class="fix"><code>aijohn-logo.png</code> is 213 KB. Navbar loads it on every page on scroll. Convert to WebP (target &lt;30 KB) or use the SVG favicon as the logo source. <code>aijohn-logo-white.png</code> is acceptably sized at 59 KB.</div>
+            <div class="file">public/aijohn-logo.png</div>
+          </td>
+          <td><span class="sev sev-med">Medium</span></td>
+          <td><span class="file">public/</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Technology logos use Wikipedia/Wikimedia SVGs for some tools and Python icon as a stand-in for LangChain, Pinecone, HuggingFace</strong>
+            <div class="fix">LangChain, Pinecone, and HuggingFace in the Tech Stack section all display the Python logo instead of their own logo. This looks unprofessional and confusing to technical visitors.</div>
+            <div class="file">src/pages/Home.jsx — TECH_GROUPS</div>
+          </td>
+          <td><span class="sev sev-med">Medium</span></td>
+          <td><span class="file">Home.jsx</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong>AI market stat is outdated: "$62B AI SaaS Market by 2025" — it's now 2026</strong>
+            <div class="fix">The StatsMarquee shows this as a future projection, but 2025 has passed. Update to a 2026+ projection to stay credible with visitors.</div>
+            <div class="file">src/pages/Home.jsx — MARQUEE_ITEMS</div>
+          </td>
+          <td><span class="sev sev-med">Medium</span></td>
+          <td><span class="file">Home.jsx</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Privacy Policy and Terms of Service pages contain only "coming soon" placeholder content</strong>
+            <div class="fix">Even if they were routed correctly (see Critical #2), they only show a placeholder message. For a company that pitches "enterprise accountability" and signed contracts, these pages need real legal content before launch.</div>
+            <div class="file">src/styles/App.jsx : SimpleTextPage</div>
+          </td>
+          <td><span class="sev sev-med">Medium</span></td>
+          <td><span class="file">App.jsx (styles)</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Calendly URL is generic <code>calendly.com/aijohn</code> — verify this link is live</strong>
+            <div class="fix">Used in 7+ places across the site (Navbar, Home CTA, Contact, CaseStudy, Estimate, ServiceDetail). If the Calendly account isn't set up or the slug is wrong, all "Book a Free Call" buttons silently fail. Verify the URL resolves.</div>
+            <div class="file">Multiple files</div>
+          </td>
+          <td><span class="sev sev-med">Medium</span></td>
+          <td><span class="file">Navbar, Home, Contact…</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── LOW / INFO ── -->
+  <div class="section">
+    <h2><span class="icon" style="background:#D1FAE5">🟢</span> Low / Info — Polish &amp; Housekeeping</h2>
+    <table>
+      <thead>
+        <tr><th>Finding</th><th>Severity</th><th>File / Location</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>
+            <strong>5 stale logo test files in <code>/public</code></strong>
+            <div class="fix"><code>logo-test-1.0.png</code> through <code>logo-test-3.5.png</code> are visible to the public web server and add noise. Delete them before deploying.</div>
+            <div class="file">public/logo-test-*.png</div>
+          </td>
+          <td><span class="sev sev-low">Low</span></td>
+          <td><span class="file">public/</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>src/assets/vite.svg</code> is unused (leftover from Vite scaffolding)</strong>
+            <div class="fix">Default Vite asset was never removed. Not a runtime issue but adds clutter.</div>
+            <div class="file">src/assets/vite.svg</div>
+          </td>
+          <td><span class="sev sev-low">Low</span></td>
+          <td><span class="file">src/assets/</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Google / Facebook social icon links point to generic profile roots</strong>
+            <div class="fix">Footer social links: <code>https://facebook.com/aijohn</code> and <code>https://g.co/kgs/aijohn</code>. Verify these resolve to the actual company pages, not 404s or unrelated profiles.</div>
+            <div class="file">src/components/Footer.jsx</div>
+          </td>
+          <td><span class="sev sev-low">Low</span></td>
+          <td><span class="file">Footer.jsx</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong>Estoras Group stat shows "N.A." (North America) which reads as "Not Available"</strong>
+            <div class="fix">The <code>home-estoras__stat</code> for market presence shows <code>N.A.</code> with label "Market Presence". To most readers, "N.A." means "Not Available" or "Not Applicable". Use "North America" or "🇨🇦 Canada" instead.</div>
+            <div class="file">src/pages/Home.jsx — EstorasSection</div>
+          </td>
+          <td><span class="sev sev-low">Low</span></td>
+          <td><span class="file">Home.jsx</span></td>
+        </tr>
+        <tr>
+          <td>
+            <strong><code>logo-video.mp4</code> and <code>team-video.mp4</code> in public — confirm they are in use</strong>
+            <div class="fix"><code>hero-video.mp4</code> is clearly used. <code>logo-video.mp4</code> and <code>team-video.mp4</code> were found but no references to them appear in the codebase. If unused, remove them to reduce deploy bundle size.</div>
+            <div class="file">public/logo-video.mp4 · public/team-video.mp4</div>
+          </td>
+          <td><span class="sev sev-info">Info</span></td>
+          <td><span class="file">public/</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ── WHAT PASSES ── -->
+  <div class="section">
+    <h2><span class="icon" style="background:#D1FAE5">✅</span> What's Working Well</h2>
+    <div class="pass-grid">
+      <div class="pass-item">✓ Strong SEO setup — meta, OG, Twitter cards, JSON-LD schema</div>
+      <div class="pass-item">✓ All core routes registered correctly in App.jsx</div>
+      <div class="pass-item">✓ Navbar closes on route change, body scroll locks on mobile menu</div>
+      <div class="pass-item">✓ Hero video / background image fallback mechanism well-structured</div>
+      <div class="pass-item">✓ robots.txt correct — index, follow with sitemap pointer</div>
+      <div class="pass-item">✓ Contact form has proper client-side validation before submit</div>
+      <div class="pass-item">✓ EmailJS library correctly imported — just needs real API keys</div>
+      <div class="pass-item">✓ AOS + Framer Motion animations initialised correctly in App</div>
+      <div class="pass-item">✓ ScrollToTop component present — prevents stale scroll on navigation</div>
+      <div class="pass-item">✓ 404 page implemented with back-to-home link</div>
+      <div class="pass-item">✓ All team photos present in /public/team/</div>
+      <div class="pass-item">✓ Vite API proxy for Claude API cleanly handled in dev + Vercel prod</div>
+      <div class="pass-item">✓ Footer has proper ARIA label and address semantics</div>
+      <div class="pass-item">✓ Canonical URL set dynamically via useSEO hook on every page</div>
+      <div class="pass-item">✓ Inter font preconnected for performance</div>
+    </div>
+  </div>
+
+  <!-- ── PRIORITY FIX LIST ── -->
+  <div class="section">
+    <h2><span class="icon" style="background:#FEE2E2">🚀</span> Recommended Fix Order</h2>
+    <table>
+      <thead><tr><th>#</th><th>Action</th><th>Effort</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Wire EmailJS env vars in Contact.jsx using <code>import.meta.env.VITE_EMAILJS_*</code></td><td>10 min</td></tr>
+        <tr><td>2</td><td>Add <code>/privacy</code> and <code>/terms</code> routes to <code>src/App.jsx</code> (copy SimpleTextPage from styles/App.jsx or write real pages)</td><td>15 min</td></tr>
+        <tr><td>3</td><td>Fix footer Mobile App Development slug: <code>mobile-development</code> → <code>mobile-app-development</code></td><td>2 min</td></tr>
+        <tr><td>4</td><td>Delete <code>src/styles/App.jsx</code> (stale file causing confusion)</td><td>1 min</td></tr>
+        <tr><td>5</td><td>Unify all email addresses to one canonical address sitewide</td><td>15 min</td></tr>
+        <tr><td>6</td><td>Fix sitemap: change <code>legacy-modernisation</code> → <code>legacy-modernization</code></td><td>2 min</td></tr>
+        <tr><td>7</td><td>Fix <code>video poster=""</code> — set to a real image (or remove attribute)</td><td>5 min</td></tr>
+        <tr><td>8</td><td>Fix LangChain / Pinecone / HuggingFace logos in Tech Stack</td><td>20 min</td></tr>
+        <tr><td>9</td><td>Update "$62B AI SaaS Market by 2025" to a 2026+ figure</td><td>5 min</td></tr>
+        <tr><td>10</td><td>Delete 5 logo-test-*.png files from /public</td><td>1 min</td></tr>
+        <tr><td>11</td><td>Fix "N.A." → "North America" in Estoras section</td><td>2 min</td></tr>
+        <tr><td>12</td><td>Unify office location — Kochi vs Jangareddygudem</td><td>5 min</td></tr>
+        <tr><td>13</td><td>Compress aijohn-logo.png from 213 KB to &lt;30 KB WebP</td><td>10 min</td></tr>
+        <tr><td>14</td><td>Fix 4 setState-in-useEffect ESLint errors (Navbar, Estimate)</td><td>30 min</td></tr>
+        <tr><td>15</td><td>Add real Privacy Policy and Terms of Service content</td><td>1–2 hrs</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="report-footer">
+    QA performed by Claude (Cowork) via full source code audit · AIJOHN Technosoft · April 29, 2026
+  </div>
+
+</div>
+</body>
+</html>

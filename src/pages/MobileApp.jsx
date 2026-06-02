@@ -265,6 +265,16 @@ export default function MobileApp() {
 
       {/* ══════════ HERO ══════════ */}
       <section className="ma-hero">
+        {/* Looping background video */}
+        <video
+          className="ma-hero__video"
+          autoPlay muted loop playsInline
+          aria-hidden="true"
+          poster="https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?w=1400&q=60&auto=format"
+        >
+          <source src="https://assets.mixkit.co/videos/preview/mixkit-person-using-their-smartphone-close-up-27437-large.mp4" type="video/mp4" />
+        </video>
+        <div className="ma-hero__video-overlay" />
         <div className="ma-hero__stripes" />
         <div className="ma-hero__grid" />
         <div className="ma-hero__glow ma-hero__glow--1" />
@@ -387,15 +397,14 @@ export default function MobileApp() {
       </section>
 
       {/* ══════════ WHAT WE BUILD ══════════ */}
-      <section className="ma-section ma-section--dark">
-        <div className="ma-section__stripes" />
+      <section className="ma-section ma-section--light">
         <div className="container">
           <motion.div className="ma-section-head"
             initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}>
             <div className="ma-section-tag"><Package size={13}/> App Categories</div>
-            <h2 className="ma-section-h2">Built for Every Industry.<br/><span className="ma-accent">Engineered for Every User.</span></h2>
-            <p className="ma-section-sub">
+            <h2 className="ma-section-h2 ma-section-h2--dark">Built for Every Industry.<br/><span className="ma-accent">Engineered for Every User.</span></h2>
+            <p className="ma-section-sub ma-section-sub--dark">
               Each vertical has its own performance requirements, security constraints, and real-time
               data needs. We understand both the domain and the technology to serve it right.
             </p>
@@ -595,7 +604,7 @@ export default function MobileApp() {
       </section>
 
       {/* ══════════ TECH STACK ══════════ */}
-      <section className="ma-section ma-section--dark ma-section--stack">
+      <section className="ma-section ma-section--dark">
         <div className="ma-section__stripes" />
         <div className="container">
           <motion.div className="ma-section-head"

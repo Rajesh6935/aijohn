@@ -323,6 +323,11 @@ export default function CloudDevOpsPage() {
                 initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }} transition={{ delay: i * 0.1, duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
                 whileHover={{ y: -8, transition: { type: 'spring', stiffness: 280, damping: 18 } }}>
+                {/* Slow-moving animated brand-color radial gradient */}
+                <motion.div className="cd-provider-card__animated-bg"
+                  animate={{ backgroundPosition: ['0% 0%', '100% 100%', '0% 0%'] }}
+                  transition={{ duration: 8 + i * 2, repeat: Infinity, ease: 'linear' }}
+                  style={{ background: `radial-gradient(ellipse 80% 60% at 50% 50%, ${p.color}18, transparent 70%)` }} />
                 <motion.div className="cd-provider-card__glow"
                   animate={{ opacity: [0.4, 0.8, 0.4] }}
                   transition={{ duration: 3 + i * 0.5, repeat: Infinity, delay: i * 0.7 }} />
@@ -366,71 +371,64 @@ export default function CloudDevOpsPage() {
           </motion.div>
 
           <div className="cd-arch__diagram">
-            {/* Layer 1: Developer → Git */}
+            {/* Layer 1: Client */}
             <div className="cd-arch__row">
-              <div className="cd-arch__layer-label">Developer Workflow</div>
+              <div className="cd-arch__layer-label" style={{ color: '#f1f5f9' }}>Client Layer</div>
               <div className="cd-arch__nodes">
-                {['Dev Push', 'Pull Request', 'Code Review', 'Merge to Main'].map((n, i) => (
-                  <DiagramNode key={n} label={n} color="#0891B2" delay={0.1 + i * 0.1} />
-                ))}
+                <DiagramNode label="Client Browser" sublabel="React / Next.js" color="#e2e8f0" delay={0.1} />
               </div>
             </div>
-            <div className="cd-arch__connector-row">
-              {[0,1,2,3].map(i => <DiagramLine key={i} vertical delay={0.5 + i * 0.06} />)}
+            <div className="cd-arch__connector-row cd-arch__connector-row--center">
+              <DiagramLine vertical delay={0.25} />
             </div>
-            {/* Layer 2: CI Pipeline */}
+            {/* Layer 2: Network — amber */}
             <div className="cd-arch__row">
-              <div className="cd-arch__layer-label">CI Pipeline (GitHub Actions)</div>
+              <div className="cd-arch__layer-label" style={{ color: '#fcd34d' }}>Network Layer</div>
               <div className="cd-arch__nodes">
-                <DiagramNode label="Build & Test" sublabel="Jest · pytest" color="#06B6D4" delay={0.7} pulse />
-                <DiagramLine delay={0.8} />
-                <DiagramNode label="Container Build" sublabel="Docker · ECR" color="#06B6D4" delay={0.9} pulse />
-                <DiagramLine delay={1.0} />
-                <DiagramNode label="Security Scan" sublabel="Trivy · SAST" color="#06B6D4" delay={1.1} pulse />
+                <DiagramNode label="CDN" sublabel="CloudFront / Fastly" color="#F59E0B" delay={0.4} pulse />
+                <DiagramLine delay={0.5} />
+                <DiagramNode label="WAF / DDoS" sublabel="AWS Shield · WAF" color="#F59E0B" delay={0.6} pulse />
+                <DiagramLine delay={0.7} />
+                <DiagramNode label="Load Balancer" sublabel="ALB · NGINX" color="#F59E0B" delay={0.8} pulse />
+              </div>
+            </div>
+            <div className="cd-arch__connector-row cd-arch__connector-row--center">
+              <DiagramLine vertical delay={0.95} />
+            </div>
+            {/* Layer 3: Compute — blue */}
+            <div className="cd-arch__row">
+              <div className="cd-arch__layer-label" style={{ color: '#67e8f9' }}>Compute Layer</div>
+              <div className="cd-arch__nodes">
+                <DiagramNode label="App Server" sublabel="ECS · K8s Pod" color="#0891B2" delay={1.1} pulse />
                 <DiagramLine delay={1.2} />
-                <DiagramNode label="Helm Package" sublabel="Artifact push" color="#06B6D4" delay={1.3} pulse />
+                <DiagramNode label="API Gateway" sublabel="Kong · AWS APIGW" color="#0891B2" delay={1.3} pulse />
+                <DiagramLine delay={1.4} />
+                <DiagramNode label="Microservices" sublabel="Auth · Orders · AI" color="#0891B2" delay={1.5} pulse />
               </div>
             </div>
             <div className="cd-arch__connector-row cd-arch__connector-row--center">
-              <DiagramLine vertical delay={1.4} />
+              <DiagramLine vertical delay={1.65} />
             </div>
-            {/* Layer 3: CD / ArgoCD */}
+            {/* Layer 4: Data — green */}
             <div className="cd-arch__row">
-              <div className="cd-arch__layer-label">CD — ArgoCD GitOps</div>
-              <div className="cd-arch__nodes cd-arch__nodes--cluster">
-                <DiagramNode label="Staging" sublabel="Auto-deploy" color="#0E7490" delay={1.5} />
-                <DiagramLine delay={1.6} />
-                <div className="cd-arch__argocd-badge">
-                  {[
-                    { cls: 'staging', label: 'ArgoCD',    emoji: '⚓' },
-                    { cls: 'prod',    label: 'Production', emoji: '🚀' },
-                    { cls: 'rollback',label: 'Rollback',  emoji: '🔄' },
-                  ].map((m, i) => (
-                    <motion.div key={m.cls} className={`cd-arch__cd-badge cd-arch__cd-badge--${m.cls}`}
-                      initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }} transition={{ delay: 1.65 + i * 0.12, type: 'spring' }}
-                      animate={{ boxShadow: ['0 0 0 0 transparent', `0 0 18px 3px ${m.cls === 'prod' ? '#0891B244' : '#06B6D444'}`, '0 0 0 0 transparent'] }}
-                      whileHover={{ scale: 1.06 }}>
-                      <span>{m.emoji}</span> {m.label}
-                      <motion.span className="cd-arch__cd-ping"
-                        animate={{ scale: [1, 1.8, 1], opacity: [0.8, 0, 0.8] }}
-                        transition={{ duration: 1.8, repeat: Infinity, delay: i * 0.6 }} />
-                    </motion.div>
-                  ))}
-                </div>
-                <DiagramLine delay={1.7} />
-                <DiagramNode label="Canary Deploy" sublabel="10% → 100%" color="#0E7490" delay={1.8} />
-              </div>
-            </div>
-            <div className="cd-arch__connector-row cd-arch__connector-row--center">
-              <DiagramLine vertical delay={1.9} />
-            </div>
-            {/* Layer 4: K8s cluster services */}
-            <div className="cd-arch__row">
-              <div className="cd-arch__layer-label">Kubernetes Cluster · EKS / GKE</div>
+              <div className="cd-arch__layer-label" style={{ color: '#6ee7b7' }}>Data Layer</div>
               <div className="cd-arch__nodes">
-                {['Ingress / ALB', 'Services · HPA', 'Pods (App)', 'Prometheus / Grafana'].map((n, i) => (
-                  <DiagramNode key={n} label={n} color="#0891B2" delay={2.0 + i * 0.1} pulse />
+                <DiagramNode label="PostgreSQL" sublabel="Aurora Multi-AZ" color="#10B981" delay={1.8} />
+                <DiagramLine delay={1.9} />
+                <DiagramNode label="Redis Cache" sublabel="Elasticache" color="#10B981" delay={2.0} />
+                <DiagramLine delay={2.1} />
+                <DiagramNode label="S3 / Storage" sublabel="Objects · Backups" color="#10B981" delay={2.2} />
+              </div>
+            </div>
+            <div className="cd-arch__connector-row cd-arch__connector-row--center">
+              <DiagramLine vertical delay={2.35} />
+            </div>
+            {/* Layer 5: Observability — purple */}
+            <div className="cd-arch__row">
+              <div className="cd-arch__layer-label" style={{ color: '#c4b5fd' }}>Observability</div>
+              <div className="cd-arch__nodes">
+                {['Monitoring', 'Alerting', 'Tracing', 'Cost Dashboards'].map((n, i) => (
+                  <DiagramNode key={n} label={n} color="#7C3AED" delay={2.5 + i * 0.1} pulse />
                 ))}
               </div>
             </div>
@@ -448,6 +446,13 @@ export default function CloudDevOpsPage() {
             viewport={{ once: true }} transition={{ delay: i * 0.06, duration: 0.5 }}
             whileHover={{ y: -10, transition: { type: 'spring', stiffness: 300, damping: 20 } }}>
             <div className="cd-hcard__accent-line" />
+            {/* Animated badge in top-right */}
+            <motion.div className="cd-hcard__corner-badge"
+              animate={{ rotate: [0, 15, -15, 0] }}
+              whileHover={{ rotate: 360, scale: 1.25 }}
+              transition={{ duration: 4 + i * 0.5, repeat: Infinity, ease: 'easeInOut', delay: i * 0.4 }}>
+              <cap.Icon size={12} />
+            </motion.div>
             <motion.div className="cd-hcard__icon cd-hcard__icon--light"
               animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 3 + i * 0.4, repeat: Infinity, delay: i * 0.3 }}>
               <cap.Icon size={22} />

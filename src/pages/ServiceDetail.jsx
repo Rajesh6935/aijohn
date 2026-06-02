@@ -76,7 +76,7 @@ const SERVICE_DATA = {
       { label: 'E-commerce platform', time: '9 weeks' },
     ],
   },
-  'mobile-development': {
+  'mobile-app-development': {
     title: 'Mobile App Development',
     subtitle: 'iOS & Android apps shipped in parallel with your web product',
     tag: 'Mobile Development',
@@ -191,7 +191,7 @@ const SERVICE_DATA = {
       { label: 'Campaign analytics dashboard', time: '8 weeks' },
     ],
   },
-  'legacy-modernisation': {
+  'legacy-modernization': {
     title: 'Legacy Modernisation',
     subtitle: 'Transform aging codebases into scalable modern systems',
     tag: 'Migration · Refactor · Lift',

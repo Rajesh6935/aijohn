@@ -207,6 +207,10 @@
 .ai-model-card__logo-wrap { font-size: 2rem; line-height: 1; display: inline-block; }
 .ai-model-card__name { font-size: 0.95rem; font-weight: 800; color: #1a0a3c; line-height: 1.2; }
 .ai-model-card__maker { font-size: 0.72rem; color: #94a3b8; font-weight: 500; }
+.ai-model-card__best-for {
+  font-size: 0.68rem; color: #5b4d7a; margin-bottom: 8px; letter-spacing: 0.02em;
+}
+.ai-model-card__best-for strong { color: var(--mc); font-weight: 700; }
 .ai-model-card__strength {
   font-size: 0.7rem; font-weight: 700; color: var(--mc);
   background: color-mix(in srgb, var(--mc) 10%, #faf8ff);
@@ -393,6 +397,66 @@
   background: color-mix(in srgb, var(--hc) 9%, #f8f4ff);
   color: color-mix(in srgb, var(--hc) 88%, #1e293b);
   border: 1px solid color-mix(in srgb, var(--hc) 18%, transparent);
+}
+
+/* ── Apple-style image card variant ── */
+@keyframes ai-shimmer-border {
+  0%   { transform: translateX(-100%) rotate(0deg); }
+  100% { transform: translateX(200%) rotate(0deg); }
+}
+.ai-hcard--apple {
+  background: #1a0a3c; border: 1px solid rgba(124,58,237,0.25);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.35);
+  transition: box-shadow 0.35s, transform 0.35s;
+  padding: 0;
+}
+.ai-hcard--apple:hover {
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px color-mix(in srgb, var(--hc) 50%, transparent);
+}
+.ai-hcard__bg-img {
+  position: absolute; inset: 0;
+  background-size: cover; background-position: center;
+  opacity: 0.22;
+  transition: opacity 0.5s, transform 0.5s;
+  border-radius: 22px;
+}
+.ai-hcard--apple:hover .ai-hcard__bg-img { opacity: 0.35; transform: scale(1.05); }
+.ai-hcard__bg-grad {
+  position: absolute; inset: 0; border-radius: 22px;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--hc) 25%, #0d0620) 0%,
+    rgba(8,4,16,0.85) 55%,
+    rgba(8,4,16,0.97) 100%);
+}
+.ai-hcard__shimmer-border {
+  position: absolute; inset: 0; border-radius: 22px; overflow: hidden;
+  pointer-events: none;
+}
+.ai-hcard__shimmer-border::before {
+  content: ''; position: absolute;
+  top: -2px; left: -100%; width: 60%; height: calc(100% + 4px);
+  background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.12) 50%, transparent 100%);
+  animation: ai-shimmer-border 4s ease-in-out infinite;
+  animation-play-state: paused;
+  border-radius: 22px;
+}
+.ai-hcard--apple:hover .ai-hcard__shimmer-border::before { animation-play-state: running; }
+.ai-hcard__content {
+  position: relative; z-index: 1; padding: 32px 28px;
+}
+.ai-hcard__icon--apple {
+  background: color-mix(in srgb, var(--hc) 20%, rgba(255,255,255,0.05));
+  border: 1px solid color-mix(in srgb, var(--hc) 35%, transparent);
+  color: color-mix(in srgb, var(--hc) 80%, #e9d5ff);
+}
+.ai-hcard__title--apple { font-size: 1.08rem; font-weight: 800; color: #fff; margin-bottom: 12px; line-height: 1.3; }
+.ai-hcard__desc--apple { font-size: 0.845rem; color: rgba(255,255,255,0.55); line-height: 1.68; margin-bottom: 20px; }
+.ai-hcard__tags--apple { display: flex; flex-wrap: wrap; gap: 6px; }
+.ai-hcard__tags--apple span {
+  padding: 4px 11px; border-radius: 100px; font-size: 0.69rem; font-weight: 700;
+  background: color-mix(in srgb, var(--hc) 18%, rgba(255,255,255,0.04));
+  color: color-mix(in srgb, var(--hc) 90%, #e9d5ff);
+  border: 1px solid color-mix(in srgb, var(--hc) 30%, rgba(255,255,255,0.1));
 }
 
 /* ══════════════════════════════════════════════

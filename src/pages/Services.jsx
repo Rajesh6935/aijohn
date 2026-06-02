@@ -36,7 +36,7 @@ const SERVICES = [
     ],
   },
   {
-    Icon: Smartphone, color: '#7C3AED', slug: 'mobile-development',
+    Icon: Smartphone, color: '#7C3AED', slug: 'mobile-app-development',
     title: 'Mobile App Development',
     tag: 'iOS · Android · React Native',
     short: 'Cross-platform apps that feel native on every device, built once and shipped everywhere.',
@@ -92,7 +92,7 @@ const SERVICES = [
     ],
   },
   {
-    Icon: RefreshCw, color: '#DC2626', slug: 'legacy-modernisation',
+    Icon: RefreshCw, color: '#DC2626', slug: 'legacy-modernization',
     title: 'Legacy Modernisation',
     tag: 'Migration · Refactor · Lift',
     short: 'Transform aging codebases into scalable modern systems with zero business disruption.',

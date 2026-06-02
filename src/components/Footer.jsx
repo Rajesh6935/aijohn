@@ -53,12 +53,12 @@ const QUICK_LINKS = [
 ];
 
 const SERVICES_NAV = [
-  { label: 'AI-Native SaaS',           to: '/services/ai-native-saas'        },
-  { label: 'MVP in 6–8 Weeks',         to: '/services/mvp-development'       },
-  { label: 'Web App Development',      to: '/services/web-development'       },
-  { label: 'Mobile App Development',   to: '/services/mobile-development'    },
-  { label: 'Cloud & DevOps',           to: '/services/cloud-devops'          },
-  { label: 'Enterprise SaaS',          to: '/services/enterprise-saas'       },
+  { label: 'Web App Development',      to: '/services/web-development'          },
+  { label: 'Mobile App Development',   to: '/services/mobile-app-development'   },
+  { label: 'AI & Machine Learning',    to: '/services/ai-machine-learning'       },
+  { label: 'Cloud & DevOps',           to: '/services/cloud-devops'             },
+  { label: 'Marketing Automation',     to: '/services/marketing-automation'      },
+  { label: 'Legacy Modernisation',     to: '/services/legacy-modernization'      },
 ];
 
 const fadeUp = {

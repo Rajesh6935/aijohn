@@ -49,6 +49,8 @@ function AnimatedRoutes() {
         <Route path="/case-study" element={<CaseStudy />} />
         <Route path="/estimate"   element={<Estimate />}  />
         <Route path="/contact"    element={<Contact />}   />
+        <Route path="/privacy"    element={<SimpleTextPage title="Privacy Policy"   />} />
+        <Route path="/terms"      element={<SimpleTextPage title="Terms of Service" />} />
         <Route path="*"           element={<NotFound />}  />
       </Routes>
     </AnimatePresence>
@@ -75,6 +77,130 @@ function App() {
       <Footer />
       <ChatBot />
     </Router>
+  );
+}
+
+/* ── Privacy / Terms ── */
+const LEGAL_CONTENT = {
+  'Privacy Policy': {
+    updated: 'April 2026',
+    sections: [
+      {
+        title: 'Information We Collect',
+        body: `When you contact us or use our Estimate tool, we collect the information you provide: your name, email address, phone number, company name, and project description. We also collect standard web analytics data (page views, referral source, device type) through anonymised tools. We do not use tracking cookies for advertising.`,
+      },
+      {
+        title: 'How We Use Your Information',
+        body: `Your information is used solely to respond to your enquiry, scope your project, and send relevant follow-up communications. We do not sell, rent, or share your personal data with third parties for their marketing purposes. Project briefs shared with us are treated as strictly confidential.`,
+      },
+      {
+        title: 'AI Chat (JOHN)',
+        body: `Our website includes an AI chat assistant powered by Anthropic Claude. Conversations are processed in real time to generate responses. We do not store individual chat transcripts beyond the session. Do not share sensitive personal or financial data in the chat window.`,
+      },
+      {
+        title: 'Data Retention',
+        body: `Contact form submissions are retained for up to 24 months for business continuity. You may request deletion of your data at any time by emailing contact@aijohn.org with subject "Data Deletion Request".`,
+      },
+      {
+        title: 'Security',
+        body: `All data is transmitted over HTTPS. Our infrastructure is hosted on AWS with access controls, encryption at rest, and routine security reviews. We follow OWASP best practices across all systems we build and operate.`,
+      },
+      {
+        title: 'Your Rights',
+        body: `You have the right to access, correct, or delete your personal data. To exercise any of these rights, contact us at contact@aijohn.org. We aim to respond to all requests within 30 days.`,
+      },
+      {
+        title: 'Contact',
+        body: `For any privacy-related questions: contact@aijohn.org · AIJOHN Technosoft Private Limited, Jangareddygudem, Andhra Pradesh 534447, India.`,
+      },
+    ],
+  },
+  'Terms of Service': {
+    updated: 'April 2026',
+    sections: [
+      {
+        title: 'Acceptance',
+        body: `By accessing aijohn.in or engaging AIJOHN Technosoft for services, you agree to these Terms. If you do not agree, do not use this site or our services.`,
+      },
+      {
+        title: 'Services',
+        body: `AIJOHN Technosoft provides software engineering, AI integration, cloud infrastructure, and related technology consulting services. All engagements are governed by a separate Statement of Work (SOW) or Master Services Agreement (MSA) signed by both parties. These Terms apply to use of our website and AI chat tools only.`,
+      },
+      {
+        title: 'Intellectual Property',
+        body: `All content on this website — including copy, design, graphics, and code — is the property of AIJOHN Technosoft Private Limited and protected under applicable intellectual property law. You may not reproduce or repurpose any content without prior written consent.`,
+      },
+      {
+        title: 'AI Chat Disclaimer',
+        body: `The JOHN AI chat assistant provides general guidance only. Responses are AI-generated and do not constitute a binding quote, contract, or legal advice. All project estimates must be confirmed in writing by an AIJOHN representative. Pricing and timelines discussed in chat are indicative only.`,
+      },
+      {
+        title: 'Limitation of Liability',
+        body: `To the fullest extent permitted by law, AIJOHN Technosoft shall not be liable for any indirect, incidental, or consequential damages arising from use of this website. Our total liability for any claim arising from website use shall not exceed $100 USD.`,
+      },
+      {
+        title: 'Governing Law',
+        body: `These Terms are governed by the laws of India. Any disputes shall be subject to the exclusive jurisdiction of courts in Andhra Pradesh, India. For clients contracting through Estoras Group (Canada), Canadian law may apply as specified in the signed MSA.`,
+      },
+      {
+        title: 'Changes to These Terms',
+        body: `We may update these Terms periodically. The "Last updated" date below reflects the most recent revision. Continued use of the website after changes constitutes acceptance of the revised Terms.`,
+      },
+      {
+        title: 'Contact',
+        body: `Questions about these Terms: contact@aijohn.org · AIJOHN Technosoft Private Limited, Jangareddygudem, Andhra Pradesh 534447, India.`,
+      },
+    ],
+  },
+};
+
+function SimpleTextPage({ title }) {
+  const content = LEGAL_CONTENT[title];
+  useEffect(() => {
+    document.title = `${title} | AIJOHN Technosoft`;
+    window.scrollTo(0, 0);
+  }, [title]);
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: '#fff',
+      paddingTop: 120,
+      paddingBottom: 100,
+    }}>
+      <div style={{ maxWidth: 740, margin: '0 auto', padding: '0 24px' }}>
+        {/* Header */}
+        <div style={{ marginBottom: 56, borderBottom: '1px solid rgba(0,0,0,0.08)', paddingBottom: 32 }}>
+          <p style={{ fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.12em', textTransform: 'uppercase', color: '#2176AE', marginBottom: 14 }}>
+            Legal
+          </p>
+          <h1 style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', fontWeight: 900, color: '#0a0614', letterSpacing: '-0.025em', lineHeight: 1.15, marginBottom: 16 }}>
+            {title}
+          </h1>
+          <p style={{ fontSize: '0.875rem', color: '#9ca3af', fontWeight: 500 }}>
+            Last updated: {content?.updated ?? 'April 2026'} · AIJOHN Technosoft Private Limited
+          </p>
+        </div>
+
+        {/* Sections */}
+        {content?.sections.map((sec, i) => (
+          <div key={i} style={{ marginBottom: 40 }}>
+            <h2 style={{ fontSize: '1.05rem', fontWeight: 800, color: '#0a0614', marginBottom: 12, letterSpacing: '-0.01em' }}>
+              {sec.title}
+            </h2>
+            <p style={{ fontSize: '0.96rem', color: '#4b5563', lineHeight: 1.85 }}>
+              {sec.body}
+            </p>
+          </div>
+        ))}
+
+        {/* Footer links */}
+        <div style={{ marginTop: 64, paddingTop: 32, borderTop: '1px solid rgba(0,0,0,0.08)', display: 'flex', gap: 20, flexWrap: 'wrap' }}>
+          <a href="/" style={{ fontSize: '0.88rem', fontWeight: 700, color: '#2176AE', textDecoration: 'none' }}>← Back to Home</a>
+          <a href="/contact" style={{ fontSize: '0.88rem', fontWeight: 700, color: '#2176AE', textDecoration: 'none' }}>Contact Us →</a>
+        </div>
+      </div>
+    </div>
   );
 }
 

@@ -89,7 +89,7 @@ const MARQUEE_ITEMS = [
   { icon: <Users size={13}/>,  value: '3+ Yrs',  label: 'Zero Team Turnover'       },
   { icon: <Shield size={13}/>, value: '99.9%',   label: 'Uptime SLA Delivered'     },
   { icon: <Award size={13}/>,  value: 'IIT/NIT', label: 'Top 1% Engineers'         },
-  { icon: <Brain size={13}/>,  value: '$62B',    label: 'AI SaaS Market by 2025'   },
+  { icon: <Brain size={13}/>,  value: '$300B+',   label: 'AI Market by 2026'         },
   { icon: <Globe size={13}/>,  value: '35%',     label: 'AI SaaS Annual Growth'    },
 ];
 
@@ -207,10 +207,10 @@ const TECH_GROUPS = [
     techs: [
       { name: 'GPT-4o',      img: 'https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg' },
       { name: 'Claude AI',   img: 'https://upload.wikimedia.org/wikipedia/commons/7/78/Anthropic_logo.svg' },
-      { name: 'LangChain',   img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg' },
+      { name: 'LangChain',   img: 'https://raw.githubusercontent.com/langchain-ai/langchain/master/docs/static/img/favicon.ico' },
       { name: 'OpenAI API',  img: 'https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg' },
-      { name: 'Pinecone',    img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg' },
-      { name: 'HuggingFace', img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg' },
+      { name: 'Pinecone',    img: 'https://avatars.githubusercontent.com/u/54333248?s=200&v=4' },
+      { name: 'HuggingFace', img: 'https://huggingface.co/front/assets/huggingface_logo-noborder.svg' },
       { name: 'TensorFlow',  img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg' },
       { name: 'PyTorch',     img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pytorch/pytorch-original.svg' },
     ],
@@ -359,7 +359,6 @@ function HeroSection() {
         ref={videoRef}
         className="hero-video-bg"
         autoPlay muted playsInline preload="auto"
-        poster=""
         onEnded={handleVideoEnded}
         onCanPlayThrough={() => setVideoLoaded(true)}
         style={{
@@ -780,7 +779,7 @@ function EstorasSection() {
             <div className="home-estoras__stats">
               {[
                 { val: '15+',   lbl: 'Months Together', cls: '' },
-                { val: 'N.A.',  lbl: 'Market Presence', cls: 'home-estoras__stat-val--teal' },
+                { val: 'N. Am.',  lbl: 'Market Presence', cls: 'home-estoras__stat-val--teal' },
                 { val: 'F500',  lbl: 'Client Caliber',  cls: 'home-estoras__stat-val--green' },
               ].map(s => (
                 <div key={s.lbl} className="home-estoras__stat">

@@ -18,13 +18,13 @@ const INFO_ITEMS = [
   { icon:<Mail size={18}/>, color:'#2176AE', label:'Email', value:'contact@aijohn.org', href:'mailto:contact@aijohn.org' },
   { icon:<Phone size={18}/>, color:'#7C3AED', label:'Phone', value:'+91 77365 22887', href:'tel:+917736522887' },
   { icon:<Globe size={18}/>, color:'#0891B2', label:'Website', value:'aijohn.in', href:'https://aijohn.in' },
-  { icon:<MapPin size={18}/>, color:'#059669', label:'Location', value:'Kochi, Kerala, India', href:null },
+  { icon:<MapPin size={18}/>, color:'#059669', label:'Location', value:'Jangareddygudem, Andhra Pradesh, India', href:null },
 ];
 
 export default function Contact() {
   useSEO({
     title: 'Contact',
-    description: 'Start your SaaS project with AIJOHN Technosoft. Book a free 30-minute call, email contact@aijohn.in, or send your brief and get a fixed-price quote back in 48 hours.',
+    description: 'Start your SaaS project with AIJOHN Technosoft. Book a free 30-minute call, email contact@aijohn.org, or send your brief and get a fixed-price quote back in 48 hours.',
     path: '/contact',
   });
   const formRef = useRef(null);
@@ -54,7 +54,12 @@ export default function Contact() {
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setStatus('loading');
     try {
-      await emailjs.sendForm('YOUR_SERVICE_ID','YOUR_TEMPLATE_ID', formRef.current, 'YOUR_PUBLIC_KEY');
+      await emailjs.sendForm(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        formRef.current,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+      );
       setStatus('success');
       setForm({ name:'', company:'', email:'', phone:'', description:'', budget:'' });
     } catch (err) {
