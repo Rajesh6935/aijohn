@@ -184,47 +184,93 @@ function DiagramLine({ vertical = false, delay = 0 }) {
 
 /* ══════════ DATA ══════════ */
 const MODELS = [
-  { name: 'Claude 3.5 Sonnet', maker: 'Anthropic', color: '#7C3AED', emoji: '🟣',
+  { name: 'Claude Opus 4', maker: 'Anthropic', color: '#7C3AED',
+    bestFor: 'Reasoning & Code',
+    logo: (
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-label="Anthropic logo">
+        <rect width="28" height="28" rx="8" fill="#7C3AED" fillOpacity="0.15"/>
+        <path d="M14 6L19.5 19H8.5L14 6Z" fill="#7C3AED" stroke="#7C3AED" strokeWidth="1" strokeLinejoin="round"/>
+        <path d="M10 14h8" stroke="#c4b5fd" strokeWidth="1.5" strokeLinecap="round"/>
+      </svg>
+    ),
     strength: 'Reasoning · Code · Safety',
-    desc: 'Best-in-class for complex reasoning, code generation, and enterprise-grade safety. Our default for agentic workflows.',
+    desc: 'Anthropic\'s most powerful model. Exceptional at complex multi-step reasoning, agentic coding, and enterprise-grade safe deployments. Our default for autonomous workflows.',
     tags: ['Tool Use', 'Long Context', 'Code Gen', 'Vision'] },
-  { name: 'GPT-4o', maker: 'OpenAI', color: '#10b981', emoji: '⚫',
+  { name: 'GPT-4o', maker: 'OpenAI', color: '#10A37F',
+    bestFor: 'Multimodal Tasks',
+    logo: (
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-label="OpenAI logo">
+        <rect width="28" height="28" rx="8" fill="#10A37F" fillOpacity="0.15"/>
+        <path d="M14 5C9.029 5 5 9.029 5 14s4.029 9 9 9 9-4.029 9-9-4.029-9-9-9zm0 3a6 6 0 0 1 0 12A6 6 0 0 1 14 8zm0 3a3 3 0 0 0 0 6 3 3 0 0 0 0-6z" fill="#10A37F"/>
+      </svg>
+    ),
     strength: 'Speed · Multimodal · Ecosystem',
-    desc: 'Fast, multimodal, and massively adopted. Ideal for customer-facing features needing real-time streaming responses.',
-    tags: ['Streaming', 'Vision', 'Function Calling', 'DALL-E'] },
-  { name: 'Gemini 1.5 Pro', maker: 'Google', color: '#3b82f6', emoji: '🔵',
-    strength: '1M Context · Grounding · Search',
-    desc: '1M token context window with native Google Search grounding — exceptional for document-heavy RAG at scale.',
-    tags: ['1M Context', 'Grounding', 'Multimodal', 'Search'] },
-  { name: 'Llama 3.1 70B', maker: 'Meta · Self-hosted', color: '#f59e0b', emoji: '🟡',
+    desc: 'Fast, natively multimodal, massively adopted. Ideal for customer-facing features needing real-time streaming audio, image, and text responses in a single API call.',
+    tags: ['Streaming', 'Vision', 'Function Calling', 'Audio'] },
+  { name: 'Gemini 2.0 Flash', maker: 'Google DeepMind', color: '#4285F4',
+    bestFor: 'Long Context',
+    logo: (
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-label="Google Gemini logo">
+        <rect width="28" height="28" rx="8" fill="#4285F4" fillOpacity="0.15"/>
+        <path d="M14 6L16.5 12.5L23 14L16.5 15.5L14 22L11.5 15.5L5 14L11.5 12.5L14 6Z" fill="#4285F4"/>
+      </svg>
+    ),
+    strength: '1M Context · Speed · Multimodal',
+    desc: 'Google\'s fastest frontier model with a massive context window and native multimodal understanding. Our pick for document-heavy RAG and real-time, low-latency use cases.',
+    tags: ['1M Context', 'Grounding', 'Multimodal', 'Fast'] },
+  { name: 'Llama 3.3 70B', maker: 'Meta · Self-hosted', color: '#0082FB',
+    bestFor: 'Open Source / On-Prem',
+    logo: (
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-label="Meta Llama logo">
+        <rect width="28" height="28" rx="8" fill="#0082FB" fillOpacity="0.15"/>
+        <path d="M8 10c0-2.21 1.343-4 3-4s3 1.79 3 4v8c0 2.21-1.343 4-3 4S8 20.21 8 18v-8z" fill="#0082FB" fillOpacity="0.7"/>
+        <path d="M14 12c0-1.657.895-3 2-3s2 1.343 2 3v4c0 1.657-.895 3-2 3s-2-1.343-2-3v-4z" fill="#0082FB"/>
+      </svg>
+    ),
     strength: 'Privacy · Cost · Control',
-    desc: 'Open-source powerhouse for regulated industries. Deploy on-premise or in your VPC — data never leaves your cloud.',
+    desc: 'Open-source powerhouse for regulated industries. Deploy in your VPC — data never leaves your cloud. Ideal for HIPAA, GDPR, and financial services compliance.',
     tags: ['On-Prem', 'HIPAA-ready', 'LoRA Fine-tune', 'Low Cost'] },
 ];
 
 const CAPABILITIES = [
-  { Icon: MessageSquare, color: '#7C3AED', title: 'LLM Integration & Chat',
+  { Icon: MessageSquare, color: '#7C3AED',
+    image: 'https://images.unsplash.com/photo-1677442135968-6db3b0025e95?auto=format&fit=crop&w=600&q=60',
+    title: 'LLM Integration & Chat',
     desc: 'Multi-provider LLM routing with automatic fallback, streaming, cost controls, and context window management. We wire GPT-4o, Claude, and Gemini into a single abstraction layer.',
     tags: ['OpenAI', 'Claude', 'Gemini', 'Streaming'] },
-  { Icon: Database, color: '#9333EA', title: 'RAG Pipelines',
+  { Icon: Database, color: '#9333EA',
+    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&q=60',
+    title: 'RAG Pipelines',
     desc: 'Retrieval-augmented generation giving your model grounded answers from your own data. Chunking, embedding, reranking, and citation with sub-100ms retrieval.',
     tags: ['pgvector', 'Pinecone', 'Reranking', 'RAGAS eval'] },
-  { Icon: Search, color: '#6D28D9', title: 'Vector Search at Scale',
+  { Icon: Search, color: '#6D28D9',
+    image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=600&q=60',
+    title: 'Vector Search at Scale',
     desc: 'Semantic search across millions of documents. Hybrid BM25 + dense retrieval with Pinecone, pgvector, or Weaviate — sub-100ms at scale.',
     tags: ['Pinecone', 'Weaviate', 'Hybrid Search', 'FAISS'] },
-  { Icon: Workflow, color: '#7C3AED', title: 'AI Agents & Automation',
+  { Icon: Workflow, color: '#7C3AED',
+    image: 'https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=600&q=60',
+    title: 'AI Agents & Automation',
     desc: 'Autonomous agents with tool use, persistent memory, and goal-directed execution. LangGraph multi-agent orchestration for complex multi-step tasks.',
     tags: ['LangGraph', 'Tool Use', 'Memory', 'Multi-agent'] },
-  { Icon: Cpu, color: '#9333EA', title: 'Fine-tuning & Alignment',
+  { Icon: Cpu, color: '#9333EA',
+    image: 'https://images.unsplash.com/photo-1509228468518-180dd4864904?auto=format&fit=crop&w=600&q=60',
+    title: 'Fine-tuning & Alignment',
     desc: 'Domain-specific adaptation using LoRA and QLoRA on AWS SageMaker or local GPU. Instruction tuning, RLHF, and DPO for models that behave exactly as required.',
     tags: ['LoRA', 'QLoRA', 'SageMaker', 'HuggingFace'] },
-  { Icon: Eye, color: '#6D28D9', title: 'Computer Vision',
+  { Icon: Eye, color: '#6D28D9',
+    image: 'https://images.unsplash.com/photo-1535378917042-10a22c95931a?auto=format&fit=crop&w=600&q=60',
+    title: 'Computer Vision',
     desc: 'Image classification, object detection, OCR, document parsing, and video analysis. From annotated dataset to production API with confidence scoring.',
     tags: ['YOLO', 'GPT-4V', 'Tesseract', 'OpenCV'] },
-  { Icon: BarChart3, color: '#7C3AED', title: 'Predictive Analytics',
+  { Icon: BarChart3, color: '#7C3AED',
+    image: 'https://images.unsplash.com/photo-1611974789855-9c2a0a7236a3?auto=format&fit=crop&w=600&q=60',
+    title: 'Predictive Analytics',
     desc: 'Time-series forecasting, churn prediction, fraud detection, and demand planning — trained on your data, deployed as real-time inference APIs.',
     tags: ['XGBoost', 'LSTM', 'Prophet', 'Scikit-learn'] },
-  { Icon: Network, color: '#9333EA', title: 'MLOps & Model Serving',
+  { Icon: Network, color: '#9333EA',
+    image: 'https://images.unsplash.com/photo-1558494949-ef010cbdcc31?auto=format&fit=crop&w=600&q=60',
+    title: 'MLOps & Model Serving',
     desc: 'Model registry, CI/CD for ML, A/B testing, canary deploys, drift detection, and cost dashboards. We run your models like production software.',
     tags: ['MLflow', 'vLLM', 'Ray Serve', 'Prometheus'] },
 ];
@@ -239,7 +285,7 @@ const PROCESS = [
 ];
 
 const STACK_GROUPS = [
-  { label: 'LLM & Foundation',   items: ['Claude 3.5 Sonnet', 'GPT-4o', 'Gemini 1.5 Pro', 'Llama 3.1', 'Mistral'] },
+  { label: 'LLM & Foundation',   items: ['Claude Opus 4', 'GPT-4o', 'Gemini 2.0 Flash', 'Llama 3.3 70B', 'Mistral Large'] },
   { label: 'Orchestration',      items: ['LangChain', 'LangGraph', 'LlamaIndex', 'Semantic Kernel', 'CrewAI'] },
   { label: 'Vector & Retrieval', items: ['Pinecone', 'pgvector', 'Weaviate', 'Chroma', 'FAISS', 'Qdrant'] },
   { label: 'Training & Infra',   items: ['HuggingFace', 'SageMaker', 'PyTorch', 'vLLM', 'Ray Serve', 'MLflow'] },
@@ -355,15 +401,16 @@ export default function AIMLPage() {
                 <div className="ai-model-card__accent" />
                 <div className="ai-model-card__header">
                   <motion.div className="ai-model-card__logo-wrap"
-                    animate={{ rotate: [0, 5, -5, 0] }}
-                    transition={{ duration: 4 + i, repeat: Infinity, delay: i * 0.8 }}>
-                    {m.emoji}
+                    animate={{ scale: [1, 1.08, 1] }}
+                    transition={{ duration: 3 + i * 0.6, repeat: Infinity, delay: i * 0.8 }}>
+                    {m.logo}
                   </motion.div>
                   <div>
                     <div className="ai-model-card__name">{m.name}</div>
                     <div className="ai-model-card__maker">{m.maker}</div>
                   </div>
                 </div>
+                <div className="ai-model-card__best-for">Best for: <strong>{m.bestFor}</strong></div>
                 <div className="ai-model-card__strength">{m.strength}</div>
                 <p className="ai-model-card__desc">{m.desc}</p>
                 <div className="ai-model-card__tags">{m.tags.map(t => <span key={t}>{t}</span>)}</div>
@@ -458,23 +505,31 @@ export default function AIMLPage() {
         </div>
       </section>
 
-      {/* ══════ 4. CAPABILITIES CAROUSEL — Light with flowing beams ══════ */}
+      {/* ══════ 4. CAPABILITIES CAROUSEL — Apple-style with image backgrounds ══════ */}
       <HScrollCarousel theme="light" items={CAPABILITIES}
         title="Eight AI disciplines."
         subtitle="Every capability production-tested, not prototype-grade."
         renderItem={(cap, i) => (
-          <motion.div key={cap.title} className="ai-hcard ai-hcard--light" style={{ '--hc': cap.color }}
+          <motion.div key={cap.title} className="ai-hcard ai-hcard--apple" style={{ '--hc': cap.color }}
             initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }} transition={{ delay: i * 0.06, duration: 0.5 }}
             whileHover={{ y: -10, transition: { type: 'spring', stiffness: 300, damping: 20 } }}>
-            <div className="ai-hcard__accent-line" />
-            <motion.div className="ai-hcard__icon ai-hcard__icon--light"
-              animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 3 + i * 0.4, repeat: Infinity, delay: i * 0.3 }}>
-              <cap.Icon size={22} />
-            </motion.div>
-            <h3 className="ai-hcard__title ai-hcard__title--light">{cap.title}</h3>
-            <p className="ai-hcard__desc ai-hcard__desc--light">{cap.desc}</p>
-            <div className="ai-hcard__tags ai-hcard__tags--light">{cap.tags.map(t => <span key={t}>{t}</span>)}</div>
+            {/* Background image */}
+            <div className="ai-hcard__bg-img" style={{ backgroundImage: `url(${cap.image})` }} />
+            {/* Gradient overlay */}
+            <div className="ai-hcard__bg-grad" style={{ '--hc': cap.color }} />
+            {/* Shimmer border */}
+            <div className="ai-hcard__shimmer-border" />
+            {/* Content */}
+            <div className="ai-hcard__content">
+              <motion.div className="ai-hcard__icon ai-hcard__icon--apple"
+                animate={{ scale: [1, 1.1, 1] }} transition={{ duration: 3 + i * 0.4, repeat: Infinity, delay: i * 0.3 }}>
+                <cap.Icon size={22} />
+              </motion.div>
+              <h3 className="ai-hcard__title ai-hcard__title--apple">{cap.title}</h3>
+              <p className="ai-hcard__desc ai-hcard__desc--apple">{cap.desc}</p>
+              <div className="ai-hcard__tags ai-hcard__tags--apple">{cap.tags.map(t => <span key={t}>{t}</span>)}</div>
+            </div>
           </motion.div>
         )}
       />

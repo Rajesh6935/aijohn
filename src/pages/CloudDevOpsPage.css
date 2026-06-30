@@ -191,6 +191,10 @@
   overflow: hidden; cursor: default; transition: box-shadow 0.35s, transform 0.35s;
 }
 .cd-provider-card:hover { box-shadow: 0 16px 56px rgba(8,145,178,0.20); }
+.cd-provider-card__animated-bg {
+  position: absolute; inset: 0; border-radius: 22px; pointer-events: none; z-index: 0;
+  background-size: 200% 200%;
+}
 .cd-provider-card__glow {
   position: absolute; inset: 0;
   background: radial-gradient(ellipse 70% 60% at 50% -10%, color-mix(in srgb, var(--pc) 12%, transparent), transparent 70%);
@@ -372,6 +376,13 @@
   transition: box-shadow 0.3s, transform 0.3s;
 }
 .cd-hcard--light:hover { box-shadow: 0 16px 56px rgba(8,145,178,0.18); }
+.cd-hcard__corner-badge {
+  position: absolute; top: 14px; right: 14px; width: 28px; height: 28px;
+  border-radius: 8px; display: flex; align-items: center; justify-content: center;
+  background: color-mix(in srgb, var(--hc) 12%, #f0fbff);
+  border: 1px solid color-mix(in srgb, var(--hc) 25%, transparent);
+  color: var(--hc); cursor: default; z-index: 2;
+}
 .cd-hcard__accent-line {
   position: absolute; top: 0; left: 0; right: 0; height: 3px;
   background: linear-gradient(90deg, var(--hc), color-mix(in srgb, var(--hc) 40%, #a5f3fc));

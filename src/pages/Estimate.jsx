@@ -86,28 +86,8 @@ const PROJECT_TYPES = [
     plain: 'Get something live fast to test the idea',
     examples: '6–8 week · Lean · Investor-ready',
   },
-  {
-    id: 'automation', color: '#7C3AED',
-    gradient: 'linear-gradient(135deg,#4c1d95,#7C3AED)',
-    image: 'https://images.unsplash.com/photo-1518186285589-2f7649de83e0?auto=format&fit=crop&w=600&q=60',
-    emoji: '⚙️',
-    label: 'Automation / Integration',
-    plain: 'Connect systems and automate workflows',
-    examples: 'CRM · Zapier-style · Data pipelines',
-  },
 ];
 
-/* ── Features — plain English, client-friendly, 8 options max ── */
-const FEATURES_SIMPLE = [
-  { id: 'users',    emoji: '👤', color: '#2176AE', label: 'User Accounts',    sub: 'Sign up & log in',           weeks: 1,   cost: 2000 },
-  { id: 'payments', emoji: '💳', color: '#059669', label: 'Take Payments',    sub: 'Cards & subscriptions',      weeks: 1.5, cost: 3000 },
-  { id: 'admin',    emoji: '📊', color: '#7C3AED', label: 'Admin Dashboard',  sub: 'Manage from one place',      weeks: 2,   cost: 4000 },
-  { id: 'notify',   emoji: '🔔', color: '#D97706', label: 'Notifications',    sub: 'Email & push alerts',        weeks: 1,   cost: 1800 },
-  { id: 'search',   emoji: '🔍', color: '#0891B2', label: 'Search & Filters', sub: 'Find anything fast',         weeks: 1,   cost: 2000 },
-  { id: 'ai',       emoji: '🤖', color: '#EC4899', label: 'AI Assistant',     sub: 'Smart chat & automation',    weeks: 2,   cost: 5000 },
-  { id: 'realtime', emoji: '⚡', color: '#F97316', label: 'Live Updates',     sub: 'Real-time chat & tracking',  weeks: 1.5, cost: 3500 },
-  { id: 'files',    emoji: '📁', color: '#DC2626', label: 'File Uploads',     sub: 'Photos, docs & videos',      weeks: 0.5, cost: 1200 },
-];
 
 /* ── Support packages — replaces raw budget picker ── */
 const SUPPORT_PACKAGES = [
@@ -158,6 +138,19 @@ const SUPPORT_PACKAGES = [
   },
 ];
 
+/* ── Features — expanded with images, 9 items in 3 rows of 3 ── */
+const FEATURES_SIMPLE = [
+  { id: 'users',    emoji: '👤', color: '#2176AE', label: 'User Accounts',      sub: 'Sign up & log in',            img: 'https://images.unsplash.com/photo-1633174524827-db00a6b7bc74?auto=format&fit=crop&w=400&q=50', weeks: 1,   cost: 700  },
+  { id: 'payments', emoji: '💳', color: '#2176AE', label: 'Take Payments',      sub: 'Cards & subscriptions',       img: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&w=400&q=50', weeks: 1.5, cost: 1000 },
+  { id: 'admin',    emoji: '📊', color: '#2176AE', label: 'Admin Dashboard',    sub: 'Manage from one place',       img: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=400&q=50', weeks: 2,   cost: 1400 },
+  { id: 'notify',   emoji: '🔔', color: '#2176AE', label: 'Notifications',      sub: 'Email & push alerts',         img: 'https://images.unsplash.com/photo-1596526131083-e8c633c948d2?auto=format&fit=crop&w=400&q=50', weeks: 1,   cost: 600  },
+  { id: 'search',   emoji: '🔍', color: '#2176AE', label: 'Search & Filters',   sub: 'Find anything fast',          img: 'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=400&q=50', weeks: 1,   cost: 700  },
+  { id: 'ai',       emoji: '🤖', color: '#2176AE', label: 'AI Assistant',       sub: 'Smart chat & automation',     img: 'https://images.unsplash.com/photo-1677442135703-1787eea5ce01?auto=format&fit=crop&w=400&q=50', weeks: 2,   cost: 1800 },
+  { id: 'realtime', emoji: '⚡', color: '#2176AE', label: 'Live Updates',        sub: 'Real-time chat & tracking',   img: 'https://images.unsplash.com/photo-1611532736597-de2d4265fba3?auto=format&fit=crop&w=400&q=50', weeks: 1.5, cost: 1200 },
+  { id: 'files',    emoji: '📁', color: '#2176AE', label: 'File Uploads',        sub: 'Photos, docs & videos',       img: 'https://images.unsplash.com/photo-1618477247222-acbdb0e159b3?auto=format&fit=crop&w=400&q=50', weeks: 0.5, cost: 400  },
+  { id: 'analytics',emoji: '📈', color: '#2176AE', label: 'Analytics',           sub: 'Track usage & growth',        img: 'https://images.unsplash.com/photo-1543286386-713bdd548da4?auto=format&fit=crop&w=400&q=50', weeks: 1,   cost: 800  },
+];
+
 /* ── Tech stacks ── */
 const TECH_STACKS = {
   basic:      { frontend: ['HTML / CSS / JS','WordPress / Webflow','Tailwind CSS'], backend: ['Static hosting','CMS integration','Contact forms'], infra: ['Netlify / Vercel','CDN delivery','SSL included'],        ai: [] },
@@ -169,18 +162,23 @@ const TECH_STACKS = {
   mvp:        { frontend: ['Next.js','TypeScript','Tailwind CSS'],            backend: ['Supabase (BaaS)','PostgreSQL','Vercel Serverless'],    infra: ['Vercel (deploy)','Supabase Storage','GitHub Actions'],  ai: [] },
 };
 
-/* ── Estimate calculator ── */
+/* ── Estimate calculator ──
+   BASE_COST = AIJOHN's actual price (what the client pays us)
+   NA rates are 4-5× that to show savings comparison
+── */
+const MAX_PROJECT_COST = 25000;
+
 function calcEstimate(typeIds, featureIds, packageId) {
   const ids = Array.isArray(typeIds) && typeIds.length ? typeIds : ['saas'];
   const BASE_WEEKS = { basic:2, saas:4, mobile:5, ai:5, ecommerce:4, enterprise:6, mvp:3 };
-  const BASE_COST  = { basic:3000, saas:8000, mobile:10000, ai:12000, ecommerce:9000, enterprise:14000, mvp:6000 };
+  const BASE_COST  = { basic:1000, saas:3000, mobile:3500, ai:4000, ecommerce:3200, enterprise:5000, mvp:2000 };
   const primaryId  = ids[0];
   let weeks = BASE_WEEKS[primaryId] || 4;
-  let cost  = BASE_COST[primaryId]  || 8000;
-  // Additional platforms share some codebase — 60% of base cost each
+  let cost  = BASE_COST[primaryId]  || 3000;
+  // Additional platforms share codebase — 60% of base each
   ids.slice(1).forEach(tId => {
     weeks = Math.max(weeks, BASE_WEEKS[tId] || 4);
-    cost += Math.round((BASE_COST[tId] || 8000) * 0.6);
+    cost += Math.round((BASE_COST[tId] || 3000) * 0.6);
   });
   featureIds.forEach(fId => {
     const f = FEATURES_SIMPLE.find(x => x.id === fId);
@@ -190,11 +188,19 @@ function calcEstimate(typeIds, featureIds, packageId) {
   const pkgMods = { launch:0.9, care:1.0, growth:1.1, partner:1.2 };
   cost = Math.round(cost * (pkgMods[packageId] || 1));
   const pkg = SUPPORT_PACKAGES.find(p => p.id === packageId) || SUPPORT_PACKAGES[0];
-  const aijohnMin = Math.round(cost * 0.63 / 1000) * 1000;  // 0.9 × 0.7 — 30% reduction
-  const aijohnMax = Math.round(cost * 0.77 / 1000) * 1000;  // 1.1 × 0.7 — 30% reduction
+  // ±10% range, rounded to nearest $500
+  let aijohnMin = Math.round(cost * 0.90 / 500) * 500;
+  let aijohnMax = Math.round(cost * 1.10 / 500) * 500;
+  // Flag large projects — cap display at $25K, prompt a call instead
+  const isLargeProject = aijohnMax > MAX_PROJECT_COST;
+  if (isLargeProject) {
+    aijohnMin = MAX_PROJECT_COST;
+    aijohnMax = MAX_PROJECT_COST;
+  }
   return {
     weeks: Math.ceil(weeks),
     pkg,
+    isLargeProject,
     aijohn: { min: aijohnMin, max: aijohnMax },
     na:     { min: Math.round(aijohnMin*4.0/1000)*1000, max: Math.round(aijohnMax*5.0/1000)*1000 },
     markets: MARKET_RATES.map(m => ({ ...m, min: m.highlight ? aijohnMin : Math.round(aijohnMin*m.multiplier/1000)*1000, max: m.highlight ? aijohnMax : Math.round(aijohnMax*m.multiplier/1000)*1000 })),
@@ -306,6 +312,7 @@ export default function Estimate() {
   /* ── UI state for which card selector to show ── */
   const [showCard, setShowCard]         = useState(null);  // null | 'types' | 'features' | 'budget'
   const [featuresConfirmed, setFeaturesConfirmed] = useState(false);
+  const shownCardsRef = useRef(new Set()); // track which cards have already been shown
 
   const [talkingMsgId, setTalkingMsgId] = useState(null);
 
@@ -465,7 +472,11 @@ export default function Estimate() {
         setPhase('result');
       }, 800);
     } else if (signal) {
-      setShowCard(signal);
+      // Only show a card selector once — prevent infinite re-triggering
+      if (!shownCardsRef.current.has(signal)) {
+        shownCardsRef.current.add(signal);
+        setShowCard(signal);
+      }
     }
   }
 
@@ -476,11 +487,41 @@ export default function Estimate() {
     }, 400);
   }, []); // intentionally empty — boot greeting once on mount
 
+  /* ── Detect garbage / nonsense input ── */
+  function isGarbage(text) {
+    const t = text.trim();
+    if (t.length < 2) return true;
+    // Mostly non-letter chars (symbols, numbers spam, random keyboard mashing)
+    const letterRatio = (t.match(/[a-zA-Z]/g) || []).length / t.length;
+    if (t.length > 3 && letterRatio < 0.35) return true;
+    // Repeated character spam (aaaa, zzzz, asdf, qwerty patterns)
+    if (/^(.)\1{3,}$/.test(t)) return true;
+    // Common keyboard mash patterns
+    if (/^[asdfghjklqwertyuiopzxcvbnm]{1,}$/i.test(t) && t.length <= 6 && t.length >= 4 && !/(the|and|for|you|this|that|what|want|build|app|web|site|need)/i.test(t)) return true;
+    return false;
+  }
+
   /* ── Send user message ── */
   const sendMessage = useCallback(async () => {
     const text = userInput.trim();
     if (!text || isTyping) return;
     setUserInput('');
+
+    // Reject garbage input with a polite clarification
+    if (isGarbage(text)) {
+      const newUserMsg = { role: 'user', text, id: Date.now() };
+      setMessages(prev => [...prev, newUserMsg]);
+      await new Promise(r => setTimeout(r, 600));
+      setIsTyping(true);
+      await new Promise(r => setTimeout(r, 900));
+      setIsTyping(false);
+      setMessages(prev => [...prev, {
+        role: 'assistant',
+        text: "Sorry, I didn't quite catch that! Could you tell me a bit about what you'd like to build?",
+        id: Date.now()
+      }]);
+      return;
+    }
 
     const newUserMsg = { role: 'user', text, id: Date.now() };
     setMessages(prev => [...prev, newUserMsg]);
@@ -585,6 +626,7 @@ export default function Estimate() {
     setExchange(0); setTokenCount(0); setProjectType([]); setFeatures([]);
     setBudget(null); setResult(null); setShowCard(null); setFeaturesConfirmed(false);
     projectTypeRef.current = []; featuresRef.current = []; budgetRef.current = null;
+    shownCardsRef.current = new Set();
     setTimeout(() => {
       setMessages([{ role: 'assistant', text: getFallback('greeting'), id: Date.now() }]);
     }, 300);
@@ -737,26 +779,29 @@ export default function Estimate() {
                     </motion.div>
                   )}
 
-                  {/* ── 2. Features — simple emoji tiles ── */}
+                  {/* ── 2. Features — image tiles, 3×3 grid ── */}
                   {showCard === 'features' && !isTyping && (
                     <motion.div className="john-card-selector"
                       initial={{ opacity:0, y:16 }} animate={{ opacity:1, y:0 }}
                       exit={{ opacity:0, y:-8 }} transition={{ duration:0.35 }}>
-                      <div className="john-card-selector__label">What should your product be able to do? ↓</div>
+                      <div className="john-card-selector__label">What should your product be able to do? ↓ <span className="john-card-selector__hint">select all that apply</span></div>
                       <div className="john-feat-grid">
                         {FEATURES_SIMPLE.map((item, i) => (
                           <motion.button key={item.id}
                             className={`john-feat-tile ${features.includes(item.id) ? 'selected' : ''}`}
-                            style={{ '--feat-color': item.color }}
                             onClick={() => toggleFeature(item.id)}
                             custom={i} initial="hidden" animate="visible" variants={fadeUp}
-                            whileHover={{ scale:1.03 }}>
-                            <div className="john-feat-tile__emoji">{item.emoji}</div>
-                            <div className="john-feat-tile__label">{item.label}</div>
-                            <div className="john-feat-tile__sub">{item.sub}</div>
+                            whileHover={{ y:-3, scale:1.02 }}>
+                            <div className="john-feat-tile__bg" style={{ backgroundImage:`url(${item.img})` }} />
+                            <div className="john-feat-tile__overlay" />
                             {features.includes(item.id) && (
                               <div className="john-feat-tile__check"><CheckCircle2 size={13}/></div>
                             )}
+                            <div className="john-feat-tile__content">
+                              <div className="john-feat-tile__emoji">{item.emoji}</div>
+                              <div className="john-feat-tile__label">{item.label}</div>
+                              <div className="john-feat-tile__sub">{item.sub}</div>
+                            </div>
                           </motion.button>
                         ))}
                       </div>
@@ -879,8 +924,16 @@ export default function Estimate() {
                   </span>
                 </div>
                 <div className="john-est-card__price">
-                  ${result.aijohn.min.toLocaleString()} – ${result.aijohn.max.toLocaleString()}
+                  {result.isLargeProject
+                    ? <>$25,000+ <span className="john-est-card__price-note">Let's talk scope</span></>
+                    : <>${result.aijohn.min.toLocaleString()} – ${result.aijohn.max.toLocaleString()}</>
+                  }
                 </div>
+                {result.isLargeProject && (
+                  <div className="john-est-card__large-note">
+                    🚀 This is a larger build — exact pricing depends on final scope. Book a free call and we'll give you a fixed quote within 48 hours.
+                  </div>
+                )}
                 <div className="john-est-card__meta-row">
                   <div className="john-est-card__timeline">
                     <Clock size={12}/> {result.weeks} weeks to production

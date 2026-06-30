@@ -89,7 +89,7 @@ const MARQUEE_ITEMS = [
   { icon: <Users size={13}/>,  value: '3+ Yrs',  label: 'Zero Team Turnover'       },
   { icon: <Shield size={13}/>, value: '99.9%',   label: 'Uptime SLA Delivered'     },
   { icon: <Award size={13}/>,  value: 'IIT/NIT', label: 'Top 1% Engineers'         },
-  { icon: <Brain size={13}/>,  value: '$62B',    label: 'AI SaaS Market by 2025'   },
+  { icon: <Brain size={13}/>,  value: '$300B+',   label: 'AI Market by 2026'         },
   { icon: <Globe size={13}/>,  value: '35%',     label: 'AI SaaS Annual Growth'    },
 ];
 
@@ -207,10 +207,10 @@ const TECH_GROUPS = [
     techs: [
       { name: 'GPT-4o',      img: 'https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg' },
       { name: 'Claude AI',   img: 'https://upload.wikimedia.org/wikipedia/commons/7/78/Anthropic_logo.svg' },
-      { name: 'LangChain',   img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg' },
+      { name: 'LangChain',   img: 'https://raw.githubusercontent.com/langchain-ai/langchain/master/docs/static/img/favicon.ico' },
       { name: 'OpenAI API',  img: 'https://upload.wikimedia.org/wikipedia/commons/0/04/ChatGPT_logo.svg' },
-      { name: 'Pinecone',    img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg' },
-      { name: 'HuggingFace', img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg' },
+      { name: 'Pinecone',    img: 'https://avatars.githubusercontent.com/u/54333248?s=200&v=4' },
+      { name: 'HuggingFace', img: 'https://huggingface.co/front/assets/huggingface_logo-noborder.svg' },
       { name: 'TensorFlow',  img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tensorflow/tensorflow-original.svg' },
       { name: 'PyTorch',     img: 'https://cdn.jsdelivr.net/gh/devicons/devicon/icons/pytorch/pytorch-original.svg' },
     ],
@@ -280,9 +280,9 @@ const TESTIMONIALS = [
     rating: 5, initials: 'AL', color: '#0891b2',
   },
   {
-    quote: "We came with a rough concept and they returned a full architecture doc in 3 days. The MVP was live in 6 weeks, on budget. Our investors were genuinely impressed with the speed and the code quality. Best engineering partner we've worked with.",
-    author: 'Marcus Osei', role: 'Founder & CEO', company: 'Logiflex', stage: 'Pre-Seed · AI SaaS',
-    rating: 5, initials: 'MO', color: '#16a34a',
+    quote: "We've partnered with AIJOHN across multiple projects under Archive Digital Marketing — from client platforms in real estate and e-commerce to custom marketing dashboards. Every delivery has been on time, on budget, and genuinely impressive in quality. They're the engineering team we trust when our clients need something built right.",
+    author: 'Daniel Kacic', role: 'General Management', company: 'Archive Digital Marketing', stage: 'archivedigital.com',
+    rating: 5, initials: 'DK', color: '#16a34a',
   },
 ];
 
@@ -346,20 +346,20 @@ function HeroSection() {
 
   return (
     <section className="home-hero">
-      {/* Slide background images — never shown on video slide */}
+      {/* Slide background images — slide 0 shows until video is ready */}
       {SLIDES.map((s, i) => (
         <div key={s.id}
-          className={`hero-slide-bg${(i === slide && !s.showVideo) ? ' hero-slide-bg--active' : ''}`}
+          className={`hero-slide-bg${(i === slide && (!s.showVideo || !videoLoaded)) ? ' hero-slide-bg--active' : ''}`}
           style={{ backgroundImage: `url(${s.bg})` }}
         />
       ))}
 
-      {/* Cinematic video — full opacity on slide 0, hidden on others */}
+      {/* Cinematic video — fades in over the image once buffered */}
       <video
         ref={videoRef}
         className="hero-video-bg"
         autoPlay muted playsInline preload="auto"
-        poster=""
+        poster={SLIDES[0].bg}
         onEnded={handleVideoEnded}
         onCanPlayThrough={() => setVideoLoaded(true)}
         style={{
@@ -780,7 +780,7 @@ function EstorasSection() {
             <div className="home-estoras__stats">
               {[
                 { val: '15+',   lbl: 'Months Together', cls: '' },
-                { val: 'N.A.',  lbl: 'Market Presence', cls: 'home-estoras__stat-val--teal' },
+                { val: 'N. Am.',  lbl: 'Market Presence', cls: 'home-estoras__stat-val--teal' },
                 { val: 'F500',  lbl: 'Client Caliber',  cls: 'home-estoras__stat-val--green' },
               ].map(s => (
                 <div key={s.lbl} className="home-estoras__stat">

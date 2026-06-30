@@ -8,17 +8,18 @@ import './Contact.css';
 
 const BUDGET_OPTIONS = [
   { value:'', label:'Select your budget range' },
+  { value:'<$2K', label:'Below $2,000' },
+  { value:'$2K–$5K', label:'$2,000 – $5,000' },
+  { value:'$5K–$10K', label:'$5,000 – $10,000' },
   { value:'$10K–$25K', label:'$10,000 – $25,000' },
   { value:'$25K–$50K', label:'$25,000 – $50,000' },
-  { value:'$50K–$100K', label:'$50,000 – $100,000' },
-  { value:'$100K+', label:'$100,000+' },
+  { value:'$50K+', label:'$50,000+' },
 ];
 
 const INFO_ITEMS = [
-  { icon:<Mail size={18}/>, color:'#2176AE', label:'Email', value:'contact@aijohn.org', href:'mailto:contact@aijohn.org' },
+  { icon:<Mail size={18}/>, color:'#2176AE', label:'Email', value:'contact@aijohn.in', href:'mailto:contact@aijohn.in' },
   { icon:<Phone size={18}/>, color:'#7C3AED', label:'Phone', value:'+91 77365 22887', href:'tel:+917736522887' },
   { icon:<Globe size={18}/>, color:'#0891B2', label:'Website', value:'aijohn.in', href:'https://aijohn.in' },
-  { icon:<MapPin size={18}/>, color:'#059669', label:'Location', value:'Kochi, Kerala, India', href:null },
 ];
 
 export default function Contact() {
@@ -54,7 +55,12 @@ export default function Contact() {
     if (Object.keys(errs).length) { setErrors(errs); return; }
     setStatus('loading');
     try {
-      await emailjs.sendForm('YOUR_SERVICE_ID','YOUR_TEMPLATE_ID', formRef.current, 'YOUR_PUBLIC_KEY');
+      await emailjs.sendForm(
+        import.meta.env.VITE_EMAILJS_SERVICE_ID,
+        import.meta.env.VITE_EMAILJS_TEMPLATE_ID,
+        formRef.current,
+        import.meta.env.VITE_EMAILJS_PUBLIC_KEY,
+      );
       setStatus('success');
       setForm({ name:'', company:'', email:'', phone:'', description:'', budget:'' });
     } catch (err) {
@@ -102,10 +108,25 @@ export default function Contact() {
               ))}
             </div>
 
+            {/* Office tiles — 2 India offices */}
+            <div className="contact-loc-heading">Location</div>
+            <div className="contact-offices-row">
+              <div className="contact-loc-tile">
+                <div className="contact-loc-tile__label">Headquarters</div>
+                <div className="contact-loc-tile__name">AIJohn HQ</div>
+                <div className="contact-loc-tile__addr">Jangareddygudem, AP 534447, India</div>
+              </div>
+              <div className="contact-loc-tile">
+                <div className="contact-loc-tile__label">New Office</div>
+                <div className="contact-loc-tile__name">AIJohn Vijayawada</div>
+                <div className="contact-loc-tile__addr">Vijayawada, Andhra Pradesh, India</div>
+              </div>
+            </div>
+
             <div className="contact-estoras">
-              <span className="contact-estoras__badge">🤝 Strategic Partner</span>
+              <span className="contact-estoras__badge">🌐 Global Office</span>
               <div className="contact-estoras__name">Estoras Group</div>
-              <div className="contact-estoras__loc"><MapPin size={11}/> Vancouver, Canada</div>
+              <div className="contact-estoras__loc"><Globe size={11}/> Vancouver, Canada</div>
               <p className="contact-estoras__desc">North American clients are served through our Estoras Group partnership — global delivery, enterprise accountability.</p>
             </div>
 
@@ -179,14 +200,14 @@ export default function Contact() {
                       {errors.description && <span className="cf-err">{errors.description}</span>}
                     </div>
                     {status==='error' && (
-                      <div className="cf-err-banner">Something went wrong. Email us at contact@aijohn.org</div>
+                      <div className="cf-err-banner">Something went wrong. Email us at contact@aijohn.in</div>
                     )}
                     <button type="submit" className="btn btn-primary cf-submit" disabled={status==='loading'}>
                       {status==='loading'
                         ? <span className="cf-spinner"/>
                         : <><Send size={15}/>Send Message</>}
                     </button>
-                    <p className="cf-note">Or email us directly at <a href="mailto:contact@aijohn.org">contact@aijohn.org</a></p>
+                    <p className="cf-note">Or email us directly at <a href="mailto:contact@aijohn.in">contact@aijohn.in</a></p>
                   </motion.form>
                 )}
               </AnimatePresence>

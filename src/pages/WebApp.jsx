@@ -1,11 +1,11 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { motion, useMotionValue, useTransform, useSpring } from 'framer-motion';
+import { motion, useMotionValue, useTransform, useSpring, useInView } from 'framer-motion';
 import {
   ArrowRight, Monitor, Tablet, Smartphone, Zap, Shield, Database,
   BarChart3, Brain, Code2, Cloud, RefreshCw, CheckCircle2,
   Layers, Lock, Activity, LayoutDashboard, GitBranch,
-  Globe, Search, Cpu, Boxes, Rocket, Wrench, Sparkles,
+  Globe, Search, Cpu, Boxes, Rocket, Wrench, Sparkles, Workflow,
 } from 'lucide-react';
 import PageWrapper from '../components/PageWrapper';
 import { useSEO } from '../utils/seo';
@@ -48,6 +48,28 @@ function TiltCard({ children, className, style }) {
   );
 }
 
+/* ─────────────────────── Animated Counter ─────────────────────── */
+function Counter({ to, suffix = '', duration = 1800 }) {
+  const [count, setCount] = useState(0);
+  const ref = useRef(null);
+  const inView = useInView(ref, { once: true, margin: '-60px' });
+
+  useEffect(() => {
+    if (!inView) return;
+    let start = null;
+    const step = (ts) => {
+      if (!start) start = ts;
+      const progress = Math.min((ts - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      setCount(Math.round(ease * to));
+      if (progress < 1) requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }, [inView, to, duration]);
+
+  return <span ref={ref}>{count}{suffix}</span>;
+}
+
 /* ─────────────────────── data ─────────────────────── */
 const TIERS = [
   {
@@ -84,52 +106,52 @@ const TIERS = [
 
 const BUILDS = [
   {
-    Icon: LayoutDashboard, color: '#2176ae',
-    iconAnim: { animate: { scale: [1, 1.05, 1] }, transition: { duration: 3, repeat: Infinity } },
+    Icon: Brain, color: '#7c3aed',
+    iconAnim: { animate: { scale: [1, 1.08, 1] }, transition: { duration: 2.2, repeat: Infinity } },
+    hoverAnim: { scale: 1.3, rotate: 10 },
+    title: 'LLM-Powered Applications',
+    desc: 'Chat interfaces, RAG pipelines, and autonomous agents built with Claude Opus 4, GPT-4o, and Gemini — streamed, cached, and cost-controlled for production.',
+    tags: ['Claude / GPT-4o', 'RAG pipelines', 'Streaming UI', 'LangGraph agents'],
+  },
+  {
+    Icon: Workflow, color: '#2176ae',
+    iconAnim: { animate: { rotate: [0, 8, -8, 0] }, transition: { duration: 3.5, repeat: Infinity } },
     hoverAnim: { scale: 1.25, rotate: -5 },
-    title: 'SaaS Platforms',
-    desc: 'Multi-tenant subscription products with workspace isolation, billing, and RBAC — architected to grow from 10 users to 100,000.',
-    tags: ['Multi-tenant', 'Subscription billing', 'RBAC', 'Usage metering'],
+    title: 'Agentic Workflow Automation',
+    desc: 'Multi-step AI agents that plan, use tools, call APIs, and complete complex tasks without human intervention — wired into your existing systems.',
+    tags: ['Tool use', 'Memory', 'Multi-agent', 'Human-in-loop'],
   },
   {
     Icon: BarChart3, color: '#0891b2',
     iconAnim: { animate: { scaleY: [1, 1.1, 1] }, transition: { duration: 2, repeat: Infinity, ease: 'easeInOut' } },
     hoverAnim: { scale: 1.25, y: -4 },
-    title: 'Analytics Dashboards',
-    desc: 'Real-time charts, virtual scrolling for millions of rows, export to CSV/Excel/PDF, and advanced filtering for data-heavy applications.',
-    tags: ['Real-time data', 'Large datasets', 'Chart viz', 'Export'],
+    title: 'Real-Time Analytics Dashboards',
+    desc: 'Live metrics with sub-100ms WebSocket updates, virtual scrolling for millions of rows, AI-generated summaries, and one-click CSV/PDF export.',
+    tags: ['WebSockets', '1M+ row virtual scroll', 'AI insights', 'Export'],
   },
   {
-    Icon: Brain, color: '#7c3aed',
-    iconAnim: { animate: { scale: [1, 1.08, 1] }, transition: { duration: 2.2, repeat: Infinity } },
-    hoverAnim: { scale: 1.3, rotate: 10 },
-    title: 'AI-Powered Apps',
-    desc: 'LLM features built into the product — chat interfaces, smart recommendations, document analysis, natural language search.',
-    tags: ['OpenAI / Claude', 'RAG pipelines', 'Embeddings', 'AI agents'],
+    Icon: Database, color: '#059669',
+    iconAnim: { animate: { y: [0, -3, 0] }, transition: { duration: 2.5, repeat: Infinity } },
+    hoverAnim: { scale: 1.25, rotate: 12 },
+    title: 'RAG & Knowledge Platforms',
+    desc: 'Enterprise search and Q&A over private documents. Chunking, hybrid retrieval, reranking, and citation tracking — all under 100ms end-to-end.',
+    tags: ['pgvector / Pinecone', 'Hybrid BM25', 'Citations', 'Sub-100ms'],
   },
   {
-    Icon: Boxes, color: '#059669',
-    iconAnim: { animate: { rotate: [0, 5, -5, 0] }, transition: { duration: 4, repeat: Infinity } },
-    hoverAnim: { scale: 1.25, rotate: 15 },
-    title: 'Internal Tools & CRMs',
-    desc: 'Custom admin panels, CRM systems, workflow tools, and dashboards that replace generic software with something that fits exactly.',
-    tags: ['Custom workflows', 'Admin UX', 'Integrations', 'Automation'],
-  },
-  {
-    Icon: Globe, color: '#dc2626',
-    iconAnim: { animate: { rotate: [0, 360] }, transition: { duration: 14, repeat: Infinity, ease: 'linear' } },
+    Icon: Layers, color: '#dc2626',
+    iconAnim: { animate: { scale: [1, 1.05, 1] }, transition: { duration: 3, repeat: Infinity } },
     hoverAnim: { scale: 1.25 },
-    title: 'Marketplace Platforms',
-    desc: 'Multi-sided platforms with buyers and sellers, payment splits, listing management, reviews, and the operational complexity that comes with it.',
-    tags: ['Stripe Connect', 'Listings', 'Search', 'Payments'],
+    title: 'Multi-Tenant SaaS Platforms',
+    desc: 'Workspace isolation, Stripe subscription billing, usage-based metering, RBAC, and SSO — architected for 10 users or 100,000 from the first deploy.',
+    tags: ['Workspace isolation', 'Stripe billing', 'RBAC', 'SSO / SAML'],
   },
   {
-    Icon: Rocket, color: '#d97706',
-    iconAnim: { animate: { y: [0, -4, 0] }, transition: { duration: 2, repeat: Infinity, ease: 'easeInOut' } },
+    Icon: Cpu, color: '#d97706',
+    iconAnim: { animate: { rotate: [0, 360] }, transition: { duration: 12, repeat: Infinity, ease: 'linear' } },
     hoverAnim: { scale: 1.3, y: -6, rotate: -15 },
-    title: 'MVPs & Startup Products',
-    desc: 'Investor-ready products built fast without technical debt. Architecture decisions made upfront so the codebase can actually scale.',
-    tags: ['Fast to market', 'Scalable arch', 'Full-stack', 'Launch ready'],
+    title: 'AI-Assisted Developer Tools',
+    desc: 'Code review bots, PR summaries, test generators, and doc writers — AI wired directly into the developer workflow via GitHub Actions and IDE plugins.',
+    tags: ['GitHub Actions', 'Code review AI', 'Test gen', 'IDE plugins'],
   },
 ];
 
@@ -167,6 +189,13 @@ const STACK = [
   { group: 'DevOps',    items: ['AWS', 'Docker', 'GitHub Actions', 'Vercel', 'nginx', 'Terraform'] },
 ];
 
+const STATS = [
+  { value: 99, suffix: '.9%', label: 'Uptime SLA',          color: '#2176ae', desc: 'Multi-AZ deployment with auto-failover' },
+  { value: 100, suffix: 'ms', label: 'API Response Target', color: '#7c3aed', desc: 'Sub-100ms p95 for read endpoints' },
+  { value: 50,  suffix: '+',  label: 'AI Apps Shipped',     color: '#059669', desc: 'LLM, RAG, agents, and analytics' },
+  { value: 10,  suffix: 'M+', label: 'Users Served',        color: '#d97706', desc: 'Across SaaS and enterprise systems' },
+];
+
 const AFTER = [
   { Icon: Activity,  color: '#2176ae', title: 'Monitoring & Alerts',  desc: 'Uptime monitoring, Sentry error tracking, and real-time alerts so you know before your users do.' },
   { Icon: Shield,    color: '#059669', title: 'Security Patches',     desc: 'Dependency updates, CVE monitoring, and proactive security reviews on a regular cadence.' },
@@ -189,6 +218,16 @@ export default function WebApp() {
 
       {/* ══════════════════════  HERO  ══════════════════════ */}
       <section className="wa-hero">
+        {/* Looping background video */}
+        <video
+          className="wa-hero__video"
+          autoPlay muted loop playsInline
+          aria-hidden="true"
+          poster="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1400&q=60&auto=format"
+        >
+          <source src="https://assets.mixkit.co/videos/preview/mixkit-hands-of-a-developer-writing-code-on-a-computer-18305-large.mp4" type="video/mp4" />
+        </video>
+        <div className="wa-hero__video-overlay" />
         <div className="wa-hero__noise" />
         <div className="wa-hero__grid" />
         <div className="wa-hero__glow wa-hero__glow--1" />
@@ -372,12 +411,14 @@ export default function WebApp() {
       {/* ══════════════════════  TIERS  ══════════════════════ */}
       <section className="wa-tiers">
         <div className="wa-tiers__stripe"/>
-        <div className="container">
+        <div className="wa-tiers__blob wa-tiers__blob--1"/>
+        <div className="wa-tiers__blob wa-tiers__blob--2"/>
+        <div className="container" style={{ position: 'relative', zIndex: 1 }}>
           <motion.div className="wa-tiers__head"
             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }} transition={{ duration: 0.5 }}>
-            <span className="section-tag wa-section-tag--light">Built for every stage</span>
-            <h2 className="wa-section-title wa-section-title--light">MVP. Product. Enterprise.<br/>We build all three.</h2>
+            <span className="section-tag">Built for every stage</span>
+            <h2 className="wa-section-title">MVP. Product. Enterprise.<br/>We build all three.</h2>
           </motion.div>
           <div className="wa-tiers__grid">
             {TIERS.map((tier, i) => (
@@ -428,8 +469,8 @@ export default function WebApp() {
           <motion.div className="wa-builds__head"
             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }} transition={{ duration: 0.5 }}>
-            <span className="section-tag">What we build</span>
-            <h2 className="wa-section-title">Six types of web product.<br/>One standard of quality.</h2>
+            <span className="section-tag wa-section-tag--light">What we build</span>
+            <h2 className="wa-section-title wa-section-title--light">Six types of web product.<br/>One standard of quality.</h2>
           </motion.div>
           <div className="wa-builds__grid">
             {BUILDS.map((b, i) => (
@@ -467,7 +508,7 @@ export default function WebApp() {
             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }} transition={{ duration: 0.5 }}>
             <span className="section-tag">How we work</span>
-            <h2 className="wa-section-title wa-section-title--light">From zero to production.<br/>Eight steps, no shortcuts.</h2>
+            <h2 className="wa-section-title">From zero to production.<br/>Eight steps, no shortcuts.</h2>
           </motion.div>
           <div className="wa-process__track">
             {PROCESS.map((step, i) => (
@@ -503,8 +544,8 @@ export default function WebApp() {
           <motion.div className="wa-screens__head"
             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }} transition={{ duration: 0.5 }}>
-            <span className="section-tag">Responsive & Cross-Browser</span>
-            <h2 className="wa-section-title">Pixel-perfect on every screen,<br/>every browser.</h2>
+            <span className="section-tag wa-section-tag--light">Responsive & Cross-Browser</span>
+            <h2 className="wa-section-title wa-section-title--light">Pixel-perfect on every screen,<br/>every browser.</h2>
             <p className="wa-screens__sub">
               We build and test across the full spectrum — 320px mobile to 2560px ultrawide,
               across Chrome, Firefox, Safari, and Edge. Every breakpoint is intentional.
@@ -572,6 +613,25 @@ export default function WebApp() {
             <span className="section-tag">Capabilities</span>
             <h2 className="wa-section-title">Everything it takes<br/>to ship a great product.</h2>
           </motion.div>
+
+          {/* ── Stat counters ── */}
+          <div className="wa-caps__stats">
+            {STATS.map((s, i) => (
+              <motion.div key={s.label} className="wa-stat-card"
+                style={{ '--sc': s.color }}
+                initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }} transition={{ delay: i * 0.08, duration: 0.5 }}
+                whileHover={{ y: -5, transition: { type: 'spring', stiffness: 300 } }}>
+                <div className="wa-stat-card__accent" />
+                <div className="wa-stat-card__number">
+                  <Counter to={s.value} suffix={s.suffix} />
+                </div>
+                <div className="wa-stat-card__label">{s.label}</div>
+                <div className="wa-stat-card__desc">{s.desc}</div>
+              </motion.div>
+            ))}
+          </div>
+
           <div className="wa-caps__grid">
             {CAPABILITIES.map((cap, i) => (
               <motion.div key={cap.title} className="wa-cap-card"
@@ -685,6 +745,42 @@ export default function WebApp() {
               </motion.div>
             ))}
           </div>
+
+          {/* Architecture flow diagram */}
+          <motion.div className="wa-flow-diagram"
+            initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }} transition={{ duration: 0.7, delay: 0.2 }}>
+            <div className="wa-flow-diagram__title">Request Lifecycle</div>
+            <div className="wa-flow-nodes">
+              {[
+                { icon: '🌐', label: 'Browser', sub: 'React / Next.js' },
+                null,
+                { icon: '⚡', label: 'CDN', sub: 'CloudFront' },
+                null,
+                { icon: '⚖️', label: 'Load Balancer', sub: 'ALB / nginx' },
+                null,
+                { icon: '🖥️', label: 'API Server', sub: 'Node / Rails' },
+                null,
+                { icon: '⚙️', label: 'Workers', sub: 'Sidekiq / BullMQ' },
+                null,
+                { icon: '🗄️', label: 'PostgreSQL', sub: 'Primary DB' },
+                null,
+                { icon: '📦', label: 'Redis + S3', sub: 'Cache + Objects' },
+              ].map((node, idx) =>
+                node === null ? (
+                  <div key={idx} className="wa-flow-connector" />
+                ) : (
+                  <motion.div key={node.label} className="wa-flow-node"
+                    whileHover={{ y: -4, boxShadow: '0 8px 24px rgba(33,118,174,0.18)' }}
+                    transition={{ type: 'spring', stiffness: 300 }}>
+                    <div className="wa-flow-node__icon">{node.icon}</div>
+                    {node.label}
+                    <div className="wa-flow-node__sub">{node.sub}</div>
+                  </motion.div>
+                )
+              )}
+            </div>
+          </motion.div>
         </div>
       </section>
 
@@ -697,7 +793,7 @@ export default function WebApp() {
           <motion.div className="wa-after__head"
             initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }} transition={{ duration: 0.5 }}>
-            <span className="section-tag">After Launch</span>
+            <span className="section-tag wa-section-tag--light">After Launch</span>
             <h2 className="wa-after__title">We don't disappear after the demo.</h2>
             <p className="wa-after__sub">Shipping is the beginning. We stay involved.</p>
           </motion.div>

@@ -13,10 +13,10 @@
   background: linear-gradient(145deg, rgba(7,16,27,0.9) 0%, rgba(13,27,42,0.8) 50%, rgba(12,32,64,0.9) 100%);
 }
 .contact-body { background:var(--gray-light); }
-.contact-layout { display:grid; grid-template-columns:400px 1fr; gap:48px; align-items:start; }
+.contact-layout { display:grid; grid-template-columns:400px 1fr; gap:48px; align-items:stretch; }
 
 /* Info */
-.contact-info { position:sticky; top:100px; }
+.contact-info { display:flex; flex-direction:column; }
 .contact-info__title { font-size:1.4rem; font-weight:900; color:var(--navy); margin-bottom:8px; }
 .contact-info__sub { font-size:0.9rem; color:var(--gray); line-height:1.72; margin-bottom:28px; }
 .contact-info-items { display:flex; flex-direction:column; gap:14px; margin-bottom:28px; }
@@ -32,6 +32,43 @@
 .contact-info-item__value--link { color:var(--blue-dark); text-decoration:underline; text-underline-offset:3px; transition:opacity 0.2s; }
 .contact-info-item__value--link:hover { opacity:0.72; }
 
+/* Location heading above tiles */
+.contact-loc-heading {
+  font-size: 0.7rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--gray); margin-bottom: 8px;
+}
+
+/* Office location tiles (2-up above Estoras) */
+.contact-offices-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.contact-loc-tile {
+  background: #fff;
+  border: 1px solid rgba(33,118,174,0.12);
+  border-radius: var(--radius-md);
+  padding: 14px 14px 15px;
+  transition: box-shadow 0.22s var(--ease), border-color 0.22s var(--ease);
+}
+.contact-loc-tile:hover {
+  border-color: rgba(33,118,174,0.3);
+  box-shadow: var(--shadow-sm);
+}
+.contact-loc-tile__label {
+  font-size: 0.62rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--blue-dark);
+  margin-bottom: 3px;
+}
+.contact-loc-tile__name {
+  font-size: 0.82rem; font-weight: 800; color: var(--navy);
+  margin-bottom: 3px;
+}
+.contact-loc-tile__addr {
+  font-size: 0.75rem; color: var(--gray); line-height: 1.5;
+}
+
 .contact-estoras {
   background:#fff; border:1px solid rgba(33,118,174,0.12); border-radius:var(--radius-lg);
   padding:20px 22px; margin-bottom:20px;
@@ -45,10 +82,11 @@
 .contact-estoras__loc { display:flex; align-items:center; gap:4px; font-size:0.78rem; color:var(--gray); margin-bottom:8px; }
 .contact-estoras__desc { font-size:0.83rem; color:var(--gray); line-height:1.65; }
 
-.contact-calendly { width:100%; justify-content:center; padding:13px; font-size:0.92rem; }
+.contact-calendly { width:100%; justify-content:center; padding:13px; font-size:0.92rem; margin-top:auto; }
 
 /* Form */
-.contact-form-card { background:#fff; border-radius:var(--radius-xl); padding:40px 44px; box-shadow:var(--shadow-md); border:1px solid rgba(0,0,0,0.06); }
+.contact-form-col { display:flex; flex-direction:column; }
+.contact-form-card { background:#fff; border-radius:var(--radius-xl); padding:40px 44px; box-shadow:var(--shadow-md); border:1px solid rgba(0,0,0,0.06); flex:1; }
 .contact-form-card__hdr { margin-bottom:28px; }
 .contact-form-card__title { font-size:1.25rem; font-weight:900; color:var(--navy); margin-bottom:5px; }
 .contact-form-card__sub { font-size:0.86rem; color:var(--gray); }
