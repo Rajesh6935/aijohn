@@ -14,7 +14,7 @@ const TEAM = [
     name: 'Rajesh Mallelli',
     initials: 'RM',
     photo: '/team/rajesh.png',
-    role: 'Founder & CEO',
+    role: 'Founder',
     dept: 'Engineering',
     avatarGrad: ['#0D1B2A', '#2176AE'],
     education: { degree: 'M.Tech, Computer Science & Engineering', institution: 'NIT Calicut', year: '2013' },
@@ -372,7 +372,7 @@ function TeamCard({ member, index, isExpanded, onToggle }) {
       variants={fadeUp}
     >
       {member.featured && <div className="team-card__founder-badge"><Star size={11} /> Founder</div>}
-      <span className="team-card__dept-badge">{member.dept}</span>
+      {!member.featured && <span className="team-card__dept-badge">{member.dept}</span>}
 
       {/* Top: Avatar + Name */}
       <div className="team-card__top">
